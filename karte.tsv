@@ -1,0 +1,170 @@
+@quelle	Gedruckte Speisekarte ATAS Doener & Pizza, Nordstr. 45a Beckum, PDF-Scan vom 10. September 2026
+@hinweis	Zwei Preise sind mit preis_unsicher markiert und vor dem Livegang gegen die gedruckte Karte zu pruefen: Taschen 5 (Scan mehrdeutig, 9,50 aus dem Altsystem uebernommen) und Pizza 90 Diavolo 50 cm (Scan liest 25,00, Altsystem 20,00 - der niedrigere Wert steht drin).
+@pos_start	taschen
+@groessen	normal=30 cm	maxi=50 cm
+@extras	normal=1	maxi=3
+@extras_hinweis	Extra Belag 1,00 (30 cm) / 3,00 (50 cm). Extra Belag Fisch und Fleisch 2,00 (30 cm) / 7,00 (50 cm).
+
+#	mittagsangebote	Mittagsangebote	simple	nur_mittags=true	nummer_zeigen=false	note=Angebote 1-4 gueltig von Mo bis Fr, 11:30 bis 14:00 Uhr. Dienstag ist Ruhetag.
+	Linsensuppe mit Fladenbrot	Linsensuppe mit Wuerstchen und frisch gemachtem Fladenbrot	6.50
+	Menü 1: Drehspieß Tasche	mit Pommes, Softgetränk 0,33 l	10
+	Menü 2: Pizza 30 cm	Softgetränk 0,33 l	10
+	Menü 3: Lahmacun	mit Pommes, Softgetränk 0,33 l	10
+	Menü 4: Drehspießteller	mit Pommes, Softgetränk 0,33 l	11
+	Menü 5: Hamburger	mit Pommes, Softgetränk 0,33 l	9
+
+#	taschen	Taschengerichte	simple	note=Rind oder Hähnchen
+1	Drehspießtasche	Drehspießfleisch mit Salat und Sauce	7
+2	Drehspießtasche doppelt Fleisch	Drehspießfleisch mit Salat und Sauce	8
+3	Drehspießtasche Big XL	Drehspießfleisch, Salat, Sauce	9
+4	Drehspießtasche Sucuk	Drehspießfleisch mit Sucuk, Salat und Sauce	8.50
+5	Drehspießtasche Atas	Drehspießfleisch mit Pommes, Salat und Sauce	9.50	preis_unsicher=true
+6	Drehspießtasche mit gebratenem Gemüse	mit gebratenem Gemüse und Sauce	8
+7	Drehspieß Box klein	Drehspießfleisch, Pommes und Sauce	6
+7	Drehspieß Box groß	Drehspießfleisch, Pommes und Sauce	7
+8	Köftetasche	mit Salat und Sauce	8
+9	Cevapcici Tasche	mit Salat und Sauce	8.50
+10	Pommestasche	mit Salat und Sauce	6
+11	Chickentasche	Hähnchenschnitzel mit Remoulade, Cocktailsauce und Salat	7
+12	Salattasche mit Käse	mit Weißkäse und Sauce	5.50
+13	Falafeltasche	mit Salat und Sauce	7
+14	Chickennuggetstasche	mit Salat und Sauce	7
+
+#	dueruem	Dürüm (Wrap)	simple	note=Hausgemachte Dürüm (Teigrolle) aus dem Steinofen
+15	Rolle	Drehspießfleisch mit Salat und Sauce	8
+16	Rolle doppelt Fleisch	Drehspießfleisch mit Salat und Sauce	9
+17	Sucuk Rolle	Drehspießfleisch mit Sucuk (türk. Knoblauchwurst), Salat und Sauce	9
+18	Atas Rolle	Drehspießfleisch mit Pommes, Salat und Sauce	9
+19	XXL Rolle	Drehspießfleisch mit Salat und Sauce	14
+20	Köfte Rolle	mit Salat und Sauce	9
+21	Cevapcici Rolle	mit Salat und Sauce	9.50
+22	Falafel Rolle	Falafel mit Salat und Sauce	7
+23	Salat Rolle	Salat, Weißkäse und Sauce	7
+
+#	teller	Tellergerichte	simple	note=Saucen zur Wahl: Cocktailsauce, Tzatziki, Chili Sauce, BBQ-Sauce, Hollandaise Sauce
+25	Drehspießteller klein	Drehspießfleisch, Salat, Twister, Pommes oder Reis und Sauce nach Wahl	8.50
+26	Drehspießteller	Drehspießfleisch, Salat, Twister, Pommes oder Reis und Sauce	11
+27	Chicken-Reis Teller	geschnetzelte Hähnchenbruststreifen mit Paprika, Erbsen und Sahnesauce	15
+28	Köfteteller	Salat, Sauce nach Wahl, Twister, Pommes oder Reis	15
+29	Mixgrillteller	versch. Grillfleisch mit Gewürzen und Kräutern, Twister, Pommes und Reis	18
+30	kleine Portion Fleisch		8
+31	große Portion Fleisch		10
+
+#	lahmacun	Lahmacun	simple	note=Hauseigene türkische Teigspezialität mit Hackfleischsauce aus dem Steinofen
+35	Lahmacun-Salat	Hackfleischsauce, Salat und Sauce	7
+36	Lahmacun - Döner	Hackfleischsauce, Dönerfleisch, Salat und Sauce, mit oder ohne Käse	8
+37	Lahmacun Atas	Hackfleischsauce mit Dönerfleisch, Pommes, Salat, Sauce	9
+38	Lahmacun XXL - Döner	Hackfleischsauce mit Dönerfleisch, Salat und Sauce	14
+
+#	pide	Pide	simple	note=Hauseigene türkische Teigspezialität (Schiffchen) aus dem Steinofen
+45	Pide mit Goudakäse		8
+46	Pide mit Weißkäse		8
+47	Pide mit Hackfleischsauce und Gouda		9
+48	Pide mit Drehspießfleisch und Gouda		9
+49	Pide mit Sucuk, Gouda und Ei		9
+50	Pide mit Spinat und Schafskäse		9
+51	Pide mit Hähnchenbruststreifen und Paprika		10
+
+#	schnitzel	Putenschnitzel	simple	note=Alle Schnitzelgerichte werden mit Beilagen, Salat und wahlweise mit Pommes, Kroketten oder Wildkartoffeln serviert.
+52	Champignon-Rahmschnitzel	Champignon in Sahnesauce	10
+53	Schnitzel nach Wiener Art		9
+
+#	auflauf	Atas Auflauf	simple	note=Auf Wunsch etwas scharf, mit Currysauce, Knoblauch oder mit Käse überbacken. Alle Auflaufgerichte mit Pizzabrötchen.
+60	Brokkoli-Auflauf	mit Brokkoli, Kartoffeln, Tomaten, in Rahmsauce	9
+61	Spinat-Auflauf	mit Kartoffeln, Spinat, Tomaten, Zwiebeln, Knoblauch, Tomaten-Sahnesauce	9
+62	Frischer Drehspieß-Auflauf	Kartoffeln, Drehspießfleisch, Weißkäse, Zwiebeln, Paprika, Sauce Hollandaise	9
+63	Lachs Gemüse-Auflauf	mit Lachs, Zwiebeln, Paprika, Sahnesauce, Kartoffeln und Brokkoli	11
+64	Garnelen Gemüse-Auflauf	mit Garnelen, Zwiebeln, Paprika, Sahnesauce, Kartoffeln und Brokkoli	11
+
+#	baguettes	Baguettes	simple	note=Alle Baguettes sind mit Käse überbacken
+65	Baguette mit Salami		7
+66	Baguette mit Mozzarella		7
+67	Baguette mit Putenschinken		7
+68	Baguette mit Thunfisch		7
+69	Baguette mit Drehspießfleisch		7
+70	Baguette mit Sucuk		7.50
+71	Baguette mit Hähnchenbrust und Paprika		8
+
+#	pizza	Pizza	pizza	note=Alle Pizzen werden mit Tomatensauce, Käse und Oregano zubereitet. Alle Pizzen gerne extra scharf.
+75	Margherita			8	17
+76	Prosciutto	mit Geflügelschinken		9	20
+77	Salami	mit Geflügelsalami		9	20
+78	Tonno Cipolla	mit Thunfisch, Zwiebeln		9	20
+79	Hawaii	Geflügelschinken, Ananas		9	22
+80	Mista	Gefl. Schinken, Champignon, Geflügelsalami, gek. Ei		10	23
+81	Italia	Geflügelschinken, Thunfisch, Gefl. Salami, gek. Ei		10	23
+82	Pizza Manal	Drehspießfleisch und Hackfleisch		10	25
+83	Siziliana	mit Zwiebeln, Paprika, Peperoni, Knoblauch		9	19
+84	Pizza Spinat	mit Spinat, Mozzarella, Knoblauch, Spiegelei		9	20
+85	Gemüse Pizza	mit Paprika, Brokkoli, Zwiebeln, Champignon		9	19
+86	Scampi	mit Garnelen, Knoblauch		10	25
+87	Lachs-Spinat Pizza	Lachs, Spinat, Sauce Hollandaise		9	25
+88	Frutti di mare	Meeresfrüchte, Knoblauch		9	25
+89	Bolognese	mit Käse, Hackfleischsauce, Spiegelei		9	20
+90	Diavolo	mit Käse, Brokkoli, Geflügelschinken, gekochtes Ei, Spargel, Sauce Hollandaise		9	20	preis_unsicher=true
+91	Drehspieß Pizza	Drehspießfleisch, Weißkäse, Zwiebeln, Hollandaise		9	23
+92	Drehspieß Pizza mit Salat	Drehspießfleisch, Salat mit Joghurtsauce		9	23
+93	Atas	gebratene Hähnchenbruststreifen, Paprika, scharfe Peperoni, Currysauce		10	25
+94	Pizza al Racho	Tomaten, Käse, Thunfisch, Zwiebeln, scharfe Peperoni, Champignons		9	22
+95	Pizza Sucuk	Sucuk (türk. Knoblauchwurst), Spiegelei		10	25
+96	Pizza Malik	gebratene Hähnchenbruststreifen, fr. Champignons, fr. Paprika		10	25
+97	Amerikan Crust	verschiedene Zutaten		15	25
+
+#	calzone	Pizza Gefüllt Calzone	simple	note=Alle Calzone gerne mit Knoblauch oder scharf!
+98	Salami Calzone	mit Gefl. Schinken, Champignon, Gefl. Salami	9
+99	Royal Calzone	mit Gefl. Salami, Zwiebeln, Paprika, Drehspießfleisch	10
+
+#	pizzabroetchen	Pizzabrötchen	simple	note=Alle Pizzabrötchen werden wahlweise mit Tzatziki, Chili, Joghurtsauce oder Cocktailsauce serviert.
+100	Pizzabrötchen		3.50
+101	Pizzabrötchen mit Käse		8
+102	Pizzabrötchen mit Thunfisch		9
+103	Pizzabrötchen mit Salami (Geflügel)		9
+104	Pizzabrötchen mit Schinken (Geflügel)		9
+105	Pizzabrötchen mit Weißkäse und Spinat		9
+106	Pizzabrötchen mit Sucuk		9
+107	Pizzabrötchen mit Hähnchenbruststreifen und Paprika		9
+
+#	snacks	Snacks	simple
+109	Pommes klein		3.50
+110	Pommes groß		4
+111	Kroketten	8 Stk.	4
+112	Chicken Nuggets	6 Stk.	4
+113	Kartoffel Twister		4.50
+114	Mantaplatte		7
+115	Bratwurst		3
+116	Hamburger		5
+117	Cheeseburger		5.50
+
+#	salat	Salat	simple	note=Zu allen Salaten werden zusätzlich 4 Stk. Pizzabrötchen serviert. Wahlweise mit Tzatziki, Cocktail, Joghurtsauce, Essig, Öl oder Balsamico als Dressing.
+121	Mista	Tomaten, Gurken, Eisbergsalat	6
+122	Gemischter Salat	Tomaten, Gurken, Eisbergsalat, Zwiebeln, Mais, Oliven, Peperoni	8
+123	Bauernsalat	Eisbergsalat, Gurken, Tomaten, Paprika, Weißkäse	8
+124	Atas-Salat	mit gebratenen Hähnchenbruststreifen, Paprika, Champignons und Zwiebeln	9
+125	Della Casa	Tomaten, Gurken, Eisbergsalat, Käse, Zwiebeln, Thunfisch, gekochtes Ei	7
+126	Chickensalat	Tomaten, Gurken, Eisbergsalat, Weißkäse, Paprika, Mais, Hähnchenbruststreifen	9
+127	Drehspießfleischsalat	Tomaten, Gurken, Eisbergsalat, Drehspießfleisch, Weißkäse	9
+
+#	extras	Extras	simple
+130	Ketchup		0.50
+131	Mayonnaise		0.50
+132	Cocktailsauce		1
+133	Tzatziki		1
+134	Chili Sauce		1
+135	BBQ-Sauce		1
+136	Hollandaise Sauce		1
+
+#	getraenke	Getränke	simple	nummer_zeigen=false
+	Mineralwasser	0,33 l	1
+	Coca Cola	0,33 l	2
+	Coca Cola Light	0,33 l	2
+	Coca Cola Life	0,33 l	2
+	Fanta	0,33 l	2
+	Sprite	0,33 l	2
+	Mezzo-Mix	0,33 l	2
+	Uludag zzgl. Pfand	0,33 l	2
+	Ayran	0,2 l	1.80
+	Durstlöscher		1.80
+	Coca Cola Flasche zzgl. Pfand	1 l	3.50
+	Coca Cola Light Flasche zzgl. Pfand	1 l	3.50
+	Fanta Flasche zzgl. Pfand	1 l	3.50
+	Sprite Flasche zzgl. Pfand	1 l	3.50

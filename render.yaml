@@ -1,0 +1,74 @@
+# Render Blueprint – ATAS Döner & Pizza
+#
+# Render → New → Blueprint → dieses Repository wählen.
+# Render legt den Service dann mit den Einstellungen unten an; abgefragt werden
+# nur noch die als `sync: false` markierten Geheimnisse.
+#
+# Nach dem ersten Deploy:
+#   1. Service-URL kopieren (z. B. https://atas-doener-pizza.onrender.com)
+#   2. In config.js window.FLUEVATE_BACKEND auf genau diese URL setzen
+#   3. Render → Connect/Outbound → Static Outbound IPs in MongoDB Atlas freigeben
+
+services:
+  - type: web
+    name: atas-doener-pizza
+    runtime: node
+    plan: starter
+    region: frankfurt
+    branch: main
+    buildCommand: npm install
+    startCommand: node server.js
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: "20"
+      - key: FRONTEND_URL
+        value: https://atas-doener-pizza.com
+
+      # ── Datenbank ──
+      - key: MONGODB_URI
+        sync: false
+
+      # ── Stripe ──
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false
+      - key: STRIPE_CONNECT_ACCOUNT
+        sync: false
+
+      # ── PayPal: bewusst nicht eingerichtet ──
+      # Das Backend kann PayPal, das Frontend bietet es nicht an
+      # (ONLINE_ZAHLUNG_AKTIV steht auf true, die PayPal-Option ist entfernt).
+      # Zum Nachruesten hier wieder eintragen:
+      #   PAYPAL_ENV (sandbox oder live), PAYPAL_CLIENT_ID,
+      #   PAYPAL_CLIENT_SECRET, PAYPAL_WEBHOOK_ID
+      # und die Auswahl in index.html zurueckholen. Ohne beides bliebe Render
+      # nach vier Geheimnissen fragen, die niemand hat.
+
+      # ── E-Mail (Resend) ──
+      - key: RESEND_API_KEY
+        sync: false
+      - key: EMAIL_FROM
+        value: bestellungen@atas-doener-pizza.com
+      - key: RESTAURANT_EMAIL
+        sync: false
+      - key: OWNER_EMAIL
+        sync: false
+
+      # ── Zugang ──
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: ADMIN_TOKEN_SECRET
+        generateValue: true
+      - key: JWT_SECRET
+        generateValue: true
+
+      # ── Sonstiges ──
+      - key: WHATSAPP_NUMBER
+        value: "4917620124957"
+      - key: PRINTNODE_API_KEY
+        sync: false
+      - key: PRINTNODE_PRINTER_ID
+        sync: false

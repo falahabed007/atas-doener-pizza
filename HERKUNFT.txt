@@ -1,0 +1,2 @@
+Abstammung: 8aa4248 2026-09-09 menu.json ist jetzt die Quelle der Speisekarte
+Vorlage:    /Users/abedfalah/dev/gastronomie/PinocchioNordkirchen
