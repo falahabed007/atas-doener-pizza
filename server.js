@@ -429,6 +429,17 @@ app.post('/api/account/redeem-stamp', customerAuth, async (req, res) => {
 // PUBLIC ROUTES
 // ═══════════════════════════════════════════════════════════════
 
+// Lebenszeichen fuer den Lastverteiler: antwortet immer mit 200, solange der
+// Prozess laeuft. Getrennt von /api/health, und zwar aus einem konkreten
+// Grund: /api/health meldet bei fehlender Datenbank korrekt 503. Zeigt Renders
+// healthCheckPath darauf, gilt der Dienst dauerhaft als krank, Render leitet
+// keinen Verkehr hin und antwortet mit 502 - man kommt also nicht einmal mehr
+// an die Meldung heran, die sagt, was fehlt. Henne und Ei.
+//
+// Deshalb: /api/live haelt den Dienst erreichbar, /api/health sagt die
+// Wahrheit ueber seinen Zustand.
+app.get('/api/live', (req, res) => res.json({ alive: true, time: new Date() }));
+
 app.get('/api/health', (req, res) => {
   const dbUp = mongoose.connection.readyState === 1; // 1 = connected
   res.status(dbUp ? 200 : 503).json({

@@ -18,7 +18,11 @@ services:
     branch: main
     buildCommand: npm install
     startCommand: node server.js
-    healthCheckPath: /api/health
+    # Bewusst /api/live und nicht /api/health: Letzteres meldet 503, solange
+    # die Datenbank fehlt. Render wuerde den Dienst dann nie als gesund
+    # ansehen, keinen Verkehr durchlassen und 502 zeigen - die Diagnose waere
+    # damit unerreichbar.
+    healthCheckPath: /api/live
     autoDeploy: true
     envVars:
       - key: NODE_VERSION
