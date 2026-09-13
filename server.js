@@ -121,9 +121,22 @@ app.use(express.static(path.join(__dirname), {
 if (!process.env.MONGODB_URI) {
   console.error('❌ MONGODB_URI nicht gesetzt – Datenbankfunktionen sind deaktiviert.');
 }
-mongoose.connect(process.env.MONGODB_URI)
-  .then(() => console.log('✅ MongoDB verbunden'))
-  .catch(err => console.error('❌ MongoDB Erstverbindung fehlgeschlagen:', err.message));
+// try/catch um den Aufruf, nicht nur .catch() dahinter: Bei einer fehlerhaften
+// Zeichenkette wirft mongoose.connect SYNCHRON, und dann greift das .catch()
+// daneben nicht - der Prozess stirbt beim Start und Render meldet nur 502,
+// ohne dass irgendwo steht, woran es lag. Haeufigste Ursache ist ein Passwort
+// mit @ oder / darin, das nicht URL-kodiert wurde.
+//
+// Lieber laeuft der Dienst ohne Datenbank weiter: Dann antwortet /api/health
+// mit "degraded" und nennt den Grund, statt dass man im Dunkeln sucht.
+try {
+  mongoose.connect(process.env.MONGODB_URI)
+    .then(() => console.log('✅ MongoDB verbunden'))
+    .catch(err => console.error('❌ MongoDB Erstverbindung fehlgeschlagen:', err.message));
+} catch (err) {
+  console.error('❌ MONGODB_URI ist unbrauchbar:', err.message);
+  console.error('   Sonderzeichen im Passwort URL-kodieren: @ wird %40, / wird %2F, : wird %3A.');
+}
 // Dauerhafte Zustandswechsel sichtbar loggen (kein stiller Ausfall)
 mongoose.connection.on('disconnected', () => console.error('❌ MongoDB getrennt – Reconnect läuft …'));
 mongoose.connection.on('reconnected',  () => console.log('✅ MongoDB wieder verbunden'));
