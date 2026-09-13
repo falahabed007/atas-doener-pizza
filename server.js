@@ -440,11 +440,47 @@ app.post('/api/account/redeem-stamp', customerAuth, async (req, res) => {
 // Wahrheit ueber seinen Zustand.
 app.get('/api/live', (req, res) => res.json({ alive: true, time: new Date() }));
 
+// Was die Zustandsmeldung ueber die Datenbank verraten darf: ob eine URI
+// gesetzt ist, ob ein Datenbankname darin steht, und in welchem Zustand die
+// Verbindung ist. NICHT Benutzer, Passwort oder Clusteradresse - der Endpunkt
+// ist oeffentlich.
+//
+// Ohne diese drei Angaben sieht "disconnected" bei drei verschiedenen Ursachen
+// gleich aus: Variable fehlt, Datenbankname vergessen, oder Atlas laesst
+// Renders Adressen nicht durch. Mit ihnen ist es in einem Blick zu trennen.
+function datenbankBefund() {
+  const zustand = ['getrennt', 'verbunden', 'verbindet', 'trennt'][mongoose.connection.readyState] || 'unbekannt';
+  const uri = process.env.MONGODB_URI;
+  if (!uri) return { db: 'disconnected', grund: 'MONGODB_URI ist nicht gesetzt', zustand };
+  // Mehr als ein @ vor dem Host heisst: im Passwort steht ein unkodiertes @.
+  // new URL() scheitert daran nicht, es raet nur falsch und nimmt das letzte
+  // als Trenner - die Verbindung geht dann mit falschem Benutzer ins Leere.
+  const nachSchema = uri.replace(/^mongodb(\+srv)?:\/\//, '');
+  const vorPfad = nachSchema.split('/')[0];
+  if ((vorPfad.match(/@/g) || []).length > 1) {
+    return { db: 'disconnected', zustand,
+      grund: 'Mehrere @ vor der Clusteradresse - das Sonderzeichen im Passwort URL-kodieren: @ wird %40, / wird %2F, : wird %3A' };
+  }
+  let name = null;
+  try { name = new URL(uri.replace(/^mongodb\+srv:/, 'https:')).pathname.replace(/^\//, '') || null; }
+  catch { return { db: 'disconnected', grund: 'MONGODB_URI laesst sich nicht lesen - Sonderzeichen im Passwort URL-kodieren (@ wird %40)', zustand }; }
+  if (mongoose.connection.readyState === 1) return { db: 'connected', datenbank: name, zustand };
+  return {
+    db: 'disconnected',
+    datenbank: name,
+    zustand,
+    grund: !name
+      ? 'Kein Datenbankname in der URI - er gehoert hinter den letzten Schraegstrich'
+      : 'URI steht, Verbindung kommt nicht zustande - meist sind Renders Outbound-Adressen nicht in Atlas unter Network Access freigegeben',
+  };
+}
+
 app.get('/api/health', (req, res) => {
-  const dbUp = mongoose.connection.readyState === 1; // 1 = connected
+  const befund = datenbankBefund();
+  const dbUp = befund.db === 'connected';
   res.status(dbUp ? 200 : 503).json({
     status: dbUp ? 'ok' : 'degraded',
-    db: dbUp ? 'connected' : 'disconnected',
+    ...befund,
     restaurant: 'ATAS Döner & Pizza', time: new Date(),
     // Render setzt RENDER_GIT_COMMIT selbst. Ohne diese Angabe laesst sich
     // von aussen nicht feststellen, welcher Stand gerade laeuft.
