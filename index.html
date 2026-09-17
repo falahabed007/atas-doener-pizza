@@ -25,6 +25,37 @@
     }
     body { background: var(--atas-grund); color: var(--atas-schrift); }
     /* FARBEN:ENDE */
+
+    /* ── Formularelemente ──────────────────────────────────────────────
+       <input>, <select> und <textarea> erben `color` nicht, sie nehmen
+       Browser-Schwarz. Zusammen mit dem dunklen Grund der Kasse hiess das:
+       schwarz auf #16130f, also gar nichts zu sehen. Deshalb hier zentral
+       gesetzt statt einzeln je Feld. `color-scheme` sorgt zusaetzlich fuer
+       dunkle Auswahllisten und Bildlaufleisten. */
+    :root { color-scheme: dark; }
+    input:not([type="checkbox"]):not([type="radio"]), select, textarea, option {
+        color: var(--atas-schrift);
+        background-color: var(--atas-flaeche);
+    }
+    input::placeholder, textarea::placeholder { color: var(--atas-schrift-leise); }
+
+    /* ── Auswahlgruppen im Gericht-Fenster (Fleisch, Sosse, Beilage) ── */
+    .opt-group { margin: 14px 0; text-align: left; }
+    .opt-group-title { font-size: .92rem; font-weight: 700; color: var(--atas-akzent); margin-bottom: 4px; }
+    .opt-group-note { font-size: .74rem; color: var(--atas-schrift-leise); margin-bottom: 8px; }
+    .opt-item {
+        display: flex; align-items: center; gap: 10px;
+        padding: 9px 12px; margin-bottom: 6px;
+        border: 1px solid var(--atas-rahmen); border-radius: 9px;
+        background: var(--atas-flaeche); color: var(--atas-schrift);
+        font-size: .87rem; cursor: pointer; transition: border-color .15s, background .15s;
+    }
+    .opt-item:hover { border-color: var(--atas-akzent); }
+    .opt-item.selected { border-color: var(--atas-akzent); background: var(--atas-flaeche-2); }
+    .opt-item input { accent-color: var(--atas-akzent); margin: 0; flex-shrink: 0; }
+    .opt-item-label { flex: 1; }
+    .opt-item-price { color: var(--atas-akzent); font-weight: 700; font-size: .82rem; }
+    .opt-error { display: none; color: var(--atas-rot); font-size: .78rem; font-weight: 600; margin: -2px 0 8px; }
     :root { --atas-blue: var(--atas-akzent); --text-dark: var(--atas-schrift); --bg-light: var(--atas-flaeche); --atas-gold: var(--atas-akzent); --atas-red: var(--atas-rot); }
     html, body { margin: 0; padding: 0; width: 100%; overflow-x: hidden; font-family: 'Arial', sans-serif; background-color: var(--atas-flaeche); color: var(--atas-schrift); line-height: 1.6; }
 
@@ -77,7 +108,6 @@
     /* Speisekarte Links */
     .menu-section { background: transparent; border-radius: 0; padding: 0; box-shadow: none; }
     .category-title { color: var(--atas-akzent); border-bottom: 2px solid var(--atas-akzent); padding-bottom: 12px; margin-top: 40px; margin-bottom: 16px; font-size: 1.4rem; font-weight: 700; display: flex; align-items: center; gap: 10px; }
-    .category-icon { font-size: 1.2rem; }
 
     /* ===== CARD GRID ===== */
     .product-grid {
@@ -223,10 +253,10 @@
     display: none !important;
     }
     .btn-toggle { display: flex; background: var(--atas-grund); padding: 4px; border-radius: 8px; margin-bottom: 20px; }
-    .btn-toggle button { flex: 1; border: none; padding: 10px; border-radius: 6px; cursor: pointer; font-weight: bold; background: transparent; }
+    .btn-toggle button { flex: 1; border: none; padding: 10px; border-radius: 6px; cursor: pointer; font-weight: bold; background: transparent; color: var(--atas-schrift); }
     .btn-toggle button.active { background: var(--atas-grund); color: var(--atas-akzent); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
 
-    .alert-status { background: var(--atas-rot); color: var(--atas-akzent); padding: 15px; border-radius: 8px; font-size: 13px; margin-bottom: 20px; border-left: 4px solid var(--atas-akzent); }
+    .alert-status { background: var(--atas-rot); color: var(--atas-auf-akzent); padding: 15px; border-radius: 8px; font-size: 13px; margin-bottom: 20px; border-left: 4px solid var(--atas-akzent); }
     .cart-btn { width: 100%; padding: 15px; background: var(--atas-grund); border: none; border-radius: 8px; font-weight: bold; color: var(--atas-schrift-leise); cursor: not-allowed; }
 
     /* Floating Buttons Rechts */
@@ -489,7 +519,7 @@
     }
     .cat-nav-link:hover {
         background: var(--atas-akzent);
-        color: var(--atas-akzent);
+        color: var(--atas-auf-akzent);
     }
     .cat-nav-link.active {
         background: var(--atas-akzent);
@@ -815,7 +845,7 @@
 <header class="atas-header" id="atasHeader">
   <div class="atas-header-inner">
     <div class="atas-logo">
-      🥙 <em>ATAS</em> Döner &amp; Pizza
+      <em>ATAS</em> Döner &amp; Pizza
     </div>
     <!-- Suchleiste -->
     <div class="search-bar-wrap" id="searchBarWrap">
@@ -835,8 +865,8 @@
     </div>
     <!-- Aktion Banner -->
     <div id="promotionBanner" style="position: fixed; right: 15px; top: 60px; z-index: 9999; background: linear-gradient(135deg,var(--atas-flaeche),var(--atas-flaeche)); color: var(--atas-schrift); padding: 11px 15px; border-radius: 10px; font-size: 12px; font-weight: bold; text-align: center; max-width: 165px; line-height: 1.6; display: none; box-shadow: 0 4px 16px rgba(139,29,29,0.45);">
-      <div style="font-size: 10px; opacity: 0.85; margin-bottom: 3px;">🗓 01.08 – 31.08.2026</div>
-      <div style="font-size: 13px;">🍕 Kleine Margherita</div>
+      <div style="font-size: 10px; opacity: 0.85; margin-bottom: 3px;">01.08 – 31.08.2026</div>
+      <div style="font-size: 13px;">Kleine Margherita</div>
       <div style="margin-top:5px; background:var(--atas-grund); color:var(--atas-akzent); border-radius:5px; padding:3px 6px; font-size:12px;">GRATIS ab 20€!</div>
     </div>
   </div>
@@ -888,11 +918,11 @@
             <div style="display:flex; border-radius:10px; overflow:hidden; border:2px solid var(--atas-akzent);">
                 <button id="cart-btn-delivery" onclick="setCartOption('delivery')"
                     style="flex:1; padding:10px; font-weight:bold; font-size:13px; border:none; cursor:pointer; background:var(--atas-akzent); color:var(--atas-auf-akzent);">
-                    🚴 Lieferung
+                    Lieferung
                 </button>
                 <button id="cart-btn-pickup" onclick="setCartOption('pickup')"
                     style="flex:1; padding:10px; font-weight:bold; font-size:13px; border:none; cursor:pointer; background:var(--atas-grund); color:var(--atas-akzent);">
-                    🏠 Abholung
+                    Abholung
                 </button>
             </div>
 
@@ -941,7 +971,7 @@
             <li><a href="#getraenke" onclick="toggleMobileMenu()">Getraenke</a></li>
         </ul>
         <a href="account.html" style="display:block;margin-top:16px;padding:12px 16px;background:var(--atas-akzent);color:var(--atas-auf-akzent);border-radius:8px;text-align:center;text-decoration:none;font-weight:600;font-size:14px;">
-          👤 Mein Konto
+          Mein Konto
         </a>
     </div>
 
@@ -1003,8 +1033,8 @@
 
     <!-- ═══ AKTIONS-BANNER ═══ -->
     <div id="aktionsBanner" style="display:none; background: linear-gradient(135deg, var(--atas-flaeche) 0%, var(--atas-flaeche) 60%, var(--atas-flaeche) 100%); color: var(--atas-schrift); text-align: center; padding: 18px 20px; border-bottom: 3px solid var(--atas-rot);">
-      <div style="font-size: 11px; letter-spacing: 2px; text-transform: uppercase; opacity: 0.85; margin-bottom: 6px;">🗓 Aktion · 1. – 31. August 2026</div>
-      <div style="font-size: 20px; font-weight: 900; line-height: 1.3;">🍕 Kleine Pizza Margherita <span style="background:var(--atas-grund); color:var(--atas-akzent); border-radius:6px; padding:2px 10px; margin-left:4px;">GRATIS</span></div>
+      <div style="font-size: 11px; letter-spacing: 2px; text-transform: uppercase; opacity: 0.85; margin-bottom: 6px;">Aktion · 1. – 31. August 2026</div>
+      <div style="font-size: 20px; font-weight: 900; line-height: 1.3;">Kleine Pizza Margherita <span style="background:var(--atas-grund); color:var(--atas-akzent); border-radius:6px; padding:2px 10px; margin-left:4px;">GRATIS</span></div>
       <div style="font-size: 13px; margin-top: 7px; opacity: 0.9;">Bei jeder Bestellung ab <strong>20 €</strong> · kleine Margherita (22 cm) · automatisch im Warenkorb</div>
     </div>
     <script>
@@ -1016,27 +1046,22 @@
     <!-- ═══ STICKY KATEGORIE-NAVIGATION ═══ -->
     <div class="cat-nav-wrap" id="catNavWrap">
         <div class="cat-nav" id="catNav">
-            <a href="#antipasta" class="cat-nav-link">🍅 Vorspeisen</a>
-            <a href="#pizza-kaese" class="cat-nav-link">🧀 Käse-Pizza</a>
-            <a href="#pizza-vegetarisch" class="cat-nav-link">🥦 Vegetarisch</a>
-            <a href="#pizza-mozzarella" class="cat-nav-link">🍅 Mozzarella</a>
-            <a href="#pizza-fisch" class="cat-nav-link">🐟 Fisch</a>
-            <a href="#pizza-fleischsauce" class="cat-nav-link">🍖 Fleischsauce</a>
-            <a href="#pizza-belaege" class="cat-nav-link">🍕 Beläge</a>
-            <a href="#calzone" class="cat-nav-link">🥟 Calzone</a>
-            <a href="#familienpizza" class="cat-nav-link">🍕 Familienpizza</a>
-            <a href="#spaghetti" class="cat-nav-link">🍝 Spaghetti</a>
-            <a href="#tagliatelle" class="cat-nav-link">🍝 Tagliatelle</a>
-            <a href="#rigatoni" class="cat-nav-link">🍝 Rigatoni</a>
-            <a href="#tortellini" class="cat-nav-link">🍝 Tortellini</a>
-            <a href="#backofen" class="cat-nav-link">🫕 Backofen</a>
-            <a href="#auflaeufe" class="cat-nav-link">🧀 Aufläufe</a>
-            <a href="#gnocchi" class="cat-nav-link">🥔 Gnocchi</a>
-            <a href="#puten" class="cat-nav-link">🍗 Putengeschn.</a>
-            <a href="#schnitzel" class="cat-nav-link">🍗 Schnitzel</a>
-            <a href="#salate" class="cat-nav-link">🥗 Salate</a>
-            <a href="#mittagsmenue" class="cat-nav-link">☀️ Mittagsmenü</a>
-            <a href="#getraenke" class="cat-nav-link">🥤 Getränke</a>
+            <a href="#mittagsangebote" class="cat-nav-link">Mittagsangebote</a>
+            <a href="#taschen" class="cat-nav-link">Taschen</a>
+            <a href="#dueruem" class="cat-nav-link">Dürüm</a>
+            <a href="#teller" class="cat-nav-link">Teller</a>
+            <a href="#lahmacun" class="cat-nav-link">Lahmacun</a>
+            <a href="#pide" class="cat-nav-link">Pide</a>
+            <a href="#schnitzel" class="cat-nav-link">Schnitzel</a>
+            <a href="#auflauf" class="cat-nav-link">Auflauf</a>
+            <a href="#baguettes" class="cat-nav-link">Baguettes</a>
+            <a href="#pizza" class="cat-nav-link">Pizza</a>
+            <a href="#calzone" class="cat-nav-link">Calzone</a>
+            <a href="#pizzabroetchen" class="cat-nav-link">Pizzabrötchen</a>
+            <a href="#snacks" class="cat-nav-link">Snacks</a>
+            <a href="#salat" class="cat-nav-link">Salat</a>
+            <a href="#extras" class="cat-nav-link">Extras</a>
+            <a href="#getraenke" class="cat-nav-link">Getränke</a>
         </div>
     </div>
 
@@ -1772,7 +1797,7 @@
             <div style="text-align:center; color:var(--atas-schrift-leise); padding:20px;">Warenkorb leer</div>
         </div>
 
-        <button type="button" id="checkout-btn" class="cart-btn" onclick="openUpsellModal()" style="width: 100%; padding: 12px; background: var(--atas-akzent); border: 1px solid var(--atas-akzent); border-radius: 10px; color: var(--atas-akzent); font-weight: bold; font-size: 13px; cursor: not-allowed;">
+        <button type="button" id="checkout-btn" class="cart-btn" onclick="openUpsellModal()" style="width: 100%; padding: 12px; background: var(--atas-akzent); border: 1px solid var(--atas-akzent); border-radius: 10px; color: var(--atas-auf-akzent); font-weight: bold; font-size: 13px; cursor: not-allowed;">
             Warenkorb leer
         </button>
     </div>
@@ -1830,7 +1855,7 @@ function updateCartSummary() {
         html += `<span style="color:var(--atas-akzent); font-weight:bold; font-size:14px;">Gesamt: ${gesamt.toFixed(2).replace('.', ',')} €</span>`;
         if (summeWaren < config.min) {
             const rest = (config.min - summeWaren).toFixed(2).replace('.', ',');
-            html += `<br><span style="color:red; font-size:12px; font-weight:bold;">⚠️ Noch ${rest} € bis zum Mindestbestellwert (${config.min.toFixed(2).replace('.', ',')} €)</span>`;
+            html += `<br><span style="color:red; font-size:12px; font-weight:bold;">Noch ${rest} € bis zum Mindestbestellwert (${config.min.toFixed(2).replace('.', ',')} €)</span>`;
         }
         box.innerHTML = html;
     } else {
@@ -1867,7 +1892,7 @@ function renderMobileCartOverlay() {
     let html = '';
     warenkorb.forEach((item, index) => {
         const qty = item.qty || 1;
-        const priceDisplay = item.isFree ? '<span style="color:var(--atas-gruen); font-weight:bold;">GRATIS 🎉</span>' : item.preis.toFixed(2).replace('.', ',') + ' €';
+        const priceDisplay = item.isFree ? '<span style="color:var(--atas-gruen); font-weight:bold;">GRATIS</span>' : item.preis.toFixed(2).replace('.', ',') + ' €';
         const qtyBtns = item.isFree ? '' : `
             <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
               <span onclick="artikelQtyChangeMobile(${index},-1)" style="cursor:pointer;width:26px;height:26px;border-radius:50%;background:var(--atas-grund);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:bold;color:var(--atas-akzent);">−</span>
@@ -1879,7 +1904,7 @@ function renderMobileCartOverlay() {
                 <div style="flex:1;">
                     <div style="font-size:14px; font-weight:600; color:var(--atas-schrift); line-height:1.3;">${item.name}</div>
                     <div style="font-size:13px; color:var(--atas-akzent); font-weight:bold; margin-top:3px;">${priceDisplay}</div>
-                    ${item.note ? `<div style="font-size:11px;color:var(--atas-schrift-leise);font-style:italic;margin-top:2px;">📝 ${item.note}</div>` : ''}
+                    ${item.note ? `<div style="font-size:11px;color:var(--atas-schrift-leise);font-style:italic;margin-top:2px;">${item.note}</div>` : ''}
                 </div>
                 ${qtyBtns}
             </div>
@@ -1928,7 +1953,7 @@ function renderWarenkorb() {
         gesamt += item.preis;
         const qty = item.qty || 1;
         const unitPrice = item.basePreis || item.preis;
-        const priceDisplay = item.isFree ? '<span style="color:var(--atas-gruen);">GRATIS 🎉</span>' : item.preis.toFixed(2).replace('.', ',') + ' €';
+        const priceDisplay = item.isFree ? '<span style="color:var(--atas-gruen);">GRATIS</span>' : item.preis.toFixed(2).replace('.', ',') + ' €';
         const qtyBtns = item.isFree ? '' : `
             <div style="display:flex;align-items:center;gap:5px;margin-right:8px;">
               <span onclick="artikelQtyChange(${index},-1)" style="cursor:pointer;width:22px;height:22px;border-radius:50%;background:var(--atas-grund);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:bold;color:var(--atas-akzent);">−</span>
@@ -1939,7 +1964,7 @@ function renderWarenkorb() {
         const extrasHtml = (item.extraDetails||[]).filter(e=>e.name).map(e =>
             `<div style="font-size:12px;color:var(--atas-schrift-leise);padding-left:8px;">+ ${e.name}${e.price>0?' ('+e.price.toFixed(2).replace('.',',')+'€)':''}</div>`
         ).join('');
-        const noteHtml = item.note ? `<div style="font-size:11px;color:var(--atas-schrift-leise);padding-left:4px;font-style:italic;margin-top:2px;">📝 ${item.note}</div>` : '';
+        const noteHtml = item.note ? `<div style="font-size:11px;color:var(--atas-schrift-leise);padding-left:4px;font-style:italic;margin-top:2px;">${item.note}</div>` : '';
         html += `
             <div style="margin-bottom:10px; padding-bottom:5px; border-bottom:1px solid var(--atas-rahmen);">
               <div style="display:flex; justify-content:space-between; align-items:center;">
@@ -2160,8 +2185,12 @@ function speiseInWarenkorb() {
     else if (document.getElementById('quickPopup').style.display === 'flex') {
         activePopupId = 'quickPopup';
         name = document.getElementById('quickName').innerText;
-        const priceElement = document.querySelector('#quickPopup #quickPriceDisplay');
-        preis = parseFloat(priceElement.innerText.replace('€', '').replace(',', '.').trim());
+        // Fehlt eine Pflichtwahl, kommt nichts in den Warenkorb und das
+        // Fenster bleibt offen - sonst muesste die Kueche raten, welches
+        // Fleisch oder welche Beilage gemeint war.
+        if (!quickPflichtErfuellt()) return;
+        extraDetails = quickAuswahlSammeln();
+        preis = quickGrundpreis + extraDetails.reduce(function (summe, e) { return summe + e.price; }, 0);
     }
     else if (document.getElementById('famPizzaPopup').style.display === 'flex') {
         activePopupId = 'famPizzaPopup';
@@ -2212,14 +2241,14 @@ function updateCheckoutButton(isActive, total) {
 
     if (isActive) {
         checkoutBtn.innerText = `JETZT BESTELLEN (${total.toFixed(2).replace('.', ',')} €)`;
-        checkoutBtn.style.background = "#e8a020";
-        checkoutBtn.style.color = "white";
+        checkoutBtn.style.background = "var(--atas-akzent)";
+        checkoutBtn.style.color = "var(--atas-auf-akzent)";
         checkoutBtn.style.cursor = "pointer";
         checkoutBtn.style.pointerEvents = "auto";
     } else {
         checkoutBtn.innerText = "Warenkorb leer";
-        checkoutBtn.style.background = "#f7fafc";
-        checkoutBtn.style.color = "#a0aec0";
+        checkoutBtn.style.background = "var(--atas-flaeche)";
+        checkoutBtn.style.color = "var(--atas-schrift-leise)";
         checkoutBtn.style.cursor = "not-allowed";
         checkoutBtn.style.pointerEvents = "none";
     }
@@ -2252,7 +2281,7 @@ function toggleMobileMenu() {
     <!-- Header -->
     <div style="background:linear-gradient(135deg,var(--atas-flaeche),var(--atas-flaeche));padding:28px 24px 20px;text-align:center;color:var(--atas-schrift);">
       <button onclick="closeStampPromo()" style="position:absolute;top:12px;right:14px;background:rgba(255,255,255,0.2);border:none;color:var(--atas-schrift);border-radius:50%;width:30px;height:30px;font-size:16px;cursor:pointer;line-height:1;">✕</button>
-      <div style="font-size:52px;margin-bottom:8px;">🍕</div>
+      <div style="font-size:52px;margin-bottom:8px;"></div>
       <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;margin-bottom:4px;">Gratis-Pizza sichern!</div>
       <div style="font-size:13px;opacity:.9;">Melde dich an und sammle Stempel</div>
     </div>
@@ -2260,9 +2289,9 @@ function toggleMobileMenu() {
     <div style="padding:22px 24px;">
       <!-- Stempel-Vorschau -->
       <div style="display:flex;justify-content:center;gap:12px;margin-bottom:18px;">
-        <div style="width:56px;height:56px;border-radius:50%;background:var(--atas-flaeche);display:flex;align-items:center;justify-content:center;font-size:22px;">🍕</div>
-        <div style="width:56px;height:56px;border-radius:50%;background:var(--atas-flaeche);display:flex;align-items:center;justify-content:center;font-size:22px;">🍕</div>
-        <div style="width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--atas-flaeche),var(--atas-flaeche));display:flex;align-items:center;justify-content:center;font-size:22px;">🎁</div>
+        <div style="width:56px;height:56px;border-radius:50%;background:var(--atas-flaeche);display:flex;align-items:center;justify-content:center;font-size:22px;"></div>
+        <div style="width:56px;height:56px;border-radius:50%;background:var(--atas-flaeche);display:flex;align-items:center;justify-content:center;font-size:22px;"></div>
+        <div style="width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--atas-flaeche),var(--atas-flaeche));display:flex;align-items:center;justify-content:center;font-size:22px;"></div>
       </div>
       <div style="text-align:center;font-size:13px;color:var(--atas-schrift-leise);margin-bottom:18px;line-height:1.6;">
         Bei jeder Bestellung einen Stempel sammeln.<br>
@@ -2278,7 +2307,7 @@ function toggleMobileMenu() {
 
 <div id="dankeModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:999999; justify-content:center; align-items:center; padding:20px; box-sizing:border-box;">
     <div style="background:var(--atas-grund); border-radius:20px; padding:35px 30px; max-width:400px; width:100%; text-align:center; box-shadow:0 20px 60px rgba(0,0,0,0.4);">
-        <div id="dankeIcon" style="font-size:64px; margin-bottom:10px;">⏳</div>
+        <div id="dankeIcon" style="font-size:64px; margin-bottom:10px; display:none;"></div>
         <h2 id="dankeTitel" style="color:var(--atas-akzent); font-size:24px; margin:0 0 10px 0;">Bestellung eingegangen!</h2>
         <div style="background:var(--atas-flaeche); border:2px dashed var(--atas-akzent); border-radius:10px; padding:12px; margin:15px 0;">
             <div style="font-size:12px; color:var(--atas-schrift-leise);">Bestellnummer</div>
@@ -2286,7 +2315,7 @@ function toggleMobileMenu() {
         </div>
         <div id="dankeText" style="background:var(--atas-flaeche); border-radius:10px; padding:14px; margin-bottom:20px; color:var(--atas-schrift); font-size:13.5px; line-height:1.6; text-align:left;"></div>
         <button id="dankeCloseBtn" onclick="dankeSchliessen()" style="display:none; background:var(--atas-akzent); color:var(--atas-auf-akzent); border:none; border-radius:10px; padding:14px 30px; font-size:15px; font-weight:bold; cursor:pointer; width:100%;">
-            Alles klar, danke! 👍
+            Alles klar, danke!
         </button>
     </div>
 </div>
@@ -2294,12 +2323,11 @@ function toggleMobileMenu() {
 <!-- Upsell Modal -->
 <div id="upsellModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:999998; justify-content:center; align-items:center; padding:15px; box-sizing:border-box;">
     <div style="background:var(--atas-grund); padding:25px; border-radius:20px; width:100%; max-width:450px; position:relative; box-sizing:border-box; font-family:Arial,sans-serif;">
-        <h2 style="color:var(--atas-akzent); margin-top:0; border-bottom:2px solid var(--atas-rahmen); padding-bottom:10px; text-align:center; font-size:20px;">Dazu noch etwas? 🍕</h2>
+        <h2 style="color:var(--atas-akzent); margin-top:0; border-bottom:2px solid var(--atas-rahmen); padding-bottom:10px; text-align:center; font-size:20px;">Dazu noch etwas?</h2>
         <p style="color:var(--atas-schrift-leise); font-size:13px; text-align:center; margin-top:0; margin-bottom:16px;">Viele bestellen das auch dazu:</p>
         <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:20px;">
             <div style="display:flex; align-items:center; justify-content:space-between; background:var(--atas-grund); border:1px solid var(--atas-rahmen); border-radius:12px; padding:12px 15px;">
                 <div style="display:flex; align-items:center; gap:12px;">
-                    <span style="font-size:26px;">🥤</span>
                     <div>
                         <div style="font-weight:bold; font-size:14px; color:var(--atas-schrift);">Coca Cola 0,33 L</div>
                         <div style="color:var(--atas-akzent); font-weight:bold; font-size:14px;">2,50 €</div>
@@ -2309,7 +2337,6 @@ function toggleMobileMenu() {
             </div>
             <div style="display:flex; align-items:center; justify-content:space-between; background:var(--atas-grund); border:1px solid var(--atas-rahmen); border-radius:12px; padding:12px 15px;">
                 <div style="display:flex; align-items:center; gap:12px;">
-                    <span style="font-size:26px;">🍞</span>
                     <div>
                         <div style="font-weight:bold; font-size:14px; color:var(--atas-schrift);">201 Pizzabrötchen</div>
                         <div style="color:var(--atas-akzent); font-weight:bold; font-size:14px;">3,50 €</div>
@@ -2319,7 +2346,6 @@ function toggleMobileMenu() {
             </div>
             <div style="display:flex; align-items:center; justify-content:space-between; background:var(--atas-grund); border:1px solid var(--atas-rahmen); border-radius:12px; padding:12px 15px;">
                 <div style="display:flex; align-items:center; gap:12px;">
-                    <span style="font-size:26px;">🧀</span>
                     <div>
                         <div style="font-weight:bold; font-size:14px; color:var(--atas-schrift);">202 Pizzabrötchen mit Käse</div>
                         <div style="color:var(--atas-akzent); font-weight:bold; font-size:14px;">6,50 €</div>
@@ -2354,7 +2380,7 @@ function toggleMobileMenu() {
             <input type="text" id="c-hausnummer" placeholder="Hausnummer" style="width:100%; padding:12px; margin-bottom:10px; border:1px solid var(--atas-rahmen); border-radius:8px; box-sizing: border-box;">
             
             <div style="margin-bottom:5px; font-size:12px; color:var(--atas-schrift-leise);">Liefergebiet wählen:</div>
-            <select id="c-stadt" onchange="updateSummary()" style="width:100%; padding:12px; margin-bottom:20px; border:1px solid var(--atas-rahmen); border-radius:8px; background:var(--atas-grund); cursor:pointer;">
+            <select id="c-stadt" onchange="updateSummary()" style="width:100%; padding:12px; margin-bottom:20px; border:1px solid var(--atas-rahmen); border-radius:8px; background:var(--atas-flaeche); color:var(--atas-schrift); cursor:pointer;">
                 <option value="beckum">Beckum (MBW: 20,00€ | Gebühr: 2,00€)</option>
                 <option value="roland">Roland (MBW: 20,00€ | Gebühr: 2,00€)</option>
                 <option value="neubeckum">Neubeckum (MBW: 30,00€ | Gebühr: 2,00€)</option>
@@ -2363,15 +2389,15 @@ function toggleMobileMenu() {
         </div>
         
         <div style="font-weight:bold; font-size:14px; margin-bottom:5px;">Zahlungsmethode:</div>
-        <select id="c-zahlung" style="width:100%; padding:12px; margin-bottom:10px; border:1px solid var(--atas-rahmen); border-radius:8px; background: var(--atas-grund); cursor:pointer;" onchange="togglePaymentLogos()">
-            <option value="stripe">💳 Online bezahlen (Stripe)</option>
+        <select id="c-zahlung" style="width:100%; padding:12px; margin-bottom:10px; border:1px solid var(--atas-rahmen); border-radius:8px; background: var(--atas-flaeche); color:var(--atas-schrift); cursor:pointer;" onchange="togglePaymentLogos()">
+            <option value="stripe">Online bezahlen (Stripe)</option>
             <option value="bar">Barzahlung bei Übergabe</option>
         </select>
 
         <!-- Tritt an die Stelle des Auswahlfelds, solange nur bar bezahlt wird -->
         <div id="zahlung-hinweis" style="display:none;width:100%;padding:12px;margin-bottom:10px;
              border:1px solid var(--atas-rahmen);border-radius:8px;background:var(--atas-grund);font-size:14px;">
-          💵 Barzahlung bei Übergabe
+          Barzahlung bei Übergabe
         </div>
 
         <!-- Payment Logos (Stripe) -->
@@ -2395,7 +2421,7 @@ function toggleMobileMenu() {
              einen Code, den es nicht gibt, erzeugt nur Rueckfragen. -->
         <div id="coupon-section" style="display:none;margin-bottom:14px;">
           <div style="display:flex;gap:8px;">
-            <input id="c-coupon" type="text" placeholder="🎓 Rabattcode (optional)"
+            <input id="c-coupon" type="text" placeholder="Rabattcode (optional)"
               autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false"
               style="flex:1;padding:12px;border:1px solid var(--atas-rahmen);border-radius:8px;box-sizing:border-box;font-family:inherit;font-size:14px;text-transform:uppercase;letter-spacing:1px;">
             <button type="button" onclick="validateCoupon()"
@@ -2406,7 +2432,7 @@ function toggleMobileMenu() {
           <div id="coupon-msg" style="display:none;margin-top:8px;padding:10px 12px;border-radius:8px;font-size:13px;font-weight:600;"></div>
         </div>
 
-        <textarea id="c-notiz" placeholder="📝 Anmerkungen zur Bestellung (z.B. Nr. 53 ohne Spinat)" maxlength="300" style="width:100%; padding:12px; margin-bottom:14px; border:1px solid var(--atas-rahmen); border-radius:8px; box-sizing:border-box; font-family:inherit; font-size:14px; resize:vertical; min-height:70px;"></textarea>
+        <textarea id="c-notiz" placeholder="Anmerkungen zur Bestellung (z.B. Nr. 53 ohne Spinat)" maxlength="300" style="width:100%; padding:12px; margin-bottom:14px; border:1px solid var(--atas-rahmen); border-radius:8px; box-sizing:border-box; font-family:inherit; font-size:14px; resize:vertical; min-height:70px;"></textarea>
 
         <div id="final-summary" style="background:var(--atas-grund);padding:14px;border-radius:10px;margin-bottom:14px;font-size:13px;line-height:1.8;border:1px dashed var(--atas-rahmen);"></div>
 
@@ -2441,7 +2467,7 @@ function toggleMobileMenu() {
         <button id="btn-bestellen" onclick="processOrder()" disabled
                 style="width:100%;padding:15px;background:var(--atas-grund);color:var(--atas-schrift-leise);border:none;
                        border-radius:10px;font-weight:bold;font-size:15px;cursor:not-allowed;transition:all .25s;">
-          🔒 Bitte AGB &amp; Datenschutz bestätigen
+          Bitte AGB &amp; Datenschutz bestätigen
         </button>
     </div>
 </div>
@@ -2492,10 +2518,10 @@ function updateBestellBtn() {
   if (!btn) return;
   var ok = agb && dsgvo && agb.checked && dsgvo.checked;
   btn.disabled        = !ok;
-  btn.style.background = ok ? '#e8a020' : '#ccc';
-  btn.style.color      = ok ? '#fff'    : '#888';
+  btn.style.background = ok ? 'var(--atas-akzent)'    : 'var(--atas-grund)';
+  btn.style.color      = ok ? 'var(--atas-auf-akzent)' : 'var(--atas-schrift-leise)';
   btn.style.cursor     = ok ? 'pointer' : 'not-allowed';
-  btn.textContent      = ok ? '✅ Kostenpflichtig bestellen' : '🔒 Bitte AGB & Datenschutz bestätigen';
+  btn.textContent      = ok ? 'Kostenpflichtig bestellen' : 'Bitte AGB & Datenschutz bestätigen';
 }
 
 // ── Rabattaktion ──
@@ -2521,7 +2547,7 @@ function berechneRabatt(summeWaren) {
 function validateCoupon() {
   var code = (document.getElementById('c-coupon').value || '').trim().toUpperCase();
   if (!code) { showCouponMsg('Bitte gib einen Rabattcode ein.', false); return; }
-  if (code !== RABATT_CODE) { showCouponMsg('❌ Ungültiger Rabattcode.', false); return; }
+  if (code !== RABATT_CODE) { showCouponMsg('Ungültiger Rabattcode.', false); return; }
 
   couponValid = true;
   document.getElementById('c-coupon').disabled = true;
@@ -2530,12 +2556,12 @@ function validateCoupon() {
 
   var summeWaren = warenkorb.reduce((a, b) => a + b.preis, 0);
   if (currentSelection !== 'delivery') {
-    showCouponMsg('✅ Code hinterlegt – der Rabatt gilt nur bei Lieferung.', true);
+    showCouponMsg('Code hinterlegt – der Rabatt gilt nur bei Lieferung.', true);
   } else if (summeWaren < RABATT_MINDESTWERT) {
     var fehlt = (RABATT_MINDESTWERT - summeWaren).toFixed(2).replace('.', ',');
-    showCouponMsg('✅ Code hinterlegt – noch ' + fehlt + ' € bis zum Rabatt ab 20 €.', true);
+    showCouponMsg('Code hinterlegt – noch ' + fehlt + ' € bis zum Rabatt ab 20 €.', true);
   } else {
-    showCouponMsg('✅ Rabatt aktiv.', true);
+    showCouponMsg('Rabatt aktiv.', true);
   }
   if (typeof updateSummary === 'function') updateSummary();
 }
@@ -2620,7 +2646,7 @@ function updateSummary() {
         if (summeWaren < config.min) {
             const rest = (config.min - summeWaren).toFixed(2).replace('.', ',');
             html += `<div style="color:var(--atas-rot);font-size:12px;font-weight:bold;margin-top:8px;background:var(--atas-flaeche);padding:8px;border-radius:6px;">
-                ⚠️ Dir fehlen noch ${rest} € für Lieferung nach ${config.label} (MBW: ${config.min.toFixed(2).replace('.', ',')} €)</div>`;
+                Dir fehlen noch ${rest} € für Lieferung nach ${config.label} (MBW: ${config.min.toFixed(2).replace('.', ',')} €)</div>`;
         }
     } else {
         const gesamt = summeWaren + SERVICE_FEE;
@@ -2641,7 +2667,7 @@ function updateSummary() {
 
 // ============================================================
 // STRIPE CHECKOUT SESSION INTEGRATION
-// ⬇️ Hier deine Render.com Backend-URL eintragen sobald deployed:
+// Hier deine Render.com Backend-URL eintragen sobald deployed:
 // ============================================================
 const BACKEND_URL = window.FLUEVATE_BACKEND;   // siehe config.js
 // Faellt config.js aus (nicht mitdeployt, lokal per file:// geblockt), waere
@@ -2812,21 +2838,21 @@ async function processOrder() {
                 window.location.href = data.url;
             } else {
                 alert('Fehler beim Erstellen der Zahlung: ' + (data.error || data.message || 'Unbekannter Fehler'));
-                if (btn) { btn.disabled = false; btn.textContent = '✅ Kostenpflichtig bestellen'; }
+                if (btn) { btn.disabled = false; btn.textContent = 'Kostenpflichtig bestellen'; }
             }
         } catch(err) {
             alert('Verbindung zum Zahlungsserver fehlgeschlagen. Bitte versuche es erneut.');
-            if (btn) { btn.disabled = false; btn.textContent = '✅ Kostenpflichtig bestellen'; }
+            if (btn) { btn.disabled = false; btn.textContent = 'Kostenpflichtig bestellen'; }
         }
     }
 
     if (zahlung === 'stripe') {
-        await redirectToOnlinePayment('/api/create-stripe-checkout', '⏳ Weiterleitung zu Stripe...');
+        await redirectToOnlinePayment('/api/create-stripe-checkout', 'Weiterleitung zu Stripe...');
         return;
     }
 
     if (zahlung === 'paypal') {
-        await redirectToOnlinePayment('/api/create-paypal-order', '⏳ Weiterleitung zu PayPal...');
+        await redirectToOnlinePayment('/api/create-paypal-order', 'Weiterleitung zu PayPal...');
         return;
     }
 
@@ -2890,7 +2916,10 @@ let warteDaten = null;   // {t, mode, email, num, betrag, name}
 // warten = Text neben dem Spinner (leer -> kein Spinner)
 // btn    = Beschriftung des Schliessen-Knopfs (leer -> versteckt)
 function zeigeBestellZustand(icon, titel, html, warten, btn) {
-    document.getElementById('dankeIcon').textContent = icon;
+    // Ohne Symbol bleibt kein leerer 64px-Kasten ueber der Ueberschrift stehen.
+    const zustandsIcon = document.getElementById('dankeIcon');
+    zustandsIcon.textContent   = icon || '';
+    zustandsIcon.style.display = icon ? 'block' : 'none';
     document.getElementById('dankeTitel').textContent = titel;
     document.getElementById('dankeText').innerHTML = html + (warten
         ? '<div style="display:flex;align-items:center;gap:8px;margin-top:12px;">'
@@ -2905,11 +2934,11 @@ function zeigeBestellZustand(icon, titel, html, warten, btn) {
 // Zustand "liegt beim Restaurant, wartet auf Annahme"
 function zeigeWarten() {
     const hinweis = warteDaten && warteDaten.betrag
-        ? '<br>💵 Bitte halte <strong>' + warteDaten.betrag + '</strong> bei Übergabe bereit.'
-        : '<br>✅ Deine Zahlung ist eingegangen.';
+        ? '<br>Bitte halte <strong>' + warteDaten.betrag + '</strong> bei Übergabe bereit.'
+        : '<br>Deine Zahlung ist eingegangen.';
     const anrede = warteDaten && warteDaten.name
         ? 'Vielen Dank, <strong>' + warteDaten.name + '</strong>! ' : '';
-    zeigeBestellZustand('⏳', 'Bestellung eingegangen!',
+    zeigeBestellZustand('', 'Bestellung eingegangen!',
         anrede + 'Deine Bestellung wurde übermittelt.' + hinweis,
         'Warte auf Bestätigung vom Restaurant…', '');
 }
@@ -2962,13 +2991,13 @@ async function warteTick() {
     try { d = await res.json(); } catch(e) { return; }
 
     if (d.status === 'awaiting_payment') {
-        zeigeBestellZustand('💳', 'Zahlung wird geprüft…',
+        zeigeBestellZustand('', 'Zahlung wird geprüft…',
             'Einen Moment noch – wir bestätigen deine Zahlung.',
             'Zahlung wird geprüft…', '');
     } else if (d.status === 'cancelled') {
         stoppeWarten();
         const grund = d.cancelReason ? '<br><br>Grund: <em>' + d.cancelReason + '</em>' : '';
-        zeigeBestellZustand('❌', 'Bestellung abgelehnt',
+        zeigeBestellZustand('', 'Bestellung abgelehnt',
             'Leider konnte deine Bestellung nicht angenommen werden.' + grund
             + '<br><br>Bitte ruf uns an: <strong><a href="' + KONTAKT_TEL_HREF + '" style="color:var(--atas-akzent)">' + KONTAKT_TEL_TEXT + '</a></strong>'
             + '<br>Eine bereits geleistete Zahlung wird vollständig zurückerstattet.',
@@ -2979,13 +3008,13 @@ async function warteTick() {
         const art = d.mode || warteDaten.mode;
         const min = d.estimatedMinutes || (art === 'lieferung' ? 45 : 20);
         const zeit = art === 'lieferung'
-            ? '🛵 Deine Bestellung wird in ca. <strong>' + min + ' Minuten</strong> geliefert.'
-            : '🏃 Deine Bestellung ist in ca. <strong>' + min + ' Minuten</strong> abholbereit.';
+            ? 'Deine Bestellung wird in ca. <strong>' + min + ' Minuten</strong> geliefert.'
+            : 'Deine Bestellung ist in ca. <strong>' + min + ' Minuten</strong> abholbereit.';
         const mail = warteDaten.email
-            ? '<br><br>📧 Eine Bestätigung wurde an <strong>' + warteDaten.email + '</strong> gesendet.' : '';
-        zeigeBestellZustand('✅', 'Bestellung bestätigt!',
+            ? '<br><br>Eine Bestätigung wurde an <strong>' + warteDaten.email + '</strong> gesendet.' : '';
+        zeigeBestellZustand('', 'Bestellung bestätigt!',
             'Deine Bestellung wurde von <strong>ATAS Döner & Pizza</strong> bestätigt!<br><br>' + zeit + mail,
-            '', 'Super, danke! 🎉');
+            '', 'Super, danke!');
     } else {
         zeigeWarten();
     }
@@ -2995,17 +3024,17 @@ async function warteTick() {
 // Das Backend kann den Status (noch) nicht beantworten. Die Bestellung ist
 // trotzdem angekommen -- also genau das sagen und nicht beunruhigen.
 function zeigeOhneStatusabfrage() {
-    zeigeBestellZustand('✅', 'Bestellung eingegangen!',
+    zeigeBestellZustand('', 'Bestellung eingegangen!',
         'Deine Bestellung liegt beim Restaurant.<br><br>'
-        + '📧 Sobald sie angenommen ist, bekommst du eine <strong>Bestätigungs-E-Mail</strong> mit der Wartezeit.',
-        '', 'Alles klar, danke! 👍');
+        + 'Sobald sie angenommen ist, bekommst du eine <strong>Bestätigungs-E-Mail</strong> mit der Wartezeit.',
+        '', 'Alles klar, danke!');
 }
 
 // Nach fünf Minuten ohne Antwort: die Bestellung bleibt gültig, aber der Kunde
 // bekommt einen Weg nachzufragen -- statt eines Spinners, der ewig dreht.
 function zeigeKeineRueckmeldung() {
     const num = warteDaten && warteDaten.num ? ' <strong>#' + String(warteDaten.num).replace(/^#/, '') + '</strong>' : '';
-    zeigeBestellZustand('📞', 'Wir haben deine Bestellung',
+    zeigeBestellZustand('', 'Wir haben deine Bestellung',
         'Deine Bestellung' + num + ' liegt beim Restaurant vor, ist aber noch nicht bestätigt. '
         + 'Bei viel Betrieb kann das etwas dauern – sobald sie angenommen ist, bekommst du eine E-Mail.'
         + '<br><br>Du willst sichergehen? Ruf uns an: <strong><a href="' + KONTAKT_TEL_HREF + '" style="color:var(--atas-akzent)">' + KONTAKT_TEL_TEXT + '</a></strong>',
@@ -3064,7 +3093,7 @@ window.addEventListener('load', async () => {
         // und ist im Dashboard noch gar nicht sichtbar. Das sagen wir auch so.
         document.getElementById('dankeOrderId').textContent = orderNum ? '#' + orderNum : orderId;
         document.getElementById('dankeModal').style.display = 'flex';
-        zeigeBestellZustand('💳', 'Zahlung wird geprüft…',
+        zeigeBestellZustand('', 'Zahlung wird geprüft…',
             'Einen Moment noch – wir bestätigen deine Zahlung.', 'Zahlung wird geprüft…', '');
 
         // Stripe-Zahlung serverseitig bestätigen (Fallback falls Webhook fehlschlägt)
@@ -3138,7 +3167,7 @@ function showStripeCancelBanner() {
         'box-shadow:0 4px 16px rgba(0,0,0,0.12)', 'z-index:99999',
         'max-width:90vw', 'text-align:center', 'cursor:pointer'
     ].join(';');
-    banner.innerHTML = '⚠️ Zahlung abgebrochen – du kannst deine Bestellung anpassen oder eine andere Zahlungsart wählen. <strong>✕</strong>';
+    banner.innerHTML = 'Zahlung abgebrochen – du kannst deine Bestellung anpassen oder eine andere Zahlungsart wählen. <strong>✕</strong>';
     banner.onclick = () => banner.remove();
     document.body.appendChild(banner);
     setTimeout(() => { if (banner.parentNode) banner.remove(); }, 7000);
@@ -3164,7 +3193,7 @@ function showStripeCancelBanner() {
     cursor: pointer; font-weight: bold; transition: 0.2s;
   }
   .size-btn.active {
-    border-color: var(--atas-akzent); background: var(--atas-akzent); color: var(--atas-akzent);
+    border-color: var(--atas-akzent); background: var(--atas-akzent); color: var(--atas-auf-akzent);
   }
   #pizzaExtrasBox {
     overflow-y: auto; margin: 10px 0; padding-right: 8px; flex-grow: 1; max-height: 260px; border-top: 1px solid var(--atas-rahmen);
@@ -3593,6 +3622,8 @@ function closeSaladPopup() {
     padding: 25px; 
     position: relative;
     text-align: center;
+    max-height: 88vh;
+    overflow-y: auto;
   }
 </style>
 
@@ -3602,6 +3633,8 @@ function closeSaladPopup() {
     
     <h2 id="quickName" style="color:var(--atas-akzent); margin:0 0 10px 0;">Produkt Name</h2>
     <p id="quickDesc" style="color:var(--atas-schrift-leise); font-size:0.9rem; margin-bottom:20px;">Beschreibung</p>
+
+    <div id="quickOptions"></div>
 
     <div style="font-size: 1.2rem; font-weight: bold; margin-bottom: 20px;" id="quickPriceDisplay">0,00 €</div>
 
@@ -3613,6 +3646,125 @@ function closeSaladPopup() {
 </div>
 
 <script>
+/* ═══ GERICHT-FENSTER MIT AUSWAHL ═══════════════════════════════════════
+   Vorbild ist Ararat (ararat-beckum.html). Dort haengen die Auswahlgruppen
+   am Gerichtsnamen als Text - und neun Schluessel treffen auf kein Gericht,
+   ohne dass es auffaellt; Falafel-Teller und Adana Kebab fragen ihre
+   Pflicht-Beilage deshalb nie ab.
+
+   Hier kommt die Zuordnung stattdessen aus der Kategorie im DOM und aus
+   dem, was auf der Karte steht. Die Karte selbst (KARTE:START) wird aus
+   Menue/menu.json erzeugt und bleibt unberuehrt - sie bekommt keine
+   zusaetzlichen Attribute, die ein neuer Generatorlauf wegwerfen wuerde. */
+
+/* ── Die Gruppen. Alle Werte stehen so in Menue/menu.json ────────────── */
+
+// Kategorie-Notiz der Taschengerichte: "Rind oder Hähnchen"
+const G_FLEISCH = { typ: 'radio', titel: 'Fleisch auswählen', pflicht: true,
+  optionen: [{ label: 'Rind' }, { label: 'Hähnchen' }] };
+
+// Tellergerichte: "Twister, Pommes oder Reis"
+const G_BEILAGE = { typ: 'radio', titel: 'Beilage auswählen', pflicht: true,
+  optionen: [{ label: 'Pommes' }, { label: 'Reis' }] };
+
+// Kategorie-Notiz der Tellergerichte nennt die Saucen namentlich
+const G_SOSSE = { typ: 'checkbox', titel: 'Soße auswählen',
+  hinweis: 'Mehrfachauswahl möglich',
+  optionen: [{ label: 'Cocktailsauce' }, { label: 'Tzatziki' }, { label: 'Chili Sauce' },
+             { label: 'BBQ-Sauce' }, { label: 'Hollandaise Sauce' }, { label: 'ohne Soße' }] };
+
+const G_WEGLASSEN = { typ: 'checkbox', titel: 'Zutaten weglassen (optional)',
+  hinweis: 'Ankreuzen, was du NICHT möchtest',
+  optionen: [{ label: 'ohne Zwiebeln' }, { label: 'ohne Tomaten' },
+             { label: 'ohne Gurken' }, { label: 'ohne Salat' }] };
+
+/* ── Wer bekommt was ─────────────────────────────────────────────────── */
+
+const AUSWAHL_JE_KATEGORIE = {
+  taschen:  [G_SOSSE, G_WEGLASSEN],
+  dueruem:  [G_SOSSE, G_WEGLASSEN],
+  teller:   [G_BEILAGE, G_SOSSE, G_WEGLASSEN],
+  lahmacun: [G_SOSSE, G_WEGLASSEN],
+};
+
+// Die Fleischfrage haengt nicht an einer Pflegeliste, sondern daran, ob das
+// Gericht Drehspiessfleisch enthaelt. Koefte-, Cevapcici-, Chicken-,
+// Pommes-, Salat- und Falafeltasche fallen so von selbst heraus.
+const DREHSPIESS = /drehspieß|döner/i;
+
+// Nr. 30 und 31 heissen nur "kleine/große Portion Fleisch" - die Regel oben
+// erwischt sie nicht, gemeint ist aber dasselbe Fleisch.
+const FLEISCH_TROTZDEM = /portion fleisch/i;
+
+// Beilage nur, wo die Karte wirklich eine Wahl nennt. Der Mixgrillteller
+// sagt "Pommes und Reis" - das ist beides, keine Wahl.
+const BEILAGE_WAHL = /pommes oder reis/i;
+
+/* ── Kategorie einer Produktkarte finden ─────────────────────────────── */
+// Nach dem CARD TRANSFORM liegen die Karten in einem .product-grid; die
+// Ueberschrift ist dann Geschwister des Gitters, nicht der Karte. Beide
+// Formen muessen funktionieren, weil geklickt werden kann, bevor der
+// Umbau gelaufen ist.
+function kategorieVon(el) {
+  var knoten = (el.closest && el.closest('.product-grid')) || el;
+  while (knoten && knoten !== document.body) {
+    var vor = knoten.previousElementSibling;
+    while (vor) {
+      if (vor.classList && vor.classList.contains('category-title')) return vor.id;
+      vor = vor.previousElementSibling;
+    }
+    knoten = knoten.parentElement;
+  }
+  return '';
+}
+
+function gruppenFuer(el) {
+  var basis = AUSWAHL_JE_KATEGORIE[kategorieVon(el)];
+  if (!basis) return [];
+
+  var h3 = el.querySelector('h3');
+  var pEl = el.querySelector('.product-info p');
+  var name = h3 ? h3.textContent : '';
+  var desc = pEl ? pEl.textContent : '';
+
+  var gruppen = basis.filter(function (g) {
+    return g !== G_BEILAGE || BEILAGE_WAHL.test(desc);
+  });
+  if (DREHSPIESS.test(name + ' ' + desc) || FLEISCH_TROTZDEM.test(name)) {
+    gruppen = [G_FLEISCH].concat(gruppen);
+  }
+  return gruppen;
+}
+
+/* ── Selbstpruefung beim Laden ───────────────────────────────────────── */
+// Die Regel haengt an der Schreibweise von "Drehspieß" und "Döner". Wird die
+// Karte einmal mit "Drehspiess" neu erzeugt, greift sie nicht mehr - und
+// jedes Doenergericht verloere still seine Fleischfrage. Genau diese Sorte
+// stiller Ausfall ist bei Ararat passiert, deshalb hier eine laute Meldung.
+function auswahlSelbsttest() {
+  Object.keys(AUSWAHL_JE_KATEGORIE).forEach(function (kat) {
+    var gerichte = 0, mitFleisch = 0;
+    document.querySelectorAll('.product-item').forEach(function (el) {
+      if (kategorieVon(el) !== kat) return;
+      gerichte++;
+      if (gruppenFuer(el).indexOf(G_FLEISCH) !== -1) mitFleisch++;
+    });
+    if (gerichte === 0) {
+      console.warn('[Auswahl] Kategorie "' + kat + '" hat keine Gerichte – Karte geändert?');
+    } else if (mitFleisch === 0) {
+      console.warn('[Auswahl] In "' + kat + '" fragt kein Gericht nach dem Fleisch (' +
+                   gerichte + ' Gerichte geprüft). Schreibweise von "Drehspieß"/"Döner" geändert?');
+    }
+  });
+}
+
+/* ── Fenster oeffnen und Gruppen zeichnen ────────────────────────────── */
+
+var quickGruppen = [];     // die Gruppen des gerade offenen Gerichts
+var quickGrundpreis = 0;   // Kartenpreis ohne Aufschlaege
+
+function euro(n) { return n.toFixed(2).replace('.', ',') + ' €'; }
+
 function openQuickAdd(element) {
     const num = element.dataset.itemNum;
     const name = (num ? num + ' ' : '') + element.querySelector('h3').innerText;
@@ -3622,15 +3774,103 @@ function openQuickAdd(element) {
 
     document.getElementById('quickName').innerText = name;
     document.getElementById('quickDesc').innerText = desc;
-    document.getElementById('quickPriceDisplay').innerText = priceTxt;
     document.getElementById('note-quickPopup').value = '';
 
+    quickGrundpreis = parseFloat(priceTxt.replace('€', '').replace(/[()]/g, '').replace(',', '.').trim()) || 0;
+    quickGruppen = gruppenFuer(element);
+    document.getElementById('quickOptions').innerHTML = quickGruppenHtml(quickGruppen);
+    quickPreisAktualisieren();
+
     document.getElementById('quickPopup').style.display = 'flex';
+}
+
+function quickGruppenHtml(gruppen) {
+  return gruppen.map(function (gruppe, gi) {
+    var hinweis = gruppe.hinweis ||
+      (gruppe.typ === 'checkbox' ? 'Mehrfachauswahl möglich' : '');
+    var html = '<div class="opt-group">'
+      + '<div class="opt-group-title">' + gruppe.titel
+      + (gruppe.pflicht ? ' <span style="color:var(--atas-rot)">*</span>' : '') + '</div>'
+      + (hinweis ? '<div class="opt-group-note">' + hinweis + '</div>' : '');
+
+    html += gruppe.optionen.map(function (opt, oi) {
+      var auf = opt.aufpreis || 0;
+      return '<label class="opt-item">'
+        + '<input type="' + (gruppe.typ === 'radio' ? 'radio' : 'checkbox') + '"'
+        + ' name="quickGruppe_' + gi + '" value="' + oi + '"'
+        + ' data-aufpreis="' + auf + '" onchange="quickPreisAktualisieren()">'
+        + '<span class="opt-item-label">' + opt.label + '</span>'
+        + (auf > 0 ? '<span class="opt-item-price">+' + euro(auf) + '</span>' : '')
+        + '</label>';
+    }).join('');
+
+    if (gruppe.pflicht) {
+      html += '<div class="opt-error" id="quickErr_' + gi + '">Bitte eine Option wählen</div>';
+    }
+    return html + '</div>';
+  }).join('');
+}
+
+// Markierung und Preis haengen beide am Zustand der Felder, also wird beides
+// an einer Stelle daraus hergeleitet statt bei jedem Klick nachgefuehrt. Das
+// erspart die Sonderbehandlung fuer Radios, bei denen das vorher gewaehlte
+// Geschwister still seine Markierung verlieren muss.
+function quickPreisAktualisieren() {
+  document.querySelectorAll('#quickOptions .opt-item').forEach(function (label) {
+    var feld = label.querySelector('input');
+    label.classList.toggle('selected', !!(feld && feld.checked));
+  });
+  document.getElementById('quickPriceDisplay').innerText =
+    euro(quickGrundpreis + quickAufpreisSumme());
+}
+
+function quickAufpreisSumme() {
+  var summe = 0;
+  document.querySelectorAll('#quickOptions input:checked').forEach(function (i) {
+    summe += parseFloat(i.dataset.aufpreis || 0);
+  });
+  return summe;
+}
+
+/* ── Pflichtpruefung und Einsammeln ──────────────────────────────────── */
+
+function quickPflichtErfuellt() {
+  var ok = true;
+  quickGruppen.forEach(function (gruppe, gi) {
+    if (!gruppe.pflicht) return;
+    var gewaehlt = document.querySelector('#quickOptions input[name="quickGruppe_' + gi + '"]:checked');
+    var fehler = document.getElementById('quickErr_' + gi);
+    if (fehler) fehler.style.display = gewaehlt ? 'none' : 'block';
+    if (!gewaehlt) ok = false;
+  });
+  return ok;
+}
+
+// Liefert die Form, die ATAS schon fuer Pizza-Extras benutzt: Der Eintrag
+// laeuft damit von selbst durch Warenkorb, Bestellung, Mail, Bericht und Bon.
+// Der Aufpreis steht wirklich drin - Ararat setzt hier pauschal 0 und kann
+// deshalb auf dem Bon nie einen Aufschlag ausweisen.
+function quickAuswahlSammeln() {
+  var gewaehlt = [];
+  quickGruppen.forEach(function (gruppe, gi) {
+    document.querySelectorAll('#quickOptions input[name="quickGruppe_' + gi + '"]:checked')
+      .forEach(function (feld) {
+        gewaehlt.push({
+          name: gruppe.optionen[parseInt(feld.value, 10)].label,
+          price: parseFloat(feld.dataset.aufpreis || 0)
+        });
+      });
+  });
+  return gewaehlt;
 }
 
 function closeQuickPopup() {
     document.getElementById('quickPopup').style.display = 'none';
 }
+
+document.readyState === 'loading'
+  ? document.addEventListener('DOMContentLoaded', auswahlSelbsttest)
+  : auswahlSelbsttest();
 </script>
 
 
@@ -4132,22 +4372,22 @@ function confirmFamSelection() {
     <button onclick="openLegal('impressum')"
             style="background:none;border:none;color:var(--atas-akzent);cursor:pointer;
                    font-size:.82rem;text-decoration:underline;font-family:Arial,sans-serif;">
-      📋 Impressum
+      Impressum
     </button>
     <button onclick="openLegal('agb')"
             style="background:none;border:none;color:var(--atas-akzent);cursor:pointer;
                    font-size:.82rem;text-decoration:underline;font-family:Arial,sans-serif;">
-      📄 AGB &amp; Widerrufsbelehrung
+      AGB &amp; Widerrufsbelehrung
     </button>
     <button onclick="openLegal('datenschutz')"
             style="background:none;border:none;color:var(--atas-akzent);cursor:pointer;
                    font-size:.82rem;text-decoration:underline;font-family:Arial,sans-serif;">
-      🔒 Datenschutz
+      Datenschutz
     </button>
     <button onclick="openLegal('allergene')"
             style="background:none;border:none;color:var(--atas-akzent);cursor:pointer;
                    font-size:.82rem;text-decoration:underline;font-family:Arial,sans-serif;">
-      🌿 Allergene &amp; Zusatzstoffe
+      Allergene &amp; Zusatzstoffe
     </button>
   </div>
   <p style="font-size:.75rem;color:var(--atas-schrift-leise);margin:0;">
@@ -4260,7 +4500,7 @@ LEGAL.agb = {
        + "<p>Lieferzeiten sind Sch&auml;tzwerte und nicht verbindlich.</p>"
        + "<h4 style='color:var(--atas-akzent);margin:14px 0 6px;font-size:.92rem'>&sect;&nbsp;5 Widerrufsrecht</h4>"
        + "<div style='background:var(--atas-flaeche);border-left:4px solid var(--atas-akzent);padding:12px 14px;border-radius:0 8px 8px 0;margin:8px 0'>"
-       + "<strong>&#9888;&#65039; Kein Widerrufsrecht bei frisch zubereiteten Speisen</strong><br>"
+       + "<strong>Kein Widerrufsrecht bei frisch zubereiteten Speisen</strong><br>"
        + "Gem&auml;&szlig; &sect;&nbsp;312g Abs.&nbsp;2 Nr.&nbsp;2 BGB besteht kein Widerrufsrecht, da alle Speisen frisch zubereitet werden. Bei Online-Zahlung (Stripe/PayPal) und Stornierung durch uns: automatische R&uuml;ckerstattung binnen 5&ndash;10 Werktagen."
        + "</div>"
        + "<h4 style='color:var(--atas-akzent);margin:14px 0 6px;font-size:.92rem'>&sect;&nbsp;6 Allergene &amp; Haftung</h4>"
@@ -4275,7 +4515,7 @@ LEGAL.allergene = {
   text:  "<h3 style='color:var(--atas-akzent);margin:0 0 6px'>Allergene &amp; Zusatzstoffe</h3>"
        + "<p style='color:var(--atas-schrift-leise);font-size:.78rem;margin-bottom:14px'>Gem&auml;&szlig; EU-Lebensmittelinformationsverordnung (LMIV) Nr.&nbsp;1169/2011</p>"
        + "<div style='background:var(--atas-flaeche);border:1px solid var(--atas-akzent);border-radius:8px;padding:12px 14px;margin-bottom:16px'>"
-       + "<strong style='color:var(--atas-akzent)'>&#9888;&#65039; Wichtiger Hinweis f&uuml;r Allergiker</strong><br>"
+       + "<strong style='color:var(--atas-akzent)'>Wichtiger Hinweis f&uuml;r Allergiker</strong><br>"
        + "<span style='font-size:.81rem;color:var(--atas-schrift-leise)'>In unserer K&uuml;che werden alle 14 Hauptallergene verarbeitet. Kreuzkontaminationen sind m&ouml;glich. Eine Kennzeichnung je Gericht liegt online noch nicht vor &ndash; bitte ruf uns an: <strong>02521&nbsp;/&nbsp;826&nbsp;48&nbsp;00</strong></span>"
        + "</div>"
        + "<h4 style='color:var(--atas-akzent);margin:0 0 10px;font-size:.91rem'>Allergene (Buchstaben-Kennzeichnung)</h4>"
@@ -4316,7 +4556,7 @@ LEGAL.allergene = {
        + "<strong>Hähnchenbrust:</strong> (A, G) &nbsp;|&nbsp; "
        + "<strong>Meeresfrüchte:</strong> (B, D, N)"
        + "</div>"
-       + "<p style='margin-top:14px;font-size:.71rem;color:var(--atas-schrift-leise)'>&#9888;&#65039; Trotz sorgfältiger Zubereitung können Spuren anderer Stoffe enthalten sein. Stand: März 2026</p>"
+       + "<p style='margin-top:14px;font-size:.71rem;color:var(--atas-schrift-leise)'>Trotz sorgfältiger Zubereitung können Spuren anderer Stoffe enthalten sein. Stand: März 2026</p>"
 };
 
 function openLegal(type) {
@@ -4447,15 +4687,6 @@ document.readyState === 'loading'
 <!-- ═══ CARD TRANSFORM ═══ -->
 <script>
 (function() {
-  var ICONS = {
-    antipasta:'🍅', 'pizza-kaese':'🧀', 'pizza-vegetarisch':'🥦',
-    'pizza-mozzarella':'🍅', 'pizza-fisch':'🐟', 'pizza-fleischsauce':'🍖',
-    'pizza-belaege':'🍕', calzone:'🥟', familienpizza:'🍕',
-    spaghetti:'🍝', tagliatelle:'🍝', rigatoni:'🍝', tortellini:'🍝',
-    backofen:'🫕', auflaeufe:'🧀', gnocchi:'🥔', puten:'🍗',
-    schnitzel:'🍗', salate:'🥗', mittagsmenue:'☀️', getraenke:'🥤'
-  };
-
   // Gericht-Foto pro Artikelnummer (Dateien in img/menu/, lizenzfrei — siehe img/menu/QUELLEN.md)
   var ITEM_IMG = {
     '1':'pizza-formaggi', '2':'pizza-formaggi', '3':'pizza-formaggi', '4':'pizza-formaggi',
@@ -4585,13 +4816,6 @@ document.readyState === 'loading'
     var currentCat = null;
 
     container.querySelectorAll('.category-title').forEach(function(h2) {
-      var icon = ICONS[h2.id];
-      if (icon && !h2.querySelector('.category-icon')) {
-        var span = document.createElement('span');
-        span.className = 'category-icon';
-        span.textContent = icon;
-        h2.insertBefore(span, h2.firstChild);
-      }
       // Foto-Banner direkt unter dem Kategorie-Titel
       if (!KATEGORIE_BANNER) return;
       var next = h2.nextElementSibling;
@@ -4915,8 +5139,8 @@ body.modal-open {
         : 'background:var(--atas-flaeche);'
     ].join(';');
     banner.innerHTML = mode === 'neutral'
-      ? '🚧 &nbsp;Wir arbeiten gerade an unserem Online-Bestellsystem – schau bald wieder vorbei!'
-      : '🔴 &nbsp;Das Restaurant ist aktuell <u>geschlossen</u> – Bestellungen sind nicht möglich.';
+      ? 'Wir arbeiten gerade an unserem Online-Bestellsystem – schau bald wieder vorbei!'
+      : 'Das Restaurant ist aktuell <u>geschlossen</u> – Bestellungen sind nicht möglich.';
     document.body.prepend(banner);
     document.body.style.paddingTop = '52px';
   }
@@ -4947,8 +5171,8 @@ body.modal-open {
 
   function showBlockedToast(mode) {
     const msg = mode === 'neutral'
-      ? '🚧 Online-Bestellung aktuell nicht verfügbar – wir arbeiten daran!'
-      : '🔴 Bestellung nicht möglich – Restaurant ist geschlossen.';
+      ? 'Online-Bestellung aktuell nicht verfügbar – wir arbeiten daran!'
+      : 'Bestellung nicht möglich – Restaurant ist geschlossen.';
     let t = document.getElementById('atas-closed-toast');
     if (t) { clearTimeout(t._timer); t.remove(); }
     t = document.createElement('div');
@@ -5017,7 +5241,7 @@ body.modal-open {
           'font-size:14px','font-weight:600','z-index:9999999',
           'box-shadow:0 4px 18px rgba(0,0,0,.35)','text-align:center'
         ].join(';');
-        t.textContent = '❌ „' + name + '" ist leider ausverkauft.';
+        t.textContent = '„' + name + '" ist leider ausverkauft.';
         document.body.appendChild(t);
         t._timer = setTimeout(() => t.remove(), 2800);
       };
@@ -5148,7 +5372,7 @@ body.modal-open {
     // Banner anzeigen
     var banner = document.getElementById('checkout-customer-banner');
     if (banner) {
-      banner.textContent = '👤 Eingeloggt als ' + _customer.first + ' ' + _customer.last;
+      banner.textContent = 'Eingeloggt als ' + _customer.first + ' ' + _customer.last;
       banner.style.display = 'block';
     }
   }
@@ -5239,13 +5463,13 @@ body.modal-open {
     var p = document.getElementById('stamp-popup');
     if (!p) return;
     p.innerHTML = `
-      <div class="stamp-popup-title">🍕 Stempelkarte</div>
+      <div class="stamp-popup-title">Stempelkarte</div>
       <div class="stamp-popup-sub">Sammle Stempel bei jeder Bestellung</div>
       <div class="stamp-login-hint">Melde dich an, um deine<br>Stempel zu sammeln!</div>
       <div class="stamp-row">
-        <div class="stamp-icon">🍕</div>
-        <div class="stamp-icon">🍕</div>
-        <div class="stamp-icon">🎁</div>
+        <div class="stamp-icon"></div>
+        <div class="stamp-icon"></div>
+        <div class="stamp-icon"></div>
       </div>
       <div style="font-size:11px;color:var(--atas-schrift-leise);text-align:center;margin-bottom:12px;">3 Bestellungen = 1 Gratis-Margherita</div>
       <a href="account.html" class="stamp-redeem-btn" style="display:block;text-align:center;text-decoration:none;padding:11px;background:var(--atas-akzent);color:var(--atas-auf-akzent);border-radius:8px;font-size:14px;font-weight:700;">Anmelden / Registrieren</a>
@@ -5260,22 +5484,22 @@ body.modal-open {
 
     var iconsHtml = '';
     for (var i = 0; i < 3; i++) {
-      if (i < stamps) iconsHtml += '<div class="stamp-icon filled">🍕</div>';
-      else if (avail > 0 && i === 0) iconsHtml += '<div class="stamp-icon reward">🎁</div>';
-      else iconsHtml += '<div class="stamp-icon">🍕</div>';
+      if (i < stamps) iconsHtml += '<div class="stamp-icon filled"></div>';
+      else if (avail > 0 && i === 0) iconsHtml += '<div class="stamp-icon reward"></div>';
+      else iconsHtml += '<div class="stamp-icon"></div>';
     }
 
     var progressText = avail > 0
-      ? '<span style="color:var(--atas-akzent);font-weight:700;">Gratis-Pizza verfügbar! 🎉</span>'
+      ? '<span style="color:var(--atas-akzent);font-weight:700;">Gratis-Pizza verfügbar!</span>'
       : (stamps + ' von 3 Stempeln');
 
     p.innerHTML = `
-      <div class="stamp-popup-title">🍕 Deine Stempelkarte</div>
+      <div class="stamp-popup-title">Deine Stempelkarte</div>
       <div class="stamp-popup-sub">${progressText}</div>
       <div class="stamp-row">${iconsHtml}</div>
       <div style="font-size:11px;color:var(--atas-schrift-leise);text-align:center;margin-bottom:12px;">Jede Bestellung = 1 Stempel · 3 Stempel = 1 Gratis-Margherita (groß)</div>
       <button class="stamp-redeem-btn" id="stampRedeemBtn" style="${avail > 0 ? 'display:block' : 'display:none'}" onclick="redeemStamp()">
-        🎁 Gratis-Pizza einlösen
+        Gratis-Pizza einlösen
       </button>
       <a href="account.html" class="stamp-goto-account">Mein Konto ansehen →</a>
     `;
@@ -5316,11 +5540,11 @@ body.modal-open {
       if (!res.ok) {
         var d = await res.json();
         alert(d.message || 'Fehler beim Einlösen');
-        if (btn) { btn.disabled = false; btn.textContent = '🎁 Gratis-Pizza einlösen'; }
+        if (btn) { btn.disabled = false; btn.textContent = 'Gratis-Pizza einlösen'; }
         return;
       }
       // Gratis Margherita (groß) in den Warenkorb – gleiches Schema wie normale Artikel
-      var pizzaItem = { id: Date.now(), name: 'Pizza Margherita (groß) 🎁', preis: 0, basePreis: 0, qty: 1, isFree: true, stampReward: true, note: 'Gratis-Prämie (Stempelkarte)' };
+      var pizzaItem = { id: Date.now(), name: 'Pizza Margherita (groß)', preis: 0, basePreis: 0, qty: 1, isFree: true, stampReward: true, note: 'Gratis-Prämie (Stempelkarte)' };
       if (typeof warenkorb !== 'undefined' && Array.isArray(warenkorb)) {
         warenkorb.push(pizzaItem);
         // Stempel-Prämie und Aktion nicht stapeln: ggf. Aktions-Gratisgabe entfernen
@@ -5331,7 +5555,7 @@ body.modal-open {
       // kurzes Feedback-Banner
       var banner = document.createElement('div');
       banner.style.cssText = 'position:fixed;top:80px;left:50%;transform:translateX(-50%);background:var(--atas-flaeche);color:var(--atas-schrift);padding:12px 22px;border-radius:10px;font-weight:700;font-size:14px;z-index:99999;box-shadow:0 4px 16px rgba(0,0,0,0.25);';
-      banner.textContent = '🎉 Gratis-Margherita wurde zum Warenkorb hinzugefügt!';
+      banner.textContent = 'Gratis-Margherita wurde zum Warenkorb hinzugefügt!';
       document.body.appendChild(banner);
       setTimeout(function() { banner.remove(); }, 3500);
       // Stamp-Daten neu laden
@@ -5339,7 +5563,7 @@ body.modal-open {
       await loadStampData();
     } catch {
       alert('Verbindungsfehler');
-      if (btn) { btn.disabled = false; btn.textContent = '🎁 Gratis-Pizza einlösen'; }
+      if (btn) { btn.disabled = false; btn.textContent = 'Gratis-Pizza einlösen'; }
     }
   };
 
