@@ -1,12 +1,14 @@
 {
   "_quelle": "Gedruckte Speisekarte ATAS Doener & Pizza, Nordstr. 45a Beckum, PDF-Scan vom 10. September 2026",
-  "_hinweis": "Preise aus der gedruckten Karte, PDF-Scan vom 10. September 2026, gegen das alte Atas-System gegengelesen. Zwei strittige Positionen am 10. September 2026 vom Betreiber bestaetigt: Taschen 5 Drehspiesstasche Atas 9,50 und Pizza 90 Diavolo 50 cm 20,00. Pizza gibt es in 30 und 50 cm, eine Mini-Groesse fuehrt Atas nicht.",
+  "_hinweis": "Preise aus der gedruckten Karte, PDF-Scan vom 10. September 2026, gegen das alte Atas-System gegengelesen. Zwei strittige Positionen am 10. September 2026 vom Betreiber bestaetigt: Taschen 5 Drehspiesstasche Atas 9,50 und Pizza 90 Diavolo 50 cm 20,00. Pizza gibt es seit dem 18. September 2026 in 22, 30 und 50 cm; vorher nur 30 und 50. ACHTUNG: Die 22-cm-Preise sind Platzhalter (je 7,00) - der Betreiber reicht die echten Preise nach.",
   "_groessen": {
+    "mini": "22 cm",
     "normal": "30 cm",
     "maxi": "50 cm"
   },
   "_extras": {
-    "_hinweis": "Extra Belag 1,00 (30 cm) / 3,00 (50 cm). Extra Belag Fisch und Fleisch 2,00 (30 cm) / 7,00 (50 cm).",
+    "_hinweis": "Extra Belag 1,00 (22 cm) / 1,00 (30 cm) / 3,00 (50 cm). Extra Belag Fisch und Fleisch 1,50 (22 cm) / 2,00 (30 cm) / 7,00 (50 cm).",
+    "mini": 1,
     "normal": 1,
     "maxi": 3
   },
@@ -222,7 +224,7 @@
       "id": "teller",
       "titel": "Tellergerichte",
       "typ": "simple",
-      "note": "Saucen zur Wahl: Cocktailsauce, Tzatziki, Chili Sauce, BBQ-Sauce, Hollandaise Sauce",
+      "note": "Saucen zur Wahl: Cocktailsauce, Tzatziki, Chili Sauce, Joghurtsauce",
       "items": [
         {
           "num": "25",
@@ -468,6 +470,7 @@
           "num": "75",
           "name": "Margherita",
           "desc": "",
+          "mini": 7,
           "normal": 8,
           "maxi": 17
         },
@@ -475,6 +478,7 @@
           "num": "76",
           "name": "Prosciutto",
           "desc": "mit Geflügelschinken",
+          "mini": 7,
           "normal": 9,
           "maxi": 20
         },
@@ -482,6 +486,7 @@
           "num": "77",
           "name": "Salami",
           "desc": "mit Geflügelsalami",
+          "mini": 7,
           "normal": 9,
           "maxi": 20
         },
@@ -489,6 +494,7 @@
           "num": "78",
           "name": "Tonno Cipolla",
           "desc": "mit Thunfisch, Zwiebeln",
+          "mini": 7,
           "normal": 9,
           "maxi": 20
         },
@@ -496,6 +502,7 @@
           "num": "79",
           "name": "Hawaii",
           "desc": "Geflügelschinken, Ananas",
+          "mini": 7,
           "normal": 9,
           "maxi": 22
         },
@@ -503,6 +510,7 @@
           "num": "80",
           "name": "Mista",
           "desc": "Gefl. Schinken, Champignon, Geflügelsalami, gek. Ei",
+          "mini": 7,
           "normal": 10,
           "maxi": 23
         },
@@ -510,6 +518,7 @@
           "num": "81",
           "name": "Italia",
           "desc": "Geflügelschinken, Thunfisch, Gefl. Salami, gek. Ei",
+          "mini": 7,
           "normal": 10,
           "maxi": 23
         },
@@ -517,6 +526,7 @@
           "num": "82",
           "name": "Pizza Manal",
           "desc": "Drehspießfleisch und Hackfleisch",
+          "mini": 7,
           "normal": 10,
           "maxi": 25
         },
@@ -524,6 +534,7 @@
           "num": "83",
           "name": "Siziliana",
           "desc": "mit Zwiebeln, Paprika, Peperoni, Knoblauch",
+          "mini": 7,
           "normal": 9,
           "maxi": 19
         },
@@ -531,6 +542,7 @@
           "num": "84",
           "name": "Pizza Spinat",
           "desc": "mit Spinat, Mozzarella, Knoblauch, Spiegelei",
+          "mini": 7,
           "normal": 9,
           "maxi": 20
         },
@@ -538,6 +550,7 @@
           "num": "85",
           "name": "Gemüse Pizza",
           "desc": "mit Paprika, Brokkoli, Zwiebeln, Champignon",
+          "mini": 7,
           "normal": 9,
           "maxi": 19
         },
@@ -545,6 +558,7 @@
           "num": "86",
           "name": "Scampi",
           "desc": "mit Garnelen, Knoblauch",
+          "mini": 7,
           "normal": 10,
           "maxi": 25
         },
@@ -552,6 +566,7 @@
           "num": "87",
           "name": "Lachs-Spinat Pizza",
           "desc": "Lachs, Spinat, Sauce Hollandaise",
+          "mini": 7,
           "normal": 9,
           "maxi": 25
         },
@@ -559,6 +574,7 @@
           "num": "88",
           "name": "Frutti di mare",
           "desc": "Meeresfrüchte, Knoblauch",
+          "mini": 7,
           "normal": 9,
           "maxi": 25
         },
@@ -566,6 +582,7 @@
           "num": "89",
           "name": "Bolognese",
           "desc": "mit Käse, Hackfleischsauce, Spiegelei",
+          "mini": 7,
           "normal": 9,
           "maxi": 20
         },
@@ -573,6 +590,7 @@
           "num": "90",
           "name": "Diavolo",
           "desc": "mit Käse, Brokkoli, Geflügelschinken, gekochtes Ei, Spargel, Sauce Hollandaise",
+          "mini": 7,
           "normal": 9,
           "maxi": 20
         },
@@ -580,6 +598,7 @@
           "num": "91",
           "name": "Drehspieß Pizza",
           "desc": "Drehspießfleisch, Weißkäse, Zwiebeln, Hollandaise",
+          "mini": 7,
           "normal": 9,
           "maxi": 23
         },
@@ -587,6 +606,7 @@
           "num": "92",
           "name": "Drehspieß Pizza mit Salat",
           "desc": "Drehspießfleisch, Salat mit Joghurtsauce",
+          "mini": 7,
           "normal": 9,
           "maxi": 23
         },
@@ -594,6 +614,7 @@
           "num": "93",
           "name": "Atas",
           "desc": "gebratene Hähnchenbruststreifen, Paprika, scharfe Peperoni, Currysauce",
+          "mini": 7,
           "normal": 10,
           "maxi": 25
         },
@@ -601,6 +622,7 @@
           "num": "94",
           "name": "Pizza al Racho",
           "desc": "Tomaten, Käse, Thunfisch, Zwiebeln, scharfe Peperoni, Champignons",
+          "mini": 7,
           "normal": 9,
           "maxi": 22
         },
@@ -608,6 +630,7 @@
           "num": "95",
           "name": "Pizza Sucuk",
           "desc": "Sucuk (türk. Knoblauchwurst), Spiegelei",
+          "mini": 7,
           "normal": 10,
           "maxi": 25
         },
@@ -615,6 +638,7 @@
           "num": "96",
           "name": "Pizza Malik",
           "desc": "gebratene Hähnchenbruststreifen, fr. Champignons, fr. Paprika",
+          "mini": 7,
           "normal": 10,
           "maxi": 25
         },
@@ -622,6 +646,7 @@
           "num": "97",
           "name": "Amerikan Crust",
           "desc": "verschiedene Zutaten",
+          "mini": 7,
           "normal": 15,
           "maxi": 25
         }
@@ -851,13 +876,7 @@
         },
         {
           "num": "135",
-          "name": "BBQ-Sauce",
-          "desc": "",
-          "preis": 1
-        },
-        {
-          "num": "136",
-          "name": "Hollandaise Sauce",
+          "name": "Joghurtsauce",
           "desc": "",
           "preis": 1
         }
