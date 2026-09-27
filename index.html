@@ -3706,6 +3706,12 @@ const G_SOSSE = { typ: 'checkbox', titel: 'Soße auswählen',
   optionen: [{ label: 'Cocktailsauce' }, { label: 'Tzatziki' }, { label: 'Chili Sauce' },
              { label: 'Joghurtsauce' }, { label: 'ohne Soße' }] };
 
+// Salate: "Wahlweise mit Tzatziki, Cocktail, Joghurtsauce, Essig, Öl oder
+// Balsamico als Dressing" aus der Kategorie-Notiz.
+const G_DRESSING = { typ: 'radio', titel: 'Dressing auswählen', pflicht: true,
+  optionen: [{ label: 'Tzatziki' }, { label: 'Cocktail' }, { label: 'Joghurtsauce' },
+             { label: 'Essig' }, { label: 'Öl' }, { label: 'Balsamico' }] };
+
 // "Zutaten weglassen" wird je Gericht aus dessen eigener Beschreibung
 // abgeleitet statt pauschal je Kategorie vergeben - sonst bietet z. B. die
 // Atas-Tasche mit gebratenem Gemüse (kein Salat drin) trotzdem "ohne Salat"
@@ -3722,6 +3728,21 @@ function weglassenGruppeFuer(desc) {
   if (/twister/.test(text)) optionen.push({ label: 'ohne Twister' });
   if (/pommes/.test(text)) optionen.push({ label: 'ohne Pommes' });
   if (/mit oder ohne käse/.test(text)) optionen.push({ label: 'ohne Käse' });
+  if (!optionen.length) return null;
+  return { typ: 'checkbox', titel: 'Zutaten weglassen (optional)',
+    hinweis: 'Ankreuzen, was du NICHT möchtest', optionen: optionen };
+}
+
+// Salate listen ihre Zutaten schon einzeln in der Beschreibung (anders als
+// "mit Salat" bei Taschen/Duerruem/Lahmacun) - jede Zutat wird direkt zu
+// einer eigenen "ohne"-Option, kein festes Set noetig. "Fleisch nach Wahl"
+// bleibt aussen vor, das ist eine Auswahl, kein entfernbarer Belag.
+function weglassenAusZutatenliste(desc) {
+  var text = (desc || '').replace(/^mit\s+/i, '');
+  var teile = text.split(/,| und /i).map(function (s) { return s.trim(); }).filter(Boolean);
+  var optionen = teile
+    .filter(function (t) { return t && !/^fleisch nach wahl$/i.test(t); })
+    .map(function (t) { return { label: 'ohne ' + t }; });
   if (!optionen.length) return null;
   return { typ: 'checkbox', titel: 'Zutaten weglassen (optional)',
     hinweis: 'Ankreuzen, was du NICHT möchtest', optionen: optionen };
@@ -3760,6 +3781,7 @@ const AUSWAHL_JE_KATEGORIE = {
   dueruem:  [G_SOSSE],
   teller:   [G_BEILAGE, G_SOSSE],
   lahmacun: [G_SOSSE],
+  salat:    [G_DRESSING],
 };
 
 // Die Fleischfrage haengt nicht an einer Pflegeliste, sondern daran, ob das
@@ -3798,7 +3820,8 @@ function gruppenFuer(el) {
   var mittag = mittagGruppenFuer(h3vorab ? h3vorab.textContent : '');
   if (mittag) return mittag; // Mittagsmenue hat eigene Regeln, keine Kategorie-Basis
 
-  var basis = AUSWAHL_JE_KATEGORIE[kategorieVon(el)];
+  var kat = kategorieVon(el);
+  var basis = AUSWAHL_JE_KATEGORIE[kat];
   if (!basis) return [];
 
   var h3 = el.querySelector('h3');
@@ -3809,7 +3832,7 @@ function gruppenFuer(el) {
   var gruppen = basis.filter(function (g) {
     return g !== G_BEILAGE || BEILAGE_WAHL.test(desc);
   });
-  var weg = weglassenGruppeFuer(desc);
+  var weg = kat === 'salat' ? weglassenAusZutatenliste(desc) : weglassenGruppeFuer(desc);
   if (weg) gruppen = gruppen.concat([weg]);
   if (DREHSPIESS.test(name + ' ' + desc) || FLEISCH_TROTZDEM.test(name)) {
     gruppen = [G_FLEISCH].concat(gruppen);
@@ -3822,8 +3845,13 @@ function gruppenFuer(el) {
 // Karte einmal mit "Drehspiess" neu erzeugt, greift sie nicht mehr - und
 // jedes Doenergericht verloere still seine Fleischfrage. Genau diese Sorte
 // stiller Ausfall ist bei Ararat passiert, deshalb hier eine laute Meldung.
+// Nur diese Kategorien sollen ueberhaupt nach dem Fleisch fragen. "salat"
+// steht zwar auch in AUSWAHL_JE_KATEGORIE (wegen Dressing/Zutaten), aber
+// keine Salat-Position fragt nach Haehnchen/Rind/Steak.
+const FLEISCH_KATEGORIEN = ['taschen', 'dueruem', 'teller', 'lahmacun'];
+
 function auswahlSelbsttest() {
-  Object.keys(AUSWAHL_JE_KATEGORIE).forEach(function (kat) {
+  FLEISCH_KATEGORIEN.forEach(function (kat) {
     var gerichte = 0, mitFleisch = 0;
     document.querySelectorAll('.product-item').forEach(function (el) {
       if (kategorieVon(el) !== kat) return;
