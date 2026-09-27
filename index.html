@@ -3707,8 +3707,10 @@ const G_SOSSE = { typ: 'checkbox', titel: 'Soße auswählen',
              { label: 'Joghurtsauce' }, { label: 'ohne Soße' }] };
 
 // Salate: "Wahlweise mit Tzatziki, Cocktail, Joghurtsauce, Essig, Öl oder
-// Balsamico als Dressing" aus der Kategorie-Notiz.
-const G_DRESSING = { typ: 'radio', titel: 'Dressing auswählen', pflicht: true,
+// Balsamico als Dressing" aus der Kategorie-Notiz. Mehrfachauswahl wie bei
+// G_SOSSE, nicht Pflicht - genau wie dort.
+const G_DRESSING = { typ: 'checkbox', titel: 'Dressing auswählen',
+  hinweis: 'Mehrfachauswahl möglich',
   optionen: [{ label: 'Tzatziki' }, { label: 'Cocktail' }, { label: 'Joghurtsauce' },
              { label: 'Essig' }, { label: 'Öl' }, { label: 'Balsamico' }] };
 
