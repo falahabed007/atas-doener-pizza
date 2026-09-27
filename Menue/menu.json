@@ -1,6 +1,6 @@
 {
-  "_quelle": "Gedruckte Speisekarte ATAS Doener & Pizza, Nordstr. 45a Beckum, PDF-Scan vom 10. September 2026",
-  "_hinweis": "Preise aus der gedruckten Karte, PDF-Scan vom 10. September 2026, gegen das alte Atas-System gegengelesen. Zwei strittige Positionen am 10. September 2026 vom Betreiber bestaetigt: Taschen 5 Drehspiesstasche Atas 9,50 und Pizza 90 Diavolo 50 cm 20,00. Pizza gibt es seit dem 18. September 2026 in 22, 30 und 50 cm; vorher nur 30 und 50. ACHTUNG: Die 22-cm-Preise sind Platzhalter (je 7,00) - der Betreiber reicht die echten Preise nach.",
+  "_quelle": "Gedruckte Speisekarte ATAS Doener & Pizza, Nordstr. 45a Beckum, neue Ausgabe (Foto vom Betreiber), 26. September 2026",
+  "_hinweis": "Komplette Ueberarbeitung gegenueber der Karte vom 10./18. September 2026: Fleischsorten-Preise (Haehnchen/Rind/Steak) bei Taschengerichten, Duerruem, Tellergerichten und Lahmacun neu eingefuehrt; Pizza komplett neu nummeriert/bepreist, dabei bekommen die 22-cm-Preise jetzt echte Werte statt des bisherigen 7,00-Platzhalters. Nicht auf den fotografierten Seiten abgebildet und daher unveraendert gelassen: Pide-Grundpreise wurden trotzdem uebernommen (sie standen mit auf dem Foto), Baguettes/Extras/Getraenke standen nicht mit auf dem Foto. Allergene bleiben wie beim Klonen bewusst leer, bis der Betreiber die Zuordnung je Gericht bestaetigt.",
   "_groessen": {
     "mini": "22 cm",
     "normal": "30 cm",
@@ -16,115 +16,141 @@
   "kategorien": [
     {
       "id": "mittagsangebote",
-      "titel": "Mittagsangebote",
+      "titel": "Mittags Menü",
       "typ": "simple",
       "nur_mittags": true,
       "nummer_zeigen": false,
-      "note": "Angebote 1-4 gueltig von Mo bis Fr, 11:30 bis 14:00 Uhr. Dienstag ist Ruhetag.",
+      "note": "Von Mo bis Fr, 11:30 bis 14:30 Uhr.",
       "items": [
         {
           "num": "",
-          "name": "Linsensuppe mit Fladenbrot",
-          "desc": "Linsensuppe mit Wuerstchen und frisch gemachtem Fladenbrot",
-          "preis": 6.5
+          "name": "Menü 1: Döner-Tasche",
+          "desc": "",
+          "preis": 6
         },
         {
           "num": "",
-          "name": "Menü 1: Drehspieß Tasche",
-          "desc": "mit Pommes, Softgetränk 0,33 l",
+          "name": "Menü 2: Döner-Tasche",
+          "desc": "mit 0,33 l Getränk",
+          "preis": 8.5
+        },
+        {
+          "num": "",
+          "name": "Menü 3: Dürüm (Wrap)",
+          "desc": "mit 0,33 l Getränk",
           "preis": 10
         },
         {
           "num": "",
-          "name": "Menü 2: Pizza 30 cm",
-          "desc": "Softgetränk 0,33 l",
-          "preis": 10
-        },
-        {
-          "num": "",
-          "name": "Menü 3: Lahmacun",
-          "desc": "mit Pommes, Softgetränk 0,33 l",
-          "preis": 10
-        },
-        {
-          "num": "",
-          "name": "Menü 4: Drehspießteller",
-          "desc": "mit Pommes, Softgetränk 0,33 l",
+          "name": "Menü 4: Döner-Teller Hähnchen oder Kalb",
+          "desc": "mit 0,33 l Getränk",
           "preis": 11
+        }
+      ]
+    },
+    {
+      "id": "kids",
+      "titel": "Kids-Menüs",
+      "typ": "simple",
+      "nummer_zeigen": false,
+      "items": [
+        {
+          "num": "",
+          "name": "Kids-Box 1",
+          "desc": "4 Stk. Chicken Nuggets mit Pommes und 1 Capri-Sun, Überraschungsgeschenk",
+          "preis": 7
         },
         {
           "num": "",
-          "name": "Menü 5: Hamburger",
-          "desc": "mit Pommes, Softgetränk 0,33 l",
-          "preis": 9
+          "name": "Kids-Box 2",
+          "desc": "4 Stk. Chicken Nuggets mit Hähnchen oder Rind, Pommes und 1 Capri-Sonne, Überraschungsgeschenk",
+          "preis": 7
+        },
+        {
+          "num": "",
+          "name": "Kids-Box 3",
+          "desc": "4 Stk. Fischstäbchen mit Pommes und einem Getränk nach Wahl",
+          "preis": 8
+        },
+        {
+          "num": "",
+          "name": "Kids-Box 4",
+          "desc": "Klassischer Hamburger, Mayo oder Ketchup, Pommes und Getränk nach Wahl",
+          "preis": 8
         }
       ]
     },
     {
       "id": "taschen",
       "titel": "Taschengerichte",
-      "typ": "simple",
-      "note": "Rind oder Hähnchen",
+      "typ": "fleisch",
+      "note": "Freitags und samstags ab 12:00 Uhr auch als Steak-Döner.",
       "items": [
         {
           "num": "1",
-          "name": "Drehspießtasche",
-          "desc": "Drehspießfleisch mit Salat und Sauce",
-          "preis": 7
+          "name": "Döner-Tasche",
+          "desc": "Fleisch nach Wahl mit Salat und Sauce",
+          "haehnchen": 7,
+          "rind": 8,
+          "steak": 11
         },
         {
           "num": "2",
-          "name": "Drehspießtasche doppelt Fleisch",
-          "desc": "Drehspießfleisch mit Salat und Sauce",
-          "preis": 8
+          "name": "Döner-Tasche doppelt Fleisch",
+          "desc": "Fleisch nach Wahl mit Salat und Sauce",
+          "haehnchen": 8.5,
+          "rind": 9,
+          "steak": 12
         },
         {
           "num": "3",
-          "name": "Drehspießtasche Big XL",
-          "desc": "Drehspießfleisch, Salat, Sauce",
-          "preis": 9
+          "name": "Döner-Tasche Big XL",
+          "desc": "Fleisch nach Wahl mit Salat und Sauce",
+          "haehnchen": 10,
+          "rind": 11,
+          "steak": 14
         },
         {
           "num": "4",
-          "name": "Drehspießtasche Sucuk",
-          "desc": "Drehspießfleisch mit Sucuk, Salat und Sauce",
-          "preis": 8.5
+          "name": "Döner-Tasche Sucuk",
+          "desc": "Fleisch nach Wahl mit Sucuk, Salat und Sauce",
+          "haehnchen": 8.5,
+          "rind": 9,
+          "steak": 13
         },
         {
           "num": "5",
-          "name": "Drehspießtasche Atas",
-          "desc": "Drehspießfleisch mit Pommes, Salat und Sauce",
-          "preis": 9.5
+          "name": "Döner-Tasche Atas",
+          "desc": "Fleisch nach Wahl mit Pommes, Salat und Sauce",
+          "haehnchen": 8.5,
+          "rind": 9,
+          "steak": 13
         },
         {
           "num": "6",
-          "name": "Drehspießtasche mit gebratenem Gemüse",
+          "name": "Döner-Tasche mit gebratenem Gemüse",
           "desc": "mit gebratenem Gemüse und Sauce",
-          "preis": 8
+          "haehnchen": 8.5,
+          "rind": 9,
+          "steak": 13
         },
         {
           "num": "7",
-          "name": "Drehspieß Box klein",
-          "desc": "Drehspießfleisch, Pommes und Sauce",
-          "preis": 6
-        },
-        {
-          "num": "7",
-          "name": "Drehspieß Box groß",
-          "desc": "Drehspießfleisch, Pommes und Sauce",
+          "name": "Döner-Bowl Box klein",
+          "desc": "Fleisch nach Wahl, Pommes und Sauce",
           "preis": 7
+        },
+        {
+          "num": "7",
+          "name": "Döner-Bowl Box groß",
+          "desc": "Fleisch nach Wahl, Pommes und Sauce",
+          "preis": 8
         },
         {
           "num": "8",
           "name": "Köftetasche",
           "desc": "mit Salat und Sauce",
           "preis": 8
-        },
-        {
-          "num": "9",
-          "name": "Cevapcici Tasche",
-          "desc": "mit Salat und Sauce",
-          "preis": 8.5
         },
         {
           "num": "10",
@@ -135,24 +161,18 @@
         {
           "num": "11",
           "name": "Chickentasche",
-          "desc": "Hähnchenschnitzel mit Remoulade, Cocktailsauce und Salat",
+          "desc": "Doppel-Hähnchenschnitzel mit Remoulade, Cocktailsauce, Tzatziki, Chilisauce und Salat",
           "preis": 7
         },
         {
           "num": "12",
           "name": "Salattasche mit Käse",
           "desc": "mit Weißkäse und Sauce",
-          "preis": 5.5
+          "preis": 6
         },
         {
           "num": "13",
           "name": "Falafeltasche",
-          "desc": "mit Salat und Sauce",
-          "preis": 7
-        },
-        {
-          "num": "14",
-          "name": "Chickennuggetstasche",
           "desc": "mit Salat und Sauce",
           "preis": 7
         }
@@ -161,60 +181,70 @@
     {
       "id": "dueruem",
       "titel": "Dürüm (Wrap)",
-      "typ": "simple",
+      "typ": "fleisch",
       "note": "Hausgemachte Dürüm (Teigrolle) aus dem Steinofen",
       "items": [
         {
           "num": "15",
-          "name": "Rolle",
-          "desc": "Drehspießfleisch mit Salat und Sauce",
-          "preis": 8
+          "name": "Wrap",
+          "desc": "Fleisch nach Wahl mit Salat und Sauce",
+          "haehnchen": 8,
+          "rind": 9,
+          "steak": 11
         },
         {
           "num": "16",
-          "name": "Rolle doppelt Fleisch",
-          "desc": "Drehspießfleisch mit Salat und Sauce",
-          "preis": 9
+          "name": "Wrap doppelt Fleisch",
+          "desc": "Fleisch nach Wahl mit Salat und Sauce",
+          "haehnchen": 9,
+          "rind": 10,
+          "steak": 12
         },
         {
           "num": "17",
-          "name": "Sucuk Rolle",
-          "desc": "Drehspießfleisch mit Sucuk (türk. Knoblauchwurst), Salat und Sauce",
-          "preis": 9
+          "name": "Sucuk Wrap",
+          "desc": "Fleisch nach Wahl mit Sucuk (türk. Knoblauchwurst), Salat und Sauce",
+          "haehnchen": 9,
+          "rind": 10,
+          "steak": 12
         },
         {
           "num": "18",
-          "name": "Atas Rolle",
-          "desc": "Drehspießfleisch mit Pommes, Salat und Sauce",
-          "preis": 9
+          "name": "Atas Wrap",
+          "desc": "Fleisch nach Wahl mit Pommes, Salat und Sauce",
+          "haehnchen": 9,
+          "rind": 10,
+          "steak": 12
         },
         {
           "num": "19",
-          "name": "XXL Rolle",
-          "desc": "Drehspießfleisch mit Salat und Sauce",
-          "preis": 14
+          "name": "XXL Wrap",
+          "desc": "Fleisch nach Wahl mit Salat und Sauce",
+          "haehnchen": 14,
+          "rind": 15,
+          "steak": 18
         },
         {
           "num": "20",
-          "name": "Köfte Rolle",
+          "name": "Köfte Wrap",
           "desc": "mit Salat und Sauce",
           "preis": 9
         },
         {
           "num": "21",
-          "name": "Cevapcici Rolle",
+          "name": "Hähnchenschnitzel Wrap",
           "desc": "mit Salat und Sauce",
           "preis": 9.5
         },
         {
           "num": "22",
-          "name": "Falafel Rolle",
+          "name": "Falafel Wrap",
           "desc": "Falafel mit Salat und Sauce",
-          "preis": 7
+          "preis": 7.5
         },
         {
           "num": "23",
-          "name": "Salat Rolle",
+          "name": "Salat Wrap",
           "desc": "Salat, Weißkäse und Sauce",
           "preis": 7
         }
@@ -223,57 +253,38 @@
     {
       "id": "teller",
       "titel": "Tellergerichte",
-      "typ": "simple",
-      "note": "Saucen zur Wahl: Cocktailsauce, Tzatziki, Chili Sauce, Joghurtsauce",
+      "typ": "fleisch",
       "items": [
         {
+          "num": "24",
+          "name": "Dönerteller klein",
+          "desc": "Salat, Twister, Pommes oder Reis und Sauce nach Wahl",
+          "haehnchen": 9,
+          "rind": 10,
+          "steak": 12
+        },
+        {
           "num": "25",
-          "name": "Drehspießteller klein",
-          "desc": "Drehspießfleisch, Salat, Twister, Pommes oder Reis und Sauce nach Wahl",
-          "preis": 8.5
+          "name": "Dönerteller",
+          "desc": "Salat, Twister, Pommes oder Reis und Sauce nach Wahl",
+          "haehnchen": 11,
+          "rind": 12,
+          "steak": 14
         },
         {
           "num": "26",
-          "name": "Drehspießteller",
-          "desc": "Drehspießfleisch, Salat, Twister, Pommes oder Reis und Sauce",
-          "preis": 11
-        },
-        {
-          "num": "27",
-          "name": "Chicken-Reis Teller",
-          "desc": "geschnetzelte Hähnchenbruststreifen mit Paprika, Erbsen und Sahnesauce",
-          "preis": 15
-        },
-        {
-          "num": "28",
-          "name": "Köfteteller",
-          "desc": "Salat, Sauce nach Wahl, Twister, Pommes oder Reis",
-          "preis": 15
-        },
-        {
-          "num": "29",
-          "name": "Mixgrillteller",
-          "desc": "versch. Grillfleisch mit Gewürzen und Kräutern, Twister, Pommes und Reis",
-          "preis": 18
-        },
-        {
-          "num": "30",
-          "name": "kleine Portion Fleisch",
-          "desc": "",
-          "preis": 8
-        },
-        {
-          "num": "31",
-          "name": "große Portion Fleisch",
-          "desc": "",
-          "preis": 10
+          "name": "Taxi-Teller",
+          "desc": "Bratwurst, Fleisch nach Wahl, Köfte, Sauce nach Wahl",
+          "haehnchen": 15,
+          "rind": 16,
+          "steak": 18
         }
       ]
     },
     {
       "id": "lahmacun",
       "titel": "Lahmacun",
-      "typ": "simple",
+      "typ": "fleisch",
       "note": "Hauseigene türkische Teigspezialität mit Hackfleischsauce aus dem Steinofen",
       "items": [
         {
@@ -284,21 +295,27 @@
         },
         {
           "num": "36",
-          "name": "Lahmacun - Döner",
-          "desc": "Hackfleischsauce, Dönerfleisch, Salat und Sauce, mit oder ohne Käse",
-          "preis": 8
+          "name": "Lahmacun-Döner",
+          "desc": "Hackfleischsauce, Fleisch nach Wahl, Salat mit oder ohne Käse",
+          "haehnchen": 8,
+          "rind": 9,
+          "steak": 12
         },
         {
           "num": "37",
           "name": "Lahmacun Atas",
-          "desc": "Hackfleischsauce mit Dönerfleisch, Pommes, Salat, Sauce",
-          "preis": 9
+          "desc": "Hackfleischsauce mit Fleisch nach Wahl, Pommes, Salat, Sauce",
+          "haehnchen": 9,
+          "rind": 10,
+          "steak": 13
         },
         {
           "num": "38",
-          "name": "Lahmacun XXL - Döner",
-          "desc": "Hackfleischsauce mit Dönerfleisch, Salat und Sauce",
-          "preis": 14
+          "name": "Lahmacun XXL-Döner",
+          "desc": "Hackfleischsauce mit Fleisch nach Wahl, Salat und Sauce",
+          "haehnchen": 14,
+          "rind": 15,
+          "steak": 18
         }
       ]
     },
@@ -328,7 +345,7 @@
         },
         {
           "num": "48",
-          "name": "Pide mit Drehspießfleisch und Gouda",
+          "name": "Pide mit Fleisch nach Wahl und Gouda",
           "desc": "",
           "preis": 9
         },
@@ -336,7 +353,7 @@
           "num": "49",
           "name": "Pide mit Sucuk, Gouda und Ei",
           "desc": "",
-          "preis": 9
+          "preis": 10
         },
         {
           "num": "50",
@@ -386,27 +403,9 @@
         },
         {
           "num": "61",
-          "name": "Spinat-Auflauf",
-          "desc": "mit Kartoffeln, Spinat, Tomaten, Zwiebeln, Knoblauch, Tomaten-Sahnesauce",
-          "preis": 9
-        },
-        {
-          "num": "62",
           "name": "Frischer Drehspieß-Auflauf",
-          "desc": "Kartoffeln, Drehspießfleisch, Weißkäse, Zwiebeln, Paprika, Sauce Hollandaise",
-          "preis": 9
-        },
-        {
-          "num": "63",
-          "name": "Lachs Gemüse-Auflauf",
-          "desc": "mit Lachs, Zwiebeln, Paprika, Sahnesauce, Kartoffeln und Brokkoli",
-          "preis": 11
-        },
-        {
-          "num": "64",
-          "name": "Garnelen Gemüse-Auflauf",
-          "desc": "mit Garnelen, Zwiebeln, Paprika, Sahnesauce, Kartoffeln und Brokkoli",
-          "preis": 11
+          "desc": "Kartoffeln, Fleisch nach Wahl, Weißkäse, Zwiebeln, Paprika, Sauce Hollandaise",
+          "preis": 10
         }
       ]
     },
@@ -470,28 +469,36 @@
           "num": "75",
           "name": "Margherita",
           "desc": "",
-          "mini": 7,
-          "normal": 8,
-          "maxi": 17
+          "mini": 6,
+          "normal": 7,
+          "maxi": 16
         },
         {
           "num": "76",
-          "name": "Prosciutto",
-          "desc": "mit Geflügelschinken",
+          "name": "Pizza Pommes",
+          "desc": "Pommes, Sauce nach Wahl",
           "mini": 7,
-          "normal": 9,
-          "maxi": 20
+          "normal": 8,
+          "maxi": 18
         },
         {
           "num": "77",
-          "name": "Salami",
-          "desc": "mit Geflügelsalami",
+          "name": "Prosciutto",
+          "desc": "mit Putenschinken",
           "mini": 7,
           "normal": 9,
           "maxi": 20
         },
         {
           "num": "78",
+          "name": "Salami",
+          "desc": "mit Geflügel- oder Rindersalami",
+          "mini": 7,
+          "normal": 9,
+          "maxi": 18.5
+        },
+        {
+          "num": "79",
           "name": "Tonno Cipolla",
           "desc": "mit Thunfisch, Zwiebeln",
           "mini": 7,
@@ -499,155 +506,139 @@
           "maxi": 20
         },
         {
-          "num": "79",
+          "num": "80",
           "name": "Hawaii",
           "desc": "Geflügelschinken, Ananas",
           "mini": 7,
           "normal": 9,
-          "maxi": 22
-        },
-        {
-          "num": "80",
-          "name": "Mista",
-          "desc": "Gefl. Schinken, Champignon, Geflügelsalami, gek. Ei",
-          "mini": 7,
-          "normal": 10,
-          "maxi": 23
+          "maxi": 20
         },
         {
           "num": "81",
-          "name": "Italia",
-          "desc": "Geflügelschinken, Thunfisch, Gefl. Salami, gek. Ei",
-          "mini": 7,
+          "name": "Mista",
+          "desc": "Gefl. Schinken, Geflügelsalami, gek. Ei",
+          "mini": 8,
           "normal": 10,
           "maxi": 23
         },
         {
           "num": "82",
-          "name": "Pizza Manal",
-          "desc": "Drehspießfleisch und Hackfleisch",
-          "mini": 7,
+          "name": "Italia",
+          "desc": "Geflügelschinken, Thunfisch, Geflügelsalami, gek. Ei",
+          "mini": 8,
+          "normal": 10,
+          "maxi": 23
+        },
+        {
+          "num": "83",
+          "name": "Pizza Diavolo",
+          "desc": "Krabben, Spinat, Knoblauch, Ei",
+          "mini": 8,
           "normal": 10,
           "maxi": 25
         },
         {
-          "num": "83",
-          "name": "Siziliana",
-          "desc": "mit Zwiebeln, Paprika, Peperoni, Knoblauch",
-          "mini": 7,
+          "num": "84",
+          "name": "Vegetaria",
+          "desc": "mit Zwiebeln, Paprika, Peperoni, Knoblauch, Champignons",
+          "mini": 8,
           "normal": 9,
           "maxi": 19
         },
         {
-          "num": "84",
+          "num": "85",
           "name": "Pizza Spinat",
           "desc": "mit Spinat, Mozzarella, Knoblauch, Spiegelei",
-          "mini": 7,
+          "mini": 8,
           "normal": 9,
           "maxi": 20
         },
         {
-          "num": "85",
+          "num": "86",
           "name": "Gemüse Pizza",
-          "desc": "mit Paprika, Brokkoli, Zwiebeln, Champignon",
-          "mini": 7,
+          "desc": "mit Paprika, Brokkoli, Zwiebeln, Champignons",
+          "mini": 8,
           "normal": 9,
           "maxi": 19
         },
         {
-          "num": "86",
+          "num": "87",
           "name": "Scampi",
           "desc": "mit Garnelen, Knoblauch",
-          "mini": 7,
+          "mini": 8,
           "normal": 10,
           "maxi": 25
         },
         {
-          "num": "87",
+          "num": "88",
           "name": "Lachs-Spinat Pizza",
           "desc": "Lachs, Spinat, Sauce Hollandaise",
-          "mini": 7,
-          "normal": 9,
-          "maxi": 25
-        },
-        {
-          "num": "88",
-          "name": "Frutti di mare",
-          "desc": "Meeresfrüchte, Knoblauch",
-          "mini": 7,
+          "mini": 8,
           "normal": 9,
           "maxi": 25
         },
         {
           "num": "89",
-          "name": "Bolognese",
-          "desc": "mit Käse, Hackfleischsauce, Spiegelei",
-          "mini": 7,
+          "name": "Frutti di mare",
+          "desc": "Meeresfrüchte, Knoblauch",
+          "mini": 8,
           "normal": 9,
-          "maxi": 20
+          "maxi": 25
         },
         {
           "num": "90",
-          "name": "Diavolo",
-          "desc": "mit Käse, Brokkoli, Geflügelschinken, gekochtes Ei, Spargel, Sauce Hollandaise",
-          "mini": 7,
+          "name": "Pizza Hamburger",
+          "desc": "mit Käse, Hamburgerfleisch, Hamburgersauce",
+          "mini": 8,
           "normal": 9,
           "maxi": 20
         },
         {
           "num": "91",
-          "name": "Drehspieß Pizza",
-          "desc": "Drehspießfleisch, Weißkäse, Zwiebeln, Hollandaise",
-          "mini": 7,
+          "name": "Diavolo",
+          "desc": "mit Käse, Brokkoli, Geflügelschinken, gekochtes Ei, Spargel, Sauce Hollandaise",
+          "mini": 8,
           "normal": 9,
-          "maxi": 23
+          "maxi": 20
         },
         {
           "num": "92",
-          "name": "Drehspieß Pizza mit Salat",
-          "desc": "Drehspießfleisch, Salat mit Joghurtsauce",
-          "mini": 7,
+          "name": "Döner Pizza",
+          "desc": "Fleisch nach Wahl, Weißkäse, Zwiebeln, Hollandaise",
+          "mini": 8,
           "normal": 9,
           "maxi": 23
         },
         {
           "num": "93",
+          "name": "Döner Pizza mit Salat",
+          "desc": "Fleisch nach Wahl, Salat mit Joghurtsauce",
+          "mini": 8,
+          "normal": 9,
+          "maxi": 23
+        },
+        {
+          "num": "94",
           "name": "Atas",
-          "desc": "gebratene Hähnchenbruststreifen, Paprika, scharfe Peperoni, Currysauce",
-          "mini": 7,
+          "desc": "Hähnchenbruststreifen, Paprika, scharfe Peperoni",
+          "mini": 8,
           "normal": 10,
           "maxi": 25
         },
         {
-          "num": "94",
+          "num": "95",
           "name": "Pizza al Racho",
           "desc": "Tomaten, Käse, Thunfisch, Zwiebeln, scharfe Peperoni, Champignons",
-          "mini": 7,
+          "mini": 8,
           "normal": 9,
           "maxi": 22
         },
         {
-          "num": "95",
-          "name": "Pizza Sucuk",
-          "desc": "Sucuk (türk. Knoblauchwurst), Spiegelei",
-          "mini": 7,
-          "normal": 10,
-          "maxi": 25
-        },
-        {
           "num": "96",
-          "name": "Pizza Malik",
-          "desc": "gebratene Hähnchenbruststreifen, fr. Champignons, fr. Paprika",
-          "mini": 7,
+          "name": "Pizza Sucuk",
+          "desc": "Sucuk (türk. Knoblauchwurst), scharfe Peperoni",
+          "mini": 8,
           "normal": 10,
-          "maxi": 25
-        },
-        {
-          "num": "97",
-          "name": "Amerikan Crust",
-          "desc": "verschiedene Zutaten",
-          "mini": 7,
-          "normal": 15,
           "maxi": 25
         }
       ]
@@ -656,18 +647,18 @@
       "id": "calzone",
       "titel": "Pizza Gefüllt Calzone",
       "typ": "simple",
-      "note": "Alle Calzone gerne mit Knoblauch oder scharf!",
+      "note": "Alle Calzone gerne mit Knoblauch oder scharf! Mayo, Ketchup +0,50 · Chili, Tzatziki, Cocktail, Joghurt +1,00 €",
       "items": [
         {
           "num": "98",
           "name": "Salami Calzone",
-          "desc": "mit Gefl. Schinken, Champignon, Gefl. Salami",
+          "desc": "mit Gefl. Schinken, Champignons, Gefl. Salami",
           "preis": 9
         },
         {
           "num": "99",
           "name": "Royal Calzone",
-          "desc": "mit Gefl. Salami, Zwiebeln, Paprika, Drehspießfleisch",
+          "desc": "mit Gefl. Salami, Zwiebeln, Paprika, Fleisch nach Wahl",
           "preis": 10
         }
       ]
@@ -725,6 +716,12 @@
           "name": "Pizzabrötchen mit Hähnchenbruststreifen und Paprika",
           "desc": "",
           "preis": 9
+        },
+        {
+          "num": "108",
+          "name": "Dönerpizzabrötchen",
+          "desc": "",
+          "preis": 9
         }
       ]
     },
@@ -755,7 +752,7 @@
           "num": "112",
           "name": "Chicken Nuggets",
           "desc": "6 Stk.",
-          "preis": 4
+          "preis": 4.5
         },
         {
           "num": "113",
@@ -779,19 +776,25 @@
           "num": "116",
           "name": "Hamburger",
           "desc": "",
-          "preis": 5
+          "preis": 4
         },
         {
           "num": "117",
           "name": "Cheeseburger",
           "desc": "",
-          "preis": 5.5
+          "preis": 4.5
+        },
+        {
+          "num": "118",
+          "name": "Mozzarella Sticks",
+          "desc": "6 Stk.",
+          "preis": 6
         }
       ]
     },
     {
       "id": "salat",
-      "titel": "Salat",
+      "titel": "Salate",
       "typ": "simple",
       "note": "Zu allen Salaten werden zusätzlich 4 Stk. Pizzabrötchen serviert. Wahlweise mit Tzatziki, Cocktail, Joghurtsauce, Essig, Öl oder Balsamico als Dressing.",
       "items": [
@@ -810,7 +813,7 @@
         {
           "num": "123",
           "name": "Bauernsalat",
-          "desc": "Eisbergsalat, Gurken, Tomaten, Paprika, Weißkäse",
+          "desc": "Eisbergsalat, Gurken, Tomaten, Paprika, Weißkäse, Zwiebeln",
           "preis": 8
         },
         {
@@ -833,8 +836,8 @@
         },
         {
           "num": "127",
-          "name": "Drehspießfleischsalat",
-          "desc": "Tomaten, Gurken, Eisbergsalat, Drehspießfleisch, Weißkäse",
+          "name": "Dönerfleischsalat",
+          "desc": "Tomaten, Gurken, Eisbergsalat, Fleisch nach Wahl, Weißkäse",
           "preis": 9
         }
       ]

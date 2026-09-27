@@ -589,6 +589,27 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--atas-gru
   </div>
 </div>
 
+<!-- Fleischwahl-Popup (Taschen/Duerruem/Teller/Lahmacun mit Haehnchen/Rind/
+     Steak-Preisen). Eigene .fleisch-btn-Klasse statt .size-btn, weil
+     selectSize() der Pizza global ueber .size-btn abfragt - eine geteilte
+     Klasse wuerde bei offenem Fleisch-Popup die Pizzagroessen-Logik stoeren. -->
+<style>
+  .fleisch-btn{flex:1;padding:11px;border:2px solid var(--atas-rahmen);border-radius:10px;text-align:center;cursor:pointer;font-weight:bold;transition:.2s;font-family:inherit;}
+  .fleisch-btn.active{border-color:var(--atas-rot);background:var(--atas-akzent);color:var(--atas-rot);}
+</style>
+<div id="fleischPopup" class="quick-modal-overlay" onclick="closeFleischPopup()">
+  <div class="quick-modal-card" onclick="event.stopPropagation()" style="text-align:center;">
+    <span style="position:absolute;right:18px;top:13px;cursor:pointer;font-size:26px;color:var(--atas-schrift-leise);" onclick="closeFleischPopup()">&times;</span>
+    <h2 id="fleischName" style="color:var(--atas-rot);margin:0 0 8px;"></h2>
+    <p id="fleischDesc" style="color:var(--atas-schrift-leise);font-size:.88rem;margin-bottom:12px;"></p>
+    <p style="margin:0 0 6px;font-weight:700;font-size:.88rem;text-align:left;">Fleisch auswählen</p>
+    <div id="fleischButtons" style="display:flex;gap:10px;margin-bottom:8px;"></div>
+    <div id="fleischAuswahlErr" style="display:none;color:var(--atas-rot);font-size:.8rem;font-weight:600;margin-bottom:10px;">Bitte eine Fleischsorte wählen</div>
+    <div style="font-size:1.2rem;font-weight:700;margin-bottom:18px;" id="fleischPriceDisplay">– €</div>
+    <div style="background:var(--atas-grund);color:var(--atas-schrift);display:flex;justify-content:center;padding:14px;border-radius:11px;cursor:pointer;font-weight:700;" onclick="speiseInWarenkorb()">In den Warenkorb</div>
+  </div>
+</div>
+
 <!-- Pizzabrötchen nach Wunsch-Popup -->
 <div id="pbPopup" class="pb-modal-overlay" onclick="closePbPopup()">
   <div class="pb-modal-card" onclick="event.stopPropagation()">
@@ -733,6 +754,32 @@ function openQuickAdd(el){
   document.getElementById('quickPopup').style.display='flex';
 }
 function closeQuickPopup(){document.getElementById('quickPopup').style.display='none';}
+
+// ── Fleischwahl-Popup (Haehnchen/Rind/Steak) ──
+const FLEISCH_LABEL={haehnchen:'Hähnchen',rind:'Rind',steak:'Steak'};
+let fleischPreise={}, fleischAuswahl=null;
+function openFleischwahl(el){
+  document.getElementById('fleischName').innerText=el.querySelector('h3').innerText;
+  document.getElementById('fleischDesc').innerText=(el.querySelector('p')||{}).innerText||'';
+  document.getElementById('fleischAuswahlErr').style.display='none';
+  fleischPreise={};
+  ['haehnchen','rind','steak'].forEach(s=>{ if(el.dataset[s]!==undefined) fleischPreise[s]=parseFloat(el.dataset[s]); });
+  fleischAuswahl=null;
+  document.getElementById('fleischButtons').innerHTML=Object.keys(FLEISCH_LABEL)
+    .filter(s=>s in fleischPreise)
+    .map(s=>`<div class="fleisch-btn" id="fleisch-btn-${s}" onclick="waehleFleisch('${s}')">${FLEISCH_LABEL[s]} (${fleischPreise[s].toFixed(2).replace('.',',')} €)</div>`)
+    .join('');
+  document.getElementById('fleischPriceDisplay').innerText='– €';
+  document.getElementById('fleischPopup').style.display='flex';
+}
+function waehleFleisch(sorte){
+  fleischAuswahl=sorte;
+  document.getElementById('fleischAuswahlErr').style.display='none';
+  document.querySelectorAll('#fleischButtons .fleisch-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('fleisch-btn-'+sorte).classList.add('active');
+  document.getElementById('fleischPriceDisplay').innerText=fleischPreise[sorte].toFixed(2).replace('.',',')+' €';
+}
+function closeFleischPopup(){document.getElementById('fleischPopup').style.display='none';}
 
 // ── PB-Popup (nach Wunsch) ──
 let pbBasePrice=0, pbDips={knobi:0,kraeuter:0};
@@ -1085,62 +1132,60 @@ const ITEM_DESC = {
 // KARTE:START – erzeugt aus Menue/menu.json von karte-einsetzen.js, nicht von Hand aendern
 const POS_MENU = {
   mittagsangebote: [
-    {num:'',name:'Linsensuppe mit Fladenbrot',price:6.50},
-    {num:'',name:'Menü 1: Drehspieß Tasche',price:10.00},
-    {num:'',name:'Menü 2: Pizza 30 cm',price:10.00},
-    {num:'',name:'Menü 3: Lahmacun',price:10.00},
-    {num:'',name:'Menü 4: Drehspießteller',price:11.00},
-    {num:'',name:'Menü 5: Hamburger',price:9.00},
+    {num:'',name:'Menü 1: Döner-Tasche',price:6.00},
+    {num:'',name:'Menü 2: Döner-Tasche',price:8.50},
+    {num:'',name:'Menü 3: Dürüm (Wrap)',price:10.00},
+    {num:'',name:'Menü 4: Döner-Teller Hähnchen oder Kalb',price:11.00},
+  ],
+  kids: [
+    {num:'',name:'Kids-Box 1',price:7.00},
+    {num:'',name:'Kids-Box 2',price:7.00},
+    {num:'',name:'Kids-Box 3',price:8.00},
+    {num:'',name:'Kids-Box 4',price:8.00},
   ],
   taschen: [
-    {num:'1',name:'Drehspießtasche',price:7.00},
-    {num:'2',name:'Drehspießtasche doppelt Fleisch',price:8.00},
-    {num:'3',name:'Drehspießtasche Big XL',price:9.00},
-    {num:'4',name:'Drehspießtasche Sucuk',price:8.50},
-    {num:'5',name:'Drehspießtasche Atas',price:9.50},
-    {num:'6',name:'Drehspießtasche mit gebratenem Gemüse',price:8.00},
-    {num:'7',name:'Drehspieß Box klein',price:6.00},
-    {num:'7',name:'Drehspieß Box groß',price:7.00},
+    {num:'1',name:'Döner-Tasche',price:7.00,haehnchen:7.00,rind:8.00,steak:11.00},
+    {num:'2',name:'Döner-Tasche doppelt Fleisch',price:8.50,haehnchen:8.50,rind:9.00,steak:12.00},
+    {num:'3',name:'Döner-Tasche Big XL',price:10.00,haehnchen:10.00,rind:11.00,steak:14.00},
+    {num:'4',name:'Döner-Tasche Sucuk',price:8.50,haehnchen:8.50,rind:9.00,steak:13.00},
+    {num:'5',name:'Döner-Tasche Atas',price:8.50,haehnchen:8.50,rind:9.00,steak:13.00},
+    {num:'6',name:'Döner-Tasche mit gebratenem Gemüse',price:8.50,haehnchen:8.50,rind:9.00,steak:13.00},
+    {num:'7',name:'Döner-Bowl Box klein',price:7.00},
+    {num:'7',name:'Döner-Bowl Box groß',price:8.00},
     {num:'8',name:'Köftetasche',price:8.00},
-    {num:'9',name:'Cevapcici Tasche',price:8.50},
     {num:'10',name:'Pommestasche',price:6.00},
     {num:'11',name:'Chickentasche',price:7.00},
-    {num:'12',name:'Salattasche mit Käse',price:5.50},
+    {num:'12',name:'Salattasche mit Käse',price:6.00},
     {num:'13',name:'Falafeltasche',price:7.00},
-    {num:'14',name:'Chickennuggetstasche',price:7.00},
   ],
   dueruem: [
-    {num:'15',name:'Rolle',price:8.00},
-    {num:'16',name:'Rolle doppelt Fleisch',price:9.00},
-    {num:'17',name:'Sucuk Rolle',price:9.00},
-    {num:'18',name:'Atas Rolle',price:9.00},
-    {num:'19',name:'XXL Rolle',price:14.00},
-    {num:'20',name:'Köfte Rolle',price:9.00},
-    {num:'21',name:'Cevapcici Rolle',price:9.50},
-    {num:'22',name:'Falafel Rolle',price:7.00},
-    {num:'23',name:'Salat Rolle',price:7.00},
+    {num:'15',name:'Wrap',price:8.00,haehnchen:8.00,rind:9.00,steak:11.00},
+    {num:'16',name:'Wrap doppelt Fleisch',price:9.00,haehnchen:9.00,rind:10.00,steak:12.00},
+    {num:'17',name:'Sucuk Wrap',price:9.00,haehnchen:9.00,rind:10.00,steak:12.00},
+    {num:'18',name:'Atas Wrap',price:9.00,haehnchen:9.00,rind:10.00,steak:12.00},
+    {num:'19',name:'XXL Wrap',price:14.00,haehnchen:14.00,rind:15.00,steak:18.00},
+    {num:'20',name:'Köfte Wrap',price:9.00},
+    {num:'21',name:'Hähnchenschnitzel Wrap',price:9.50},
+    {num:'22',name:'Falafel Wrap',price:7.50},
+    {num:'23',name:'Salat Wrap',price:7.00},
   ],
   teller: [
-    {num:'25',name:'Drehspießteller klein',price:8.50},
-    {num:'26',name:'Drehspießteller',price:11.00},
-    {num:'27',name:'Chicken-Reis Teller',price:15.00},
-    {num:'28',name:'Köfteteller',price:15.00},
-    {num:'29',name:'Mixgrillteller',price:18.00},
-    {num:'30',name:'kleine Portion Fleisch',price:8.00},
-    {num:'31',name:'große Portion Fleisch',price:10.00},
+    {num:'24',name:'Dönerteller klein',price:9.00,haehnchen:9.00,rind:10.00,steak:12.00},
+    {num:'25',name:'Dönerteller',price:11.00,haehnchen:11.00,rind:12.00,steak:14.00},
+    {num:'26',name:'Taxi-Teller',price:15.00,haehnchen:15.00,rind:16.00,steak:18.00},
   ],
   lahmacun: [
     {num:'35',name:'Lahmacun-Salat',price:7.00},
-    {num:'36',name:'Lahmacun - Döner',price:8.00},
-    {num:'37',name:'Lahmacun Atas',price:9.00},
-    {num:'38',name:'Lahmacun XXL - Döner',price:14.00},
+    {num:'36',name:'Lahmacun-Döner',price:8.00,haehnchen:8.00,rind:9.00,steak:12.00},
+    {num:'37',name:'Lahmacun Atas',price:9.00,haehnchen:9.00,rind:10.00,steak:13.00},
+    {num:'38',name:'Lahmacun XXL-Döner',price:14.00,haehnchen:14.00,rind:15.00,steak:18.00},
   ],
   pide: [
     {num:'45',name:'Pide mit Goudakäse',price:8.00},
     {num:'46',name:'Pide mit Weißkäse',price:8.00},
     {num:'47',name:'Pide mit Hackfleischsauce und Gouda',price:9.00},
-    {num:'48',name:'Pide mit Drehspießfleisch und Gouda',price:9.00},
-    {num:'49',name:'Pide mit Sucuk, Gouda und Ei',price:9.00},
+    {num:'48',name:'Pide mit Fleisch nach Wahl und Gouda',price:9.00},
+    {num:'49',name:'Pide mit Sucuk, Gouda und Ei',price:10.00},
     {num:'50',name:'Pide mit Spinat und Schafskäse',price:9.00},
     {num:'51',name:'Pide mit Hähnchenbruststreifen und Paprika',price:10.00},
   ],
@@ -1150,10 +1195,7 @@ const POS_MENU = {
   ],
   auflauf: [
     {num:'60',name:'Brokkoli-Auflauf',price:9.00},
-    {num:'61',name:'Spinat-Auflauf',price:9.00},
-    {num:'62',name:'Frischer Drehspieß-Auflauf',price:9.00},
-    {num:'63',name:'Lachs Gemüse-Auflauf',price:11.00},
-    {num:'64',name:'Garnelen Gemüse-Auflauf',price:11.00},
+    {num:'61',name:'Frischer Drehspieß-Auflauf',price:10.00},
   ],
   baguettes: [
     {num:'65',name:'Baguette mit Salami',price:7.00},
@@ -1165,29 +1207,28 @@ const POS_MENU = {
     {num:'71',name:'Baguette mit Hähnchenbrust und Paprika',price:8.00},
   ],
   pizza: [
-    {num:'75',name:'Margherita',price:8.00},
-    {num:'76',name:'Prosciutto',price:9.00},
-    {num:'77',name:'Salami',price:9.00},
-    {num:'78',name:'Tonno Cipolla',price:9.00},
-    {num:'79',name:'Hawaii',price:9.00},
-    {num:'80',name:'Mista',price:10.00},
-    {num:'81',name:'Italia',price:10.00},
-    {num:'82',name:'Pizza Manal',price:10.00},
-    {num:'83',name:'Siziliana',price:9.00},
-    {num:'84',name:'Pizza Spinat',price:9.00},
-    {num:'85',name:'Gemüse Pizza',price:9.00},
-    {num:'86',name:'Scampi',price:10.00},
-    {num:'87',name:'Lachs-Spinat Pizza',price:9.00},
-    {num:'88',name:'Frutti di mare',price:9.00},
-    {num:'89',name:'Bolognese',price:9.00},
-    {num:'90',name:'Diavolo',price:9.00},
-    {num:'91',name:'Drehspieß Pizza',price:9.00},
-    {num:'92',name:'Drehspieß Pizza mit Salat',price:9.00},
-    {num:'93',name:'Atas',price:10.00},
-    {num:'94',name:'Pizza al Racho',price:9.00},
-    {num:'95',name:'Pizza Sucuk',price:10.00},
-    {num:'96',name:'Pizza Malik',price:10.00},
-    {num:'97',name:'Amerikan Crust',price:15.00},
+    {num:'75',name:'Margherita',price:7.00},
+    {num:'76',name:'Pizza Pommes',price:8.00},
+    {num:'77',name:'Prosciutto',price:9.00},
+    {num:'78',name:'Salami',price:9.00},
+    {num:'79',name:'Tonno Cipolla',price:9.00},
+    {num:'80',name:'Hawaii',price:9.00},
+    {num:'81',name:'Mista',price:10.00},
+    {num:'82',name:'Italia',price:10.00},
+    {num:'83',name:'Pizza Diavolo',price:10.00},
+    {num:'84',name:'Vegetaria',price:9.00},
+    {num:'85',name:'Pizza Spinat',price:9.00},
+    {num:'86',name:'Gemüse Pizza',price:9.00},
+    {num:'87',name:'Scampi',price:10.00},
+    {num:'88',name:'Lachs-Spinat Pizza',price:9.00},
+    {num:'89',name:'Frutti di mare',price:9.00},
+    {num:'90',name:'Pizza Hamburger',price:9.00},
+    {num:'91',name:'Diavolo',price:9.00},
+    {num:'92',name:'Döner Pizza',price:9.00},
+    {num:'93',name:'Döner Pizza mit Salat',price:9.00},
+    {num:'94',name:'Atas',price:10.00},
+    {num:'95',name:'Pizza al Racho',price:9.00},
+    {num:'96',name:'Pizza Sucuk',price:10.00},
   ],
   calzone: [
     {num:'98',name:'Salami Calzone',price:9.00},
@@ -1202,17 +1243,19 @@ const POS_MENU = {
     {num:'105',name:'Pizzabrötchen mit Weißkäse und Spinat',price:9.00},
     {num:'106',name:'Pizzabrötchen mit Sucuk',price:9.00},
     {num:'107',name:'Pizzabrötchen mit Hähnchenbruststreifen und Paprika',price:9.00},
+    {num:'108',name:'Dönerpizzabrötchen',price:9.00},
   ],
   snacks: [
     {num:'109',name:'Pommes klein',price:3.50},
     {num:'110',name:'Pommes groß',price:4.00},
     {num:'111',name:'Kroketten',price:4.00},
-    {num:'112',name:'Chicken Nuggets',price:4.00},
+    {num:'112',name:'Chicken Nuggets',price:4.50},
     {num:'113',name:'Kartoffel Twister',price:4.50},
     {num:'114',name:'Mantaplatte',price:7.00},
     {num:'115',name:'Bratwurst',price:3.00},
-    {num:'116',name:'Hamburger',price:5.00},
-    {num:'117',name:'Cheeseburger',price:5.50},
+    {num:'116',name:'Hamburger',price:4.00},
+    {num:'117',name:'Cheeseburger',price:4.50},
+    {num:'118',name:'Mozzarella Sticks',price:6.00},
   ],
   salat: [
     {num:'121',name:'Mista',price:6.00},
@@ -1221,7 +1264,7 @@ const POS_MENU = {
     {num:'124',name:'Atas-Salat',price:9.00},
     {num:'125',name:'Della Casa',price:7.00},
     {num:'126',name:'Chickensalat',price:9.00},
-    {num:'127',name:'Drehspießfleischsalat',price:9.00},
+    {num:'127',name:'Dönerfleischsalat',price:9.00},
   ],
   extras: [
     {num:'130',name:'Ketchup',price:0.50},
@@ -1948,10 +1991,11 @@ function setPOSCat(c, el) {
 const PASTA_CATS = ['spaghetti','rigatoni','tortellini','backofen','gnocchi','haehnchen','auflaeufe'];
 
 // Hilfselement bauen (damit bestehende openXxx-Funktionen der Website funktionieren)
-function makeFakeEl(num, name, price) {
+function makeFakeEl(num, name, price, extra) {
   const desc = ITEM_DESC[num] || '';
   const d = document.createElement('div');
   d.innerHTML = `<div class="product-info"><h3>${name}</h3><p>${desc}</p></div><div class="price">${price.toFixed(2).replace('.',',')} €</div>`;
+  if (extra) for (const k in extra) d.dataset[k] = extra[k];
   return d;
 }
 
@@ -1982,11 +2026,16 @@ function renderPOSItems() {
 function openPOSItem(num, name, price) {
   _posItemNum = num;
   const cat = getCatForNum(num);
-  const el = makeFakeEl(num, name, price);
+  const rec = (POS_MENU[cat]||[]).find(i => i.num === num && i.name === name);
+  const fleischFelder = {};
+  if (rec) ['haehnchen','rind','steak'].forEach(f => { if (typeof rec[f] === 'number') fleischFelder[f] = rec[f]; });
+  const hatFleisch = Object.keys(fleischFelder).length > 0;
+  const el = makeFakeEl(num, name, price, hatFleisch ? fleischFelder : null);
   if (cat === 'familienpizza')        openPizzaPopup(el);
   else if (cat === 'pizza')           openPizza(el);
   else if (PASTA_CATS.includes(cat))  openPasta(el);
   else if (cat === 'salate')          openSalad(el);
+  else if (hatFleisch)                openFleischwahl(el);
   else if (cat === 'sonstiges') {
     if (num === '148')                        openPbCustom(el);
     else if (['146','147','149'].includes(num)) openDipPopup(el);
@@ -2034,6 +2083,12 @@ function speiseInWarenkorb() {
     activeId='quickPopup';
     name=$('quickName').innerText;
     preis=parseFloat($('quickPriceDisplay').innerText.replace(/[€\s]/g,'').replace(',','.'));
+  } else if (vis('fleischPopup')) {
+    if (fleischAuswahl === null) { $('fleischAuswahlErr').style.display='block'; return; }
+    activeId='fleischPopup';
+    name=$('fleischName').innerText;
+    preis=fleischPreise[fleischAuswahl];
+    extras.push(FLEISCH_LABEL[fleischAuswahl]);
   } else if (vis('famPizzaPopup')) {
     activeId='famPizzaPopup';
     name=$('famPizzaName').innerText;
