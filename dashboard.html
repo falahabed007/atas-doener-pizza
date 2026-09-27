@@ -584,6 +584,7 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--atas-gru
     <span style="position:absolute;right:18px;top:13px;cursor:pointer;font-size:26px;color:var(--atas-schrift-leise);" onclick="closeQuickPopup()">&times;</span>
     <h2 id="quickName" style="color:var(--atas-rot);margin:0 0 8px;"></h2>
     <p id="quickDesc" style="color:var(--atas-schrift-leise);font-size:.88rem;margin-bottom:16px;"></p>
+    <div id="quickOptions" style="text-align:left;"></div>
     <div style="font-size:1.2rem;font-weight:700;margin-bottom:18px;" id="quickPriceDisplay">0,00 €</div>
     <div style="background:var(--atas-grund);color:var(--atas-schrift);display:flex;justify-content:center;padding:14px;border-radius:11px;cursor:pointer;font-weight:700;" onclick="speiseInWarenkorb()">In den Warenkorb</div>
   </div>
@@ -596,6 +597,7 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--atas-gru
 <style>
   .fleisch-btn{flex:1;padding:11px;border:2px solid var(--atas-rahmen);border-radius:10px;text-align:center;cursor:pointer;font-weight:bold;transition:.2s;font-family:inherit;}
   .fleisch-btn.active{border-color:var(--atas-rot);background:var(--atas-akzent);color:var(--atas-rot);}
+  .fleisch-btn-disabled{cursor:not-allowed;opacity:.5;}
 </style>
 <div id="fleischPopup" class="quick-modal-overlay" onclick="closeFleischPopup()">
   <div class="quick-modal-card" onclick="event.stopPropagation()" style="text-align:center;">
@@ -747,17 +749,49 @@ function toggleSaladCheck(i){const c=document.getElementById('sal-ex-'+i);c.chec
 function closeSaladPopup(){document.getElementById('saladPopup').style.display='none';}
 
 // ── Quick-Popup ──
+let quickIstGetraenke=false, quickGetraenkeSorte=null;
 function openQuickAdd(el){
+  quickIstGetraenke=false;
   document.getElementById('quickName').innerText=el.querySelector('h3').innerText;
   document.getElementById('quickDesc').innerText=(el.querySelector('p')||{}).innerText||'';
+  document.getElementById('quickOptions').innerHTML='';
   document.getElementById('quickPriceDisplay').innerText=el.querySelector('.price').innerText;
   document.getElementById('quickPopup').style.display='flex';
+}
+
+// Getraenke mit mehreren Sorten unter einem Kartenpreis: eigene Sortenwahl,
+// die den Namen ERSETZT (Bon/Bestellung sollen "Fanta" zeigen, nicht die
+// ganze Sortenliste), statt der generischen quickAdd-Anzeige.
+function openGetraenkeWahl(el, rawName){
+  quickIstGetraenke=true;
+  quickGetraenkeSorte=null;
+  document.getElementById('quickName').innerText='Sorte wählen';
+  document.getElementById('quickDesc').innerText=(el.querySelector('p')||{}).innerText||'';
+  document.getElementById('quickPriceDisplay').innerText=el.querySelector('.price').innerText;
+  const sorten=rawName.split(',').map(s=>s.trim()).filter(Boolean);
+  document.getElementById('quickOptions').innerHTML =
+    sorten.map((s,i)=>`<label style="display:flex;align-items:center;gap:8px;padding:8px 0;cursor:pointer;">`
+      + `<input type="radio" name="getraenkeSorte" value="${i}" onchange="waehleGetraenkeSorte(this)">`
+      + `<span>${s}</span></label>`).join('')
+    + `<div id="getraenkeSorteErr" style="display:none;color:var(--atas-rot);font-size:.8rem;font-weight:600;margin:4px 0 8px;">Bitte eine Sorte wählen</div>`;
+  document.getElementById('quickPopup').style.display='flex';
+}
+function waehleGetraenkeSorte(feld){
+  quickGetraenkeSorte=feld.parentElement.querySelector('span').textContent;
+  document.getElementById('getraenkeSorteErr').style.display='none';
 }
 function closeQuickPopup(){document.getElementById('quickPopup').style.display='none';}
 
 // ── Fleischwahl-Popup (Haehnchen/Rind/Steak) ──
 const FLEISCH_LABEL={haehnchen:'Hähnchen',rind:'Rind',steak:'Steak'};
 let fleischPreise={}, fleischAuswahl=null;
+// Steak-Döner gibt es laut Karte nur freitags und samstags ab 12 Uhr - gilt
+// auch fuer die Kasse, da es ein Kueche-Verfuegbarkeit ist, kein reiner
+// Website-Hinweis.
+function steakVerfuegbar(){
+  const jetzt=new Date(), tag=jetzt.getDay();
+  return (tag===5||tag===6) && jetzt.getHours()>=12;
+}
 function openFleischwahl(el){
   document.getElementById('fleischName').innerText=el.querySelector('h3').innerText;
   document.getElementById('fleischDesc').innerText=(el.querySelector('p')||{}).innerText||'';
@@ -767,7 +801,12 @@ function openFleischwahl(el){
   fleischAuswahl=null;
   document.getElementById('fleischButtons').innerHTML=Object.keys(FLEISCH_LABEL)
     .filter(s=>s in fleischPreise)
-    .map(s=>`<div class="fleisch-btn" id="fleisch-btn-${s}" onclick="waehleFleisch('${s}')">${FLEISCH_LABEL[s]} (${fleischPreise[s].toFixed(2).replace('.',',')} €)</div>`)
+    .map(s=>{
+      if (s==='steak' && !steakVerfuegbar()) {
+        return `<div class="fleisch-btn fleisch-btn-disabled" title="Nur freitags und samstags ab 12:00 Uhr">${FLEISCH_LABEL[s]}<br><span style="font-size:.68rem;font-weight:normal">nur Fr/Sa ab 12 Uhr</span></div>`;
+      }
+      return `<div class="fleisch-btn" id="fleisch-btn-${s}" onclick="waehleFleisch('${s}')">${FLEISCH_LABEL[s]} (${fleischPreise[s].toFixed(2).replace('.',',')} €)</div>`;
+    })
     .join('');
   document.getElementById('fleischPriceDisplay').innerText='– €';
   document.getElementById('fleischPopup').style.display='flex';
@@ -1993,10 +2032,13 @@ function makeFakeEl(num, name, price, extra) {
   return d;
 }
 
-// Kategorie eines Artikels anhand seiner Nummer ermitteln (auch bei Suche korrekt)
-function getCatForNum(num) {
+// Kategorie eines Artikels anhand Nummer+Name ermitteln (auch bei Suche korrekt).
+// Name gehoert mit dazu: mittagsangebote, kids und getraenke haben alle
+// num:"" (keine Nummer auf der Karte), ohne Namensabgleich traefe die erste
+// dieser Kategorien in POS_MENU fuer alle drei zu.
+function getCatForNum(num, name) {
   for (const [cat, items] of Object.entries(POS_MENU)) {
-    if (items.some(i => i.num === num)) return cat;
+    if (items.some(i => i.num === num && (name === undefined || i.name === name))) return cat;
   }
   return 'sonstiges';
 }
@@ -2019,7 +2061,7 @@ function renderPOSItems() {
 // Richtiges Popup je nach tatsächlicher Kategorie des Artikels öffnen
 function openPOSItem(num, name, price) {
   _posItemNum = num;
-  const cat = getCatForNum(num);
+  const cat = getCatForNum(num, name);
   const rec = (POS_MENU[cat]||[]).find(i => i.num === num && i.name === name);
   const fleischFelder = {};
   if (rec) ['haehnchen','rind','steak'].forEach(f => { if (typeof rec[f] === 'number') fleischFelder[f] = rec[f]; });
@@ -2030,6 +2072,7 @@ function openPOSItem(num, name, price) {
   else if (PASTA_CATS.includes(cat))  openPasta(el);
   else if (cat === 'salate')          openSalad(el);
   else if (hatFleisch)                openFleischwahl(el);
+  else if (cat === 'getraenke' && name.indexOf(',') !== -1) openGetraenkeWahl(el, name);
   else if (cat === 'sonstiges') {
     if (num === '148')                        openPbCustom(el);
     else if (['146','147','149'].includes(num)) openDipPopup(el);
@@ -2074,9 +2117,16 @@ function speiseInWarenkorb() {
     if(dipCounts.knobi>0) extras.push(dipCounts.knobi+'× Knoblauch-Dip');
     if(dipCounts.kraeuter>0) extras.push(dipCounts.kraeuter+'× Kräuter-Dip');
   } else if (vis('quickPopup')) {
-    activeId='quickPopup';
-    name=$('quickName').innerText;
-    preis=parseFloat($('quickPriceDisplay').innerText.replace(/[€\s]/g,'').replace(',','.'));
+    if (quickIstGetraenke) {
+      if (!quickGetraenkeSorte) { $('getraenkeSorteErr').style.display='block'; return; }
+      activeId='quickPopup';
+      name=quickGetraenkeSorte;
+      preis=parseFloat($('quickPriceDisplay').innerText.replace(/[€\s]/g,'').replace(',','.'));
+    } else {
+      activeId='quickPopup';
+      name=$('quickName').innerText;
+      preis=parseFloat($('quickPriceDisplay').innerText.replace(/[€\s]/g,'').replace(',','.'));
+    }
   } else if (vis('fleischPopup')) {
     if (fleischAuswahl === null) { $('fleischAuswahlErr').style.display='block'; return; }
     activeId='fleischPopup';

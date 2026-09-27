@@ -2133,13 +2133,25 @@ function speiseInWarenkorb() {
     }
     else if (document.getElementById('quickPopup').style.display === 'flex') {
         activePopupId = 'quickPopup';
-        name = document.getElementById('quickName').innerText;
-        // Fehlt eine Pflichtwahl, kommt nichts in den Warenkorb und das
-        // Fenster bleibt offen - sonst muesste die Kueche raten, welches
-        // Fleisch oder welche Beilage gemeint war.
-        if (!quickPflichtErfuellt()) return;
-        extraDetails = quickAuswahlSammeln();
-        preis = quickGrundpreis + extraDetails.reduce(function (summe, e) { return summe + e.price; }, 0);
+        if (quickIstGetraenke) {
+            // Sorte ersetzt den Namen (statt ihn zu ergaenzen) - Bon/Bestellung
+            // sollen "Fanta" zeigen, nicht die ganze Sortenliste der Karte.
+            if (!quickGetraenkeSorte) {
+                document.getElementById('getraenkeSorteErr').style.display = 'block';
+                return;
+            }
+            name = quickGetraenkeSorte;
+            extraDetails = [];
+            preis = quickGrundpreis;
+        } else {
+            name = document.getElementById('quickName').innerText;
+            // Fehlt eine Pflichtwahl, kommt nichts in den Warenkorb und das
+            // Fenster bleibt offen - sonst muesste die Kueche raten, welches
+            // Fleisch oder welche Beilage gemeint war.
+            if (!quickPflichtErfuellt()) return;
+            extraDetails = quickAuswahlSammeln();
+            preis = quickGrundpreis + extraDetails.reduce(function (summe, e) { return summe + e.price; }, 0);
+        }
     }
     else if (document.getElementById('fleischPopup').style.display === 'flex') {
         activePopupId = 'fleischPopup';
@@ -3638,6 +3650,9 @@ function closeSaladPopup() {
   .fleisch-btn.active {
     border-color: var(--atas-akzent); background: var(--atas-akzent); color: var(--atas-auf-akzent);
   }
+  .fleisch-btn-disabled {
+    cursor: not-allowed; opacity: .5;
+  }
 </style>
 <div id="fleischPopup" class="quick-modal-overlay" onclick="closeFleischPopup()">
   <div class="quick-modal-card" onclick="event.stopPropagation()">
@@ -3795,7 +3810,19 @@ function openQuickAdd(element) {
     // Allergen-Fussnote (<sup>, von AM angehaengt) mit im Namen, der so auch
     // in Warenkorb, Bestellung und Bon landen wuerde.
     const h3El = element.querySelector('h3');
-    const name = (num ? num + ' ' : '') + (h3El.childNodes[0] ? h3El.childNodes[0].textContent : h3El.innerText);
+    const rawName = h3El.childNodes[0] ? h3El.childNodes[0].textContent : h3El.innerText;
+
+    // Getraenke fuehren mehrere Sorten unter einem Kartenpreis
+    // ("Cola, Fanta, Sprite ..."); die Sorte muss die Kueche/Kasse eindeutig
+    // erfahren, statt der ganzen Liste. Eigener Ablauf statt der generischen
+    // Gruppen, weil die Wahl den Namen ERSETZT statt ihn zu ergaenzen.
+    if (kategorieVon(element) === 'getraenke' && rawName.indexOf(',') !== -1) {
+        openGetraenkeWahl(element, rawName);
+        return;
+    }
+    quickIstGetraenke = false;
+
+    const name = (num ? num + ' ' : '') + rawName;
     const descElement = element.querySelector('p');
     const desc = descElement ? descElement.innerText : "";
     const priceTxt = element.querySelector('.price').innerText;
@@ -3810,6 +3837,50 @@ function openQuickAdd(element) {
     quickPreisAktualisieren();
 
     document.getElementById('quickPopup').style.display = 'flex';
+}
+
+/* ── Getraenke-Sortenwahl ─────────────────────────────────────────────
+   Nutzt dasselbe quickPopup-Fenster, aber die Bestaetigung ersetzt den
+   Namen durch die gewaehlte Sorte (z. B. "Fanta"), statt sie zusaetzlich
+   zur ganzen Liste in extraDetails zu haengen - sonst stuende auf Bon und
+   Bestellmail die komplette Sortenliste statt der einen bestellten Sorte. */
+var quickIstGetraenke = false;
+var quickGetraenkeSorte = null;
+
+function openGetraenkeWahl(element, rawName) {
+    const descElement = element.querySelector('p');
+    const desc = descElement ? descElement.innerText : "";
+    const priceTxt = element.querySelector('.price').innerText;
+
+    quickIstGetraenke = true;
+    quickGetraenkeSorte = null;
+    quickGrundpreis = parseFloat(priceTxt.replace('€', '').replace(/[()]/g, '').replace(',', '.').trim()) || 0;
+
+    document.getElementById('quickName').innerText = 'Sorte wählen';
+    document.getElementById('quickDesc').innerText = desc;
+    document.getElementById('note-quickPopup').value = '';
+
+    const sorten = rawName.split(',').map(function (s) { return s.trim(); }).filter(Boolean);
+    let html = '<div class="opt-group"><div class="opt-group-title">Sorte wählen <span style="color:var(--atas-rot)">*</span></div>';
+    html += sorten.map(function (s, i) {
+      return '<label class="opt-item"><input type="radio" name="getraenkeSorte" value="' + i + '" onchange="waehleGetraenkeSorte(this)">'
+        + '<span class="opt-item-label">' + s + '</span></label>';
+    }).join('');
+    html += '<div class="opt-error" id="getraenkeSorteErr">Bitte eine Sorte wählen</div></div>';
+    document.getElementById('quickOptions').innerHTML = html;
+
+    quickPreisAktualisieren();
+    document.getElementById('quickPopup').style.display = 'flex';
+}
+
+function waehleGetraenkeSorte(feld) {
+    quickGetraenkeSorte = feld.parentElement.querySelector('.opt-item-label').textContent;
+    document.getElementById('getraenkeSorteErr').style.display = 'none';
+    document.querySelectorAll('#quickOptions .opt-item').forEach(function (label) {
+        var eingabe = label.querySelector('input');
+        label.classList.toggle('selected', !!(eingabe && eingabe.checked));
+    });
+    quickPreisAktualisieren();
 }
 
 function quickGruppenHtml(gruppen) {
@@ -3909,6 +3980,15 @@ var fleischAuswahl = null;   // 'haehnchen' | 'rind' | 'steak' | null
 
 const FLEISCH_LABEL = { haehnchen: 'Hähnchen', rind: 'Rind', steak: 'Steak' };
 
+// Steak-Döner gibt es laut Karte nur freitags und samstags ab 12 Uhr - lokale
+// Geraetezeit des Gasts, kein Server-Abgleich. Fuer eine Werbeeinschraenkung
+// (nicht sicherheitsrelevant) reicht das.
+function steakVerfuegbar() {
+  var jetzt = new Date();
+  var tag = jetzt.getDay(); // 0=So, 5=Fr, 6=Sa
+  return (tag === 5 || tag === 6) && jetzt.getHours() >= 12;
+}
+
 function openFleischwahl(element) {
     const num = element.dataset.itemNum;
     // Nur den ersten Textknoten lesen, nicht .innerText - sonst haengt die
@@ -3932,6 +4012,10 @@ function openFleischwahl(element) {
 
     const knopfHtml = Object.keys(FLEISCH_LABEL).filter(function (s) { return s in fleischPreise; })
       .map(function (sorte) {
+        if (sorte === 'steak' && !steakVerfuegbar()) {
+          return '<div class="fleisch-btn fleisch-btn-disabled" title="Steak-Döner gibt es nur freitags und samstags ab 12:00 Uhr">'
+            + FLEISCH_LABEL[sorte] + '<br><span style="font-size:.68rem;font-weight:normal">nur Fr/Sa ab 12 Uhr</span></div>';
+        }
         return '<div class="fleisch-btn" id="fleisch-btn-' + sorte + '" onclick="waehleFleisch(\'' + sorte + '\')">'
           + FLEISCH_LABEL[sorte] + ' (' + euro(fleischPreise[sorte]) + ')</div>';
       }).join('');
