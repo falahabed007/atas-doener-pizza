@@ -1399,11 +1399,13 @@ async function triggerPrint(order) {
 
 // ── Oeffnungs- und Lieferzeiten ──────────────────────────────────
 // Zwei getrennte Fenster, und das ist der Punkt: ATAS hat ab 11:30 geoeffnet,
-// liefert werktags aber erst ab 16:00, am Wochenende und feiertags ab 14:00.
-// Die Vorlage kannte nur einen Schalter fuer den ganzen Betrieb. Damit gaebe
-// es nur zwei schlechte Moeglichkeiten - entweder faellt das Mittagsgeschaeft
-// weg, samt der Mittags- und Schuelerangebote von 11:30 bis 14:00, oder der
-// Gast bestellt um 12:00 eine Lieferung, die erst vier Stunden spaeter faehrt.
+// liefert werktags aber erst ab 12:00, am Wochenende und feiertags ab 13:00
+// (Betreiber, 27.09.2026 - vorher 16:00/14:00 im Server, waehrend die
+// gedruckte Karte schon laenger 12:00/13:00 auswies). Die Vorlage kannte nur
+// einen Schalter fuer den ganzen Betrieb. Damit gaebe es nur zwei schlechte
+// Moeglichkeiten - entweder faellt das Mittagsgeschaeft weg, samt der
+// Mittags- und Schuelerangebote von 11:30 bis 14:30, oder der Gast bestellt
+// direkt bei Ladenoeffnung eine Lieferung, die noch nicht faehrt.
 //
 // Feiertage zaehlen wie Sonntag. Sie stehen als Liste da, weil ein
 // vollstaendiger Feiertagsrechner mehr Code waere als der Nutzen: die Liste
@@ -1424,8 +1426,8 @@ const OEFFNUNG = {
   6: [12 * 60,      22 * 60],       // Samstag
 };
 
-const LIEFER_AB_WERKTAG    = 16 * 60;
-const LIEFER_AB_WOCHENENDE = 14 * 60;
+const LIEFER_AB_WERKTAG    = 12 * 60;
+const LIEFER_AB_WOCHENENDE = 13 * 60;
 
 // Eine einzige Stelle, an der aus der Serverzeit deutsche Zeit wird. Vorher
 // stand diese Rechnung nur in calcAutoMode; ein zweiter Aufrufer haette sie

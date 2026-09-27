@@ -1949,8 +1949,8 @@ function renderWarenkorb() {
 let currentSelection = 'delivery';
 
 // ── Lieferfenster ────────────────────────────────────────────────
-// ATAS hat ab 11:30 offen, liefert werktags aber erst ab 16:00 und am
-// Wochenende ab 14:00. Bis dahin ist nur Abholung waehlbar. Der Wert kommt
+// ATAS hat ab 11:30 offen, liefert werktags aber erst ab 12:00 und am
+// Wochenende ab 13:00. Bis dahin ist nur Abholung waehlbar. Der Wert kommt
 // aus /api/status, nicht aus einer Konstante hier: sonst hat die Seite eine
 // zweite Wahrheit neben dem Server, und beide driften auseinander.
 let LIEFERFENSTER = { offen: true, ab: null, grund: null };
@@ -4791,7 +4791,7 @@ LEGAL.impressum = {
        + "<tr><td style='padding:4px 12px 4px 0;color:var(--atas-schrift-leise)'>Feiertage</td><td>12:00 &ndash; 22:00 Uhr</td></tr>"
        + "</table>"
        + "<h3 style='color:var(--atas-akzent);margin:20px 0 10px'>Lieferzeiten</h3>"
-       + "<p style='font-size:.84rem'>Montag bis Freitag ab 16:00&nbsp;Uhr &middot; Samstag, Sonntag und Feiertage ab 14:00&nbsp;Uhr.<br>"
+       + "<p style='font-size:.84rem'>Montag bis Freitag ab 12:00&nbsp;Uhr &middot; Samstag, Sonntag und Feiertage ab 13:00&nbsp;Uhr.<br>"
        + "Abholung ist ab &Ouml;ffnung m&ouml;glich.</p>"
        + "<p style='margin-top:20px;font-size:.84rem'>Liefergebiet: Beckum, Roland, Neubeckum und Vellern &middot; Fahrtkostenpauschale 2,00&nbsp;&euro;</p>"
        + "<h3 style='color:var(--atas-akzent);margin:20px 0 8px'>Verbraucherstreitbeilegung</h3>"
@@ -4857,7 +4857,7 @@ LEGAL.agb = {
        + "<li>Vellern: Mindestbestellwert 30,00&nbsp;&euro;</li>"
        + "</ul>"
        + "<p>In allen Liefergebieten wird eine Fahrtkostenpauschale von 2,00&nbsp;&euro; je Lieferung berechnet.</p>"
-       + "<p>Wir liefern Montag bis Freitag ab 16:00&nbsp;Uhr, samstags, sonntags und an Feiertagen ab 14:00&nbsp;Uhr. Abholung ist ab &Ouml;ffnung m&ouml;glich. Dienstag ist Ruhetag.</p>"
+       + "<p>Wir liefern Montag bis Freitag ab 12:00&nbsp;Uhr, samstags, sonntags und an Feiertagen ab 13:00&nbsp;Uhr. Abholung ist ab &Ouml;ffnung m&ouml;glich. Dienstag ist Ruhetag.</p>"
        + "<p>Lieferzeiten sind Sch&auml;tzwerte und nicht verbindlich.</p>"
        + "<h4 style='color:var(--atas-akzent);margin:14px 0 6px;font-size:.92rem'>&sect;&nbsp;5 Widerrufsrecht</h4>"
        + "<div style='background:var(--atas-flaeche);border-left:4px solid var(--atas-akzent);padding:12px 14px;border-radius:0 8px 8px 0;margin:8px 0'>"
