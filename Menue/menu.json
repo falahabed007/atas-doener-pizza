@@ -1,6 +1,6 @@
 {
-  "_quelle": "Gedruckte Speisekarte ATAS Doener & Pizza, Nordstr. 45a Beckum, neue Ausgabe (Foto vom Betreiber), 26. September 2026",
-  "_hinweis": "Komplette Ueberarbeitung gegenueber der Karte vom 10./18. September 2026: Fleischsorten-Preise (Haehnchen/Rind/Steak) bei Taschengerichten, Duerruem, Tellergerichten und Lahmacun neu eingefuehrt; Pizza komplett neu nummeriert/bepreist, dabei bekommen die 22-cm-Preise jetzt echte Werte statt des bisherigen 7,00-Platzhalters. Nicht auf den fotografierten Seiten abgebildet und daher unveraendert gelassen: Pide-Grundpreise wurden trotzdem uebernommen (sie standen mit auf dem Foto), Baguettes/Extras/Getraenke standen nicht mit auf dem Foto. Allergene bleiben wie beim Klonen bewusst leer, bis der Betreiber die Zuordnung je Gericht bestaetigt.",
+  "_quelle": "Gedruckte Speisekarte ATAS Doener & Pizza, Nordstr. 45a Beckum, Druckvorlage 'ATAS TEMP' (PDF vom Betreiber), 27. September 2026",
+  "_hinweis": "Zweite Ueberarbeitung: Umbenennung 'Doener' zu 'Atas'/'Gyros' durchgaengig (Atas-Tasche, Atasteller, Gyros Pizza, Atasfleischsalat, Gyrospizzabroetchen), Allergene je Gericht jetzt aus der PDF eingetragen (Buchstaben A-N, Zahlen 1-11 - siehe LEGAL.allergene in index.html), Getraenke komplett neu strukturiert. Vom Betreiber am 27.09.2026 entschiedene Umnummerierungen wegen Konflikten in der PDF: Pide 'Vegetarisch' bleibt 52, Champignon-Rahmschnitzel wird 53, Schnitzel nach Wiener Art wird 54; Calzone komplett auf 70-72 verschoben (Salami 70, Royal 71, neu: Vegetarisch 72). Pizza 'Gemuese Pizza' entfaellt (Inhalt in 'Vegetaria' aufgegangen), dadurch ruecken 86-90 nach; zwei echte Dubletten in der PDF (Gyros Pizza mit Jalapenos, Pizza Sucuk mit Paprika) bekommen neue Nummern 93/97 und unterscheidbare Namen - vom Betreiber am 27.09. als 'beides echte Pizzen' bestaetigt.",
   "_groessen": {
     "mini": "22 cm",
     "normal": "30 cm",
@@ -84,11 +84,11 @@
       "id": "taschen",
       "titel": "Taschengerichte",
       "typ": "fleisch",
-      "note": "Freitags und samstags ab 12:00 Uhr auch als Steak-Döner.",
+      "note": "Freitags und samstags ab 12:00 Uhr auch als Steak-Döner. Saucen: Remoulade, Cocktailsauce, Tzatziki, Joghurt, Chilisauce.",
       "items": [
         {
           "num": "1",
-          "name": "Döner-Tasche",
+          "name": "Atas-Tasche",
           "desc": "Fleisch nach Wahl mit Salat und Sauce",
           "haehnchen": 7,
           "rind": 8,
@@ -96,7 +96,7 @@
         },
         {
           "num": "2",
-          "name": "Döner-Tasche doppelt Fleisch",
+          "name": "Atas-Tasche doppelt Fleisch",
           "desc": "Fleisch nach Wahl mit Salat und Sauce",
           "haehnchen": 8.5,
           "rind": 9,
@@ -104,7 +104,7 @@
         },
         {
           "num": "3",
-          "name": "Döner-Tasche Big XL",
+          "name": "Atas-Tasche Big XL",
           "desc": "Fleisch nach Wahl mit Salat und Sauce",
           "haehnchen": 10,
           "rind": 11,
@@ -112,7 +112,7 @@
         },
         {
           "num": "4",
-          "name": "Döner-Tasche Sucuk",
+          "name": "Atas-Tasche Sucuk",
           "desc": "Fleisch nach Wahl mit Sucuk, Salat und Sauce",
           "haehnchen": 8.5,
           "rind": 9,
@@ -120,7 +120,7 @@
         },
         {
           "num": "5",
-          "name": "Döner-Tasche Atas",
+          "name": "Atas-Tasche Atas",
           "desc": "Fleisch nach Wahl mit Pommes, Salat und Sauce",
           "haehnchen": 8.5,
           "rind": 9,
@@ -128,7 +128,7 @@
         },
         {
           "num": "6",
-          "name": "Döner-Tasche mit gebratenem Gemüse",
+          "name": "Atas-Tasche mit gebratenem Gemüse",
           "desc": "mit gebratenem Gemüse und Sauce",
           "haehnchen": 8.5,
           "rind": 9,
@@ -136,13 +136,13 @@
         },
         {
           "num": "7",
-          "name": "Döner-Bowl Box klein",
+          "name": "Atas-Bowl Box klein",
           "desc": "Fleisch nach Wahl, Pommes und Sauce",
           "preis": 7
         },
         {
           "num": "7",
-          "name": "Döner-Bowl Box groß",
+          "name": "Atas-Bowl Box groß",
           "desc": "Fleisch nach Wahl, Pommes und Sauce",
           "preis": 8
         },
@@ -153,25 +153,25 @@
           "preis": 8
         },
         {
-          "num": "10",
+          "num": "9",
           "name": "Pommestasche",
           "desc": "mit Salat und Sauce",
           "preis": 6
         },
         {
-          "num": "11",
+          "num": "10",
           "name": "Chickentasche",
-          "desc": "Doppel-Hähnchenschnitzel mit Remoulade, Cocktailsauce, Tzatziki, Chilisauce und Salat",
+          "desc": "Doppel-Hähnchenschnitzel mit Sauce und Salat",
           "preis": 7
         },
         {
-          "num": "12",
-          "name": "Salattasche mit Käse",
+          "num": "11",
+          "name": "Salattasche mit Weißkäse",
           "desc": "mit Weißkäse und Sauce",
           "preis": 6
         },
         {
-          "num": "13",
+          "num": "12",
           "name": "Falafeltasche",
           "desc": "mit Salat und Sauce",
           "preis": 7
@@ -234,7 +234,7 @@
           "num": "21",
           "name": "Hähnchenschnitzel Wrap",
           "desc": "mit Salat und Sauce",
-          "preis": 9.5
+          "preis": 9
         },
         {
           "num": "22",
@@ -257,7 +257,7 @@
       "items": [
         {
           "num": "24",
-          "name": "Dönerteller klein",
+          "name": "Atasteller klein",
           "desc": "Salat, Twister, Pommes oder Reis und Sauce nach Wahl",
           "haehnchen": 9,
           "rind": 10,
@@ -265,7 +265,7 @@
         },
         {
           "num": "25",
-          "name": "Dönerteller",
+          "name": "Atasteller",
           "desc": "Salat, Twister, Pommes oder Reis und Sauce nach Wahl",
           "haehnchen": 11,
           "rind": 12,
@@ -295,7 +295,7 @@
         },
         {
           "num": "36",
-          "name": "Lahmacun-Döner",
+          "name": "Lahmacun",
           "desc": "Hackfleischsauce, Fleisch nach Wahl, Salat mit oder ohne Käse",
           "haehnchen": 8,
           "rind": 9,
@@ -311,7 +311,7 @@
         },
         {
           "num": "38",
-          "name": "Lahmacun XXL-Döner",
+          "name": "Lahmacun XXL-Atas",
           "desc": "Hackfleischsauce mit Fleisch nach Wahl, Salat und Sauce",
           "haehnchen": 14,
           "rind": 15,
@@ -366,6 +366,12 @@
           "name": "Pide mit Hähnchenbruststreifen und Paprika",
           "desc": "",
           "preis": 10
+        },
+        {
+          "num": "52",
+          "name": "Pide Vegetarisch",
+          "desc": "",
+          "preis": 9
         }
       ]
     },
@@ -376,13 +382,13 @@
       "note": "Alle Schnitzelgerichte werden mit Beilagen, Salat und wahlweise mit Pommes, Kroketten oder Wildkartoffeln serviert.",
       "items": [
         {
-          "num": "52",
+          "num": "53",
           "name": "Champignon-Rahmschnitzel",
           "desc": "Champignon in Sahnesauce",
           "preis": 10
         },
         {
-          "num": "53",
+          "num": "54",
           "name": "Schnitzel nach Wiener Art",
           "desc": "",
           "preis": 9
@@ -531,7 +537,7 @@
         },
         {
           "num": "83",
-          "name": "Pizza Diavolo",
+          "name": "Pizza Diavola",
           "desc": "Krabben, Spinat, Knoblauch, Ei",
           "mini": 8,
           "normal": 10,
@@ -540,7 +546,7 @@
         {
           "num": "84",
           "name": "Vegetaria",
-          "desc": "mit Zwiebeln, Paprika, Peperoni, Knoblauch, Champignons",
+          "desc": "mit Zwiebeln, Paprika, Peperoni, Knoblauch, Champignons, Brokkoli",
           "mini": 8,
           "normal": 9,
           "maxi": 19
@@ -555,14 +561,6 @@
         },
         {
           "num": "86",
-          "name": "Gemüse Pizza",
-          "desc": "mit Paprika, Brokkoli, Zwiebeln, Champignons",
-          "mini": 8,
-          "normal": 9,
-          "maxi": 19
-        },
-        {
-          "num": "87",
           "name": "Scampi",
           "desc": "mit Garnelen, Knoblauch",
           "mini": 8,
@@ -570,7 +568,7 @@
           "maxi": 25
         },
         {
-          "num": "88",
+          "num": "87",
           "name": "Lachs-Spinat Pizza",
           "desc": "Lachs, Spinat, Sauce Hollandaise",
           "mini": 8,
@@ -578,7 +576,7 @@
           "maxi": 25
         },
         {
-          "num": "89",
+          "num": "88",
           "name": "Frutti di mare",
           "desc": "Meeresfrüchte, Knoblauch",
           "mini": 8,
@@ -586,7 +584,7 @@
           "maxi": 25
         },
         {
-          "num": "90",
+          "num": "89",
           "name": "Pizza Hamburger",
           "desc": "mit Käse, Hamburgerfleisch, Hamburgersauce",
           "mini": 8,
@@ -594,7 +592,7 @@
           "maxi": 20
         },
         {
-          "num": "91",
+          "num": "90",
           "name": "Diavolo",
           "desc": "mit Käse, Brokkoli, Geflügelschinken, gekochtes Ei, Spargel, Sauce Hollandaise",
           "mini": 8,
@@ -602,17 +600,25 @@
           "maxi": 20
         },
         {
-          "num": "92",
-          "name": "Döner Pizza",
+          "num": "91",
+          "name": "Gyros Pizza",
           "desc": "Fleisch nach Wahl, Weißkäse, Zwiebeln, Hollandaise",
           "mini": 8,
           "normal": 9,
           "maxi": 23
         },
         {
-          "num": "93",
-          "name": "Döner Pizza mit Salat",
+          "num": "92",
+          "name": "Gyros Pizza mit Salat",
           "desc": "Fleisch nach Wahl, Salat mit Joghurtsauce",
+          "mini": 8,
+          "normal": 9,
+          "maxi": 23
+        },
+        {
+          "num": "93",
+          "name": "Gyros Pizza mit Jalapeños",
+          "desc": "Zwiebeln, Paprika, Jalapeños",
           "mini": 8,
           "normal": 9,
           "maxi": 23
@@ -640,6 +646,14 @@
           "mini": 8,
           "normal": 10,
           "maxi": 25
+        },
+        {
+          "num": "97",
+          "name": "Pizza Sucuk mit Paprika",
+          "desc": "Sucuk (türk. Knoblauchwurst), Zwiebeln, Paprika",
+          "mini": 8,
+          "normal": 10,
+          "maxi": 25
         }
       ]
     },
@@ -650,16 +664,22 @@
       "note": "Alle Calzone gerne mit Knoblauch oder scharf! Mayo, Ketchup +0,50 · Chili, Tzatziki, Cocktail, Joghurt +1,00 €",
       "items": [
         {
-          "num": "98",
+          "num": "70",
           "name": "Salami Calzone",
-          "desc": "mit Gefl. Schinken, Champignons, Gefl. Salami",
+          "desc": "mit Geflügelschinken, Champignons, Geflügelsalami",
           "preis": 9
         },
         {
-          "num": "99",
+          "num": "71",
           "name": "Royal Calzone",
-          "desc": "mit Gefl. Salami, Zwiebeln, Paprika, Fleisch nach Wahl",
+          "desc": "mit Geflügelsalami, Zwiebeln, Paprika, Fleisch nach Wahl",
           "preis": 10
+        },
+        {
+          "num": "72",
+          "name": "Vegetarisch Calzone",
+          "desc": "Paprika, Brokkoli, Zwiebeln, Champignons, Tomaten, Spinat",
+          "preis": 9
         }
       ]
     },
@@ -719,7 +739,7 @@
         },
         {
           "num": "108",
-          "name": "Dönerpizzabrötchen",
+          "name": "Gyrospizzabrötchen",
           "desc": "",
           "preis": 9
         }
@@ -836,7 +856,7 @@
         },
         {
           "num": "127",
-          "name": "Dönerfleischsalat",
+          "name": "Atasfleischsalat",
           "desc": "Tomaten, Gurken, Eisbergsalat, Fleisch nach Wahl, Weißkäse",
           "preis": 9
         }
@@ -890,90 +910,37 @@
       "titel": "Getränke",
       "typ": "simple",
       "nummer_zeigen": false,
+      "note": "Alle Getränke sind inkl. Pfand.",
       "items": [
         {
           "num": "",
           "name": "Mineralwasser",
           "desc": "0,33 l",
-          "preis": 1
+          "preis": 1.75
         },
         {
           "num": "",
-          "name": "Coca Cola",
+          "name": "Cola, Coca-Cola Zero, Light, Fanta, Fanta Exotica, Sprite, Mezzo Mix",
           "desc": "0,33 l",
           "preis": 2
         },
         {
           "num": "",
-          "name": "Coca Cola Light",
+          "name": "Uludağ",
+          "desc": "0,33 l",
+          "preis": 2.5
+        },
+        {
+          "num": "",
+          "name": "Ayran, Cherry Ayran, Durstlöscher",
           "desc": "0,33 l",
           "preis": 2
         },
         {
           "num": "",
-          "name": "Coca Cola Life",
-          "desc": "0,33 l",
-          "preis": 2
-        },
-        {
-          "num": "",
-          "name": "Fanta",
-          "desc": "0,33 l",
-          "preis": 2
-        },
-        {
-          "num": "",
-          "name": "Sprite",
-          "desc": "0,33 l",
-          "preis": 2
-        },
-        {
-          "num": "",
-          "name": "Mezzo-Mix",
-          "desc": "0,33 l",
-          "preis": 2
-        },
-        {
-          "num": "",
-          "name": "Uludag zzgl. Pfand",
-          "desc": "0,33 l",
-          "preis": 2
-        },
-        {
-          "num": "",
-          "name": "Ayran",
-          "desc": "0,2 l",
-          "preis": 1.8
-        },
-        {
-          "num": "",
-          "name": "Durstlöscher",
-          "desc": "",
-          "preis": 1.8
-        },
-        {
-          "num": "",
-          "name": "Coca Cola Flasche zzgl. Pfand",
+          "name": "Cola, Coca-Cola Zero, Light, Fanta, Sprite, Mezzo Mix",
           "desc": "1 l",
-          "preis": 3.5
-        },
-        {
-          "num": "",
-          "name": "Coca Cola Light Flasche zzgl. Pfand",
-          "desc": "1 l",
-          "preis": 3.5
-        },
-        {
-          "num": "",
-          "name": "Fanta Flasche zzgl. Pfand",
-          "desc": "1 l",
-          "preis": 3.5
-        },
-        {
-          "num": "",
-          "name": "Sprite Flasche zzgl. Pfand",
-          "desc": "1 l",
-          "preis": 3.5
+          "preis": 4
         }
       ]
     }
