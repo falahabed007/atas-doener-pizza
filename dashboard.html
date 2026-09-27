@@ -750,12 +750,56 @@ function closeSaladPopup(){document.getElementById('saladPopup').style.display='
 
 // ── Quick-Popup ──
 let quickIstGetraenke=false, quickGetraenkeSorte=null;
+let quickIstMittag=false, quickMittagFleisch=null, quickMittagGetraenk=null;
+const MITTAG_GETRAENK_SORTEN=['Cola','Coca-Cola Zero','Light','Fanta','Fanta Exotica','Sprite','Mezzo Mix'];
+
+// Mittagsmenue: Mo-Fr, 11:30-14:30 Uhr - gilt auch fuer die Kasse (siehe
+// steakVerfuegbar oben, gleiche Begruendung).
+function mittagVerfuegbar(){
+  const jetzt=new Date(), tag=jetzt.getDay();
+  if (tag<1||tag>5) return false;
+  const min=jetzt.getHours()*60+jetzt.getMinutes();
+  return min>=11*60+30 && min<=14*60+30;
+}
+
 function openQuickAdd(el){
+  const name=el.querySelector('h3').innerText;
+  if (/^Menü \d/.test(name)) {
+    if (!mittagVerfuegbar()) { alert('Mittagsmenü nur Mo–Fr von 11:30 bis 14:30 Uhr.'); return; }
+    openMittagsMenu(el, name);
+    return;
+  }
   quickIstGetraenke=false;
-  document.getElementById('quickName').innerText=el.querySelector('h3').innerText;
+  quickIstMittag=false;
+  document.getElementById('quickName').innerText=name;
   document.getElementById('quickDesc').innerText=(el.querySelector('p')||{}).innerText||'';
   document.getElementById('quickOptions').innerHTML='';
   document.getElementById('quickPriceDisplay').innerText=el.querySelector('.price').innerText;
+  document.getElementById('quickPopup').style.display='flex';
+}
+
+// Fleischwahl ohne Preisunterschied (kein Steak im Mittagsmenue, Betreiber-
+// Entscheidung 27.09.2026) plus - ausser bei Menue 1, das kein Getraenk
+// enthaelt - eine Pflicht-Getraenkewahl. Menue 4: "Haehnchen oder Kalb" wie
+// gedruckt, nicht die normale Atas-Teller-Auswahl.
+function openMittagsMenu(el, name){
+  quickIstMittag=true; quickIstGetraenke=false;
+  quickMittagFleisch=null; quickMittagGetraenk=null;
+  document.getElementById('quickName').innerText=name;
+  document.getElementById('quickDesc').innerText=(el.querySelector('p')||{}).innerText||'';
+  document.getElementById('quickPriceDisplay').innerText=el.querySelector('.price').innerText;
+
+  const istMenue4=/^Menü 4/.test(name);
+  const istMenue1=/^Menü 1/.test(name);
+  const fleischOpts=istMenue4?['Hähnchen','Kalb']:['Hähnchen','Rind'];
+  let html='<div style="font-weight:700;margin:6px 0 4px;">Fleisch wählen *</div>'
+    + fleischOpts.map(f=>`<label style="display:flex;align-items:center;gap:8px;padding:6px 0;cursor:pointer;"><input type="radio" name="mittagFleisch" value="${f}" onchange="quickMittagFleisch=this.value"><span>${f}</span></label>`).join('');
+  if (!istMenue1) {
+    html += '<div style="font-weight:700;margin:10px 0 4px;">Getränk wählen *</div>'
+      + MITTAG_GETRAENK_SORTEN.map(s=>`<label style="display:flex;align-items:center;gap:8px;padding:6px 0;cursor:pointer;"><input type="radio" name="mittagGetraenk" value="${s}" onchange="quickMittagGetraenk=this.value"><span>${s}</span></label>`).join('');
+  }
+  html += '<div id="mittagErr" style="display:none;color:var(--atas-rot);font-size:.8rem;font-weight:600;margin:6px 0;">Bitte alles auswählen</div>';
+  document.getElementById('quickOptions').innerHTML=html;
   document.getElementById('quickPopup').style.display='flex';
 }
 
@@ -1171,10 +1215,10 @@ const ITEM_DESC = {
 // KARTE:START – erzeugt aus Menue/menu.json von karte-einsetzen.js, nicht von Hand aendern
 const POS_MENU = {
   mittagsangebote: [
-    {num:'',name:'Menü 1: Döner-Tasche',price:6.00},
-    {num:'',name:'Menü 2: Döner-Tasche',price:8.50},
+    {num:'',name:'Menü 1: Atas-Tasche',price:6.00},
+    {num:'',name:'Menü 2: Atas-Tasche',price:8.50},
     {num:'',name:'Menü 3: Dürüm (Wrap)',price:10.00},
-    {num:'',name:'Menü 4: Döner-Teller Hähnchen oder Kalb',price:11.00},
+    {num:'',name:'Menü 4: Atas-Teller',price:11.00},
   ],
   kids: [
     {num:'',name:'Kids-Box 1',price:7.00},
@@ -2122,6 +2166,14 @@ function speiseInWarenkorb() {
       activeId='quickPopup';
       name=quickGetraenkeSorte;
       preis=parseFloat($('quickPriceDisplay').innerText.replace(/[€\s]/g,'').replace(',','.'));
+    } else if (quickIstMittag) {
+      const istMenue1=/^Menü 1/.test($('quickName').innerText);
+      if (!quickMittagFleisch || (!istMenue1 && !quickMittagGetraenk)) { $('mittagErr').style.display='block'; return; }
+      activeId='quickPopup';
+      name=$('quickName').innerText;
+      preis=parseFloat($('quickPriceDisplay').innerText.replace(/[€\s]/g,'').replace(',','.'));
+      extras.push(quickMittagFleisch);
+      if (quickMittagGetraenk) extras.push(quickMittagGetraenk);
     } else {
       activeId='quickPopup';
       name=$('quickName').innerText;

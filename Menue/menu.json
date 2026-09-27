@@ -24,13 +24,13 @@
       "items": [
         {
           "num": "",
-          "name": "Menü 1: Döner-Tasche",
+          "name": "Menü 1: Atas-Tasche",
           "desc": "",
           "preis": 6
         },
         {
           "num": "",
-          "name": "Menü 2: Döner-Tasche",
+          "name": "Menü 2: Atas-Tasche",
           "desc": "mit 0,33 l Getränk",
           "preis": 8.5
         },
@@ -42,7 +42,7 @@
         },
         {
           "num": "",
-          "name": "Menü 4: Döner-Teller Hähnchen oder Kalb",
+          "name": "Menü 4: Atas-Teller",
           "desc": "mit 0,33 l Getränk",
           "preis": 11
         }
@@ -63,7 +63,7 @@
         {
           "num": "",
           "name": "Kids-Box 2",
-          "desc": "4 Stk. Chicken Nuggets mit Hähnchen oder Rind, Pommes und 1 Capri-Sonne, Überraschungsgeschenk",
+          "desc": "Hähnchen oder Rind, Pommes und 1 Capri-Sonne, Überraschungsgeschenk",
           "preis": 7
         },
         {

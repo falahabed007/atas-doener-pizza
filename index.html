@@ -1169,11 +1169,11 @@
     <h2 class="category-title" id="mittagsangebote">Mittags Menü</h2>
     <p class="category-note">Von Mo bis Fr, 11:30 bis 14:30 Uhr.</p>
     <div class="product-item" onclick="openQuickAdd(this)" style="cursor: pointer;">
-        <div class="product-info"><h3>Menü 1: Döner-Tasche</h3></div>
+        <div class="product-info"><h3>Menü 1: Atas-Tasche</h3></div>
         <div class="price">6,00 €</div>
     </div>
     <div class="product-item" onclick="openQuickAdd(this)" style="cursor: pointer;">
-        <div class="product-info"><h3>Menü 2: Döner-Tasche</h3><p>mit 0,33 l Getränk</p></div>
+        <div class="product-info"><h3>Menü 2: Atas-Tasche</h3><p>mit 0,33 l Getränk</p></div>
         <div class="price">8,50 €</div>
     </div>
     <div class="product-item" onclick="openQuickAdd(this)" style="cursor: pointer;">
@@ -1181,7 +1181,7 @@
         <div class="price">10,00 €</div>
     </div>
     <div class="product-item" onclick="openQuickAdd(this)" style="cursor: pointer;">
-        <div class="product-info"><h3>Menü 4: Döner-Teller Hähnchen oder Kalb</h3><p>mit 0,33 l Getränk</p></div>
+        <div class="product-info"><h3>Menü 4: Atas-Teller</h3><p>mit 0,33 l Getränk</p></div>
         <div class="price">11,00 €</div>
     </div>
     <h2 class="category-title" id="kids">Kids-Menüs</h2>
@@ -1190,7 +1190,7 @@
         <div class="price">7,00 €</div>
     </div>
     <div class="product-item" onclick="openQuickAdd(this)" style="cursor: pointer;">
-        <div class="product-info"><h3>Kids-Box 2</h3><p>4 Stk. Chicken Nuggets mit Hähnchen oder Rind, Pommes und 1 Capri-Sonne, Überraschungsgeschenk</p></div>
+        <div class="product-info"><h3>Kids-Box 2</h3><p>Hähnchen oder Rind, Pommes und 1 Capri-Sonne, Überraschungsgeschenk</p></div>
         <div class="price">7,00 €</div>
     </div>
     <div class="product-item" onclick="openQuickAdd(this)" style="cursor: pointer;">
@@ -3706,18 +3706,60 @@ const G_SOSSE = { typ: 'checkbox', titel: 'Soße auswählen',
   optionen: [{ label: 'Cocktailsauce' }, { label: 'Tzatziki' }, { label: 'Chili Sauce' },
              { label: 'Joghurtsauce' }, { label: 'ohne Soße' }] };
 
-const G_WEGLASSEN = { typ: 'checkbox', titel: 'Zutaten weglassen (optional)',
-  hinweis: 'Ankreuzen, was du NICHT möchtest',
-  optionen: [{ label: 'ohne Zwiebeln' }, { label: 'ohne Tomaten' },
-             { label: 'ohne Gurken' }, { label: 'ohne Salat' }] };
+// "Zutaten weglassen" wird je Gericht aus dessen eigener Beschreibung
+// abgeleitet statt pauschal je Kategorie vergeben - sonst bietet z. B. die
+// Atas-Tasche mit gebratenem Gemüse (kein Salat drin) trotzdem "ohne Salat"
+// an, und der Taxi-Teller (nur Fleisch, kein Salat) genauso. Rotkohl gehoert
+// laut Betreiber (27.09.2026) mit in die Doener-Salatmischung.
+function weglassenGruppeFuer(desc) {
+  var text = (desc || '').toLowerCase();
+  var optionen = [];
+  if (/\bsalat\b/.test(text)) {
+    optionen.push({ label: 'ohne Zwiebeln' }, { label: 'ohne Tomaten' },
+                  { label: 'ohne Gurken' }, { label: 'ohne Rotkohl' },
+                  { label: 'ohne Salat' });
+  }
+  if (/twister/.test(text)) optionen.push({ label: 'ohne Twister' });
+  if (/pommes/.test(text)) optionen.push({ label: 'ohne Pommes' });
+  if (/mit oder ohne käse/.test(text)) optionen.push({ label: 'ohne Käse' });
+  if (!optionen.length) return null;
+  return { typ: 'checkbox', titel: 'Zutaten weglassen (optional)',
+    hinweis: 'Ankreuzen, was du NICHT möchtest', optionen: optionen };
+}
+
+// Die 0,33-l-Sorten aus Menue/menu.json (Getraenke-Kategorie), hier separat
+// gepflegt, weil die Mittagsmenues keinen eigenen Kartenpreis fuer das
+// Getraenk haben und daher nicht durch den Getraenke-Popup laufen.
+const MITTAG_GETRAENK_SORTEN = ['Cola', 'Coca-Cola Zero', 'Light', 'Fanta', 'Fanta Exotica', 'Sprite', 'Mezzo Mix'];
+
+// Mittagsmenues: eigene, einfache Fleischwahl ohne Preisunterschied (kein
+// Steak im Mittagsmenue, Betreiber-Entscheidung 27.09.2026) plus - ausser
+// bei Menue 1, das kein Getraenk enthaelt - eine Pflicht-Getraenkewahl.
+// Menue 4 nennt "Haehnchen oder Kalb" statt Haehnchen/Rind, genau wie
+// gedruckt (keine Rind/Steak-Wahl wie beim regulaeren Atas-Teller).
+function mittagGruppenFuer(name) {
+  if (!/^Menü \d/.test(name)) return null;
+  var istMenue4 = /^Menü 4/.test(name);
+  var istMenue1 = /^Menü 1/.test(name);
+  var gruppen = [
+    { typ: 'radio', titel: 'Fleisch auswählen', pflicht: true,
+      optionen: istMenue4 ? [{ label: 'Hähnchen' }, { label: 'Kalb' }]
+                          : [{ label: 'Hähnchen' }, { label: 'Rind' }] }
+  ];
+  if (!istMenue1) {
+    gruppen.push({ typ: 'radio', titel: 'Getränk auswählen', pflicht: true,
+      optionen: MITTAG_GETRAENK_SORTEN.map(function (s) { return { label: s }; }) });
+  }
+  return gruppen;
+}
 
 /* ── Wer bekommt was ─────────────────────────────────────────────────── */
 
 const AUSWAHL_JE_KATEGORIE = {
-  taschen:  [G_SOSSE, G_WEGLASSEN],
-  dueruem:  [G_SOSSE, G_WEGLASSEN],
-  teller:   [G_BEILAGE, G_SOSSE, G_WEGLASSEN],
-  lahmacun: [G_SOSSE, G_WEGLASSEN],
+  taschen:  [G_SOSSE],
+  dueruem:  [G_SOSSE],
+  teller:   [G_BEILAGE, G_SOSSE],
+  lahmacun: [G_SOSSE],
 };
 
 // Die Fleischfrage haengt nicht an einer Pflegeliste, sondern daran, ob das
@@ -3752,6 +3794,10 @@ function kategorieVon(el) {
 }
 
 function gruppenFuer(el) {
+  var h3vorab = el.querySelector('h3');
+  var mittag = mittagGruppenFuer(h3vorab ? h3vorab.textContent : '');
+  if (mittag) return mittag; // Mittagsmenue hat eigene Regeln, keine Kategorie-Basis
+
   var basis = AUSWAHL_JE_KATEGORIE[kategorieVon(el)];
   if (!basis) return [];
 
@@ -3763,6 +3809,8 @@ function gruppenFuer(el) {
   var gruppen = basis.filter(function (g) {
     return g !== G_BEILAGE || BEILAGE_WAHL.test(desc);
   });
+  var weg = weglassenGruppeFuer(desc);
+  if (weg) gruppen = gruppen.concat([weg]);
   if (DREHSPIESS.test(name + ' ' + desc) || FLEISCH_TROTZDEM.test(name)) {
     gruppen = [G_FLEISCH].concat(gruppen);
   }
@@ -3818,6 +3866,11 @@ function openQuickAdd(element) {
     // Gruppen, weil die Wahl den Namen ERSETZT statt ihn zu ergaenzen.
     if (kategorieVon(element) === 'getraenke' && rawName.indexOf(',') !== -1) {
         openGetraenkeWahl(element, rawName);
+        return;
+    }
+
+    if (/^Menü \d/.test(rawName) && !mittagVerfuegbar()) {
+        zeigeHinweisToast('Mittagsmenü nur Mo–Fr von 11:30 bis 14:30 Uhr bestellbar.');
         return;
     }
     quickIstGetraenke = false;
@@ -3987,6 +4040,29 @@ function steakVerfuegbar() {
   var jetzt = new Date();
   var tag = jetzt.getDay(); // 0=So, 5=Fr, 6=Sa
   return (tag === 5 || tag === 6) && jetzt.getHours() >= 12;
+}
+
+// Mittagsmenue: Mo-Fr, 11:30-14:30 Uhr - lokale Geraetezeit, wie steakVerfuegbar.
+function mittagVerfuegbar() {
+  var jetzt = new Date();
+  var tag = jetzt.getDay(); // 1=Mo ... 5=Fr
+  if (tag < 1 || tag > 5) return false;
+  var minuten = jetzt.getHours() * 60 + jetzt.getMinutes();
+  return minuten >= 11 * 60 + 30 && minuten <= 14 * 60 + 30;
+}
+
+function zeigeHinweisToast(text) {
+  var alt = document.getElementById('atas-hinweis-toast');
+  if (alt) { clearTimeout(alt._timer); alt.remove(); }
+  var t = document.createElement('div');
+  t.id = 'atas-hinweis-toast';
+  t.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);'
+    + 'background:var(--atas-flaeche);color:var(--atas-schrift);padding:12px 22px;'
+    + 'border-radius:10px;font-size:14px;font-weight:600;z-index:9999999;'
+    + 'box-shadow:0 4px 18px rgba(0,0,0,.4);text-align:center;max-width:90vw;';
+  t.textContent = text;
+  document.body.appendChild(t);
+  t._timer = setTimeout(function () { t.remove(); }, 3200);
 }
 
 function openFleischwahl(element) {
