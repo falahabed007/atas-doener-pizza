@@ -13,4 +13,4 @@
 //
 // Diese Datei muss in <head> vor allen anderen Skripten geladen werden.
 
-window.FLUEVATE_BACKEND = 'https://atas-doener-pizza.onrender.com';
+window.FLUEVATE_BACKEND = 'https://api.atas-doener-pizza.com';
