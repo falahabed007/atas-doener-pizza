@@ -2305,9 +2305,11 @@ app.get('/api/admin/history', auth, async (req, res) => {
     const svcFees = sum(o => o.serviceFee);
 
     const byPayment = {};
+    const byPaymentRevenue = {};
     valid.forEach(o => {
       const k = o.payment || 'unbekannt';
       byPayment[k] = (byPayment[k] || 0) + 1;
+      byPaymentRevenue[k] = r2((byPaymentRevenue[k] || 0) + (o.total || 0));
     });
 
     const days = {};
@@ -2328,7 +2330,8 @@ app.get('/api/admin/history', auth, async (req, res) => {
         auszahlung:   r2(brutto - svcFees),
         cancelled:    all.length - valid.length,
         unpaid:       valid.filter(o => o.paymentStatus !== 'paid').length,
-        byPayment
+        byPayment,
+        byPaymentRevenue
       },
       byDay: Object.values(days)
         .sort((a, b) => a.date.localeCompare(b.date))
