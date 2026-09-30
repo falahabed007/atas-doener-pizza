@@ -19,8 +19,9 @@
       "titel": "Mittags Menü",
       "typ": "simple",
       "nur_mittags": true,
+      "nur_abholung": true,
       "nummer_zeigen": false,
-      "note": "Von Mo bis Fr, 11:30 bis 14:30 Uhr.",
+      "note": "Von Mo bis Fr, 11:30 bis 14:30 Uhr. Nur zur Abholung, keine Lieferung.",
       "items": [
         {
           "num": "",

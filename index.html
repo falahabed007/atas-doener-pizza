@@ -14,10 +14,10 @@
     <style>
     /* FARBEN:START – erzeugt aus palette in stammdaten.json, nicht von Hand aendern */
     :root {
-      --atas-grund: #16130f; --atas-flaeche: #211d17; --atas-flaeche-2: #2c2720; --atas-rahmen: #3a342b;
-      --atas-schrift: #f3ece0; --atas-schrift-leise: #a99d8a;
-      --atas-akzent: #e8a020; --atas-akzent-2: #e2661a; --atas-auf-akzent: #17130d;
-      --atas-rot: #ef7a7a; --atas-gruen: #5cb85c;
+      --atas-grund: #e6d6b8; --atas-flaeche: #f1e5c9; --atas-flaeche-2: #dcc9a0; --atas-rahmen: #b99a68;
+      --atas-schrift: #2a1210; --atas-schrift-leise: #6b5644;
+      --atas-akzent: #6d1220; --atas-akzent-2: #8a1b28; --atas-auf-akzent: #f3ece0;
+      --atas-rot: #a5333a; --atas-gruen: #2e6b34;
       /* Namen aus der Vorlage, damit vorhandenes var(...) weiter traegt */
       --atas-blue: var(--atas-akzent); --atas-gold: var(--atas-akzent);
       --atas-red: var(--atas-rot);
@@ -932,8 +932,8 @@
                     style="width:100%; padding:10px; border:1px solid var(--atas-rahmen); border-radius:8px; background:var(--atas-grund); font-size:13px; cursor:pointer;">
                     <option value="beckum">Beckum (MBW: 20,00€ | +2,00€ Gebühr)</option>
                     <option value="roland">Roland (MBW: 20,00€ | +2,00€ Gebühr)</option>
-                    <option value="neubeckum">Neubeckum (MBW: 30,00€ | +2,00€ Gebühr)</option>
-                    <option value="vellern">Vellern (MBW: 30,00€ | +2,00€ Gebühr)</option>
+                    <option value="neubeckum">Neubeckum (MBW: 30,00€ | +3,00€ Gebühr)</option>
+                    <option value="vellern">Vellern (MBW: 30,00€ | +3,00€ Gebühr)</option>
                 </select>
             </div>
 
@@ -1007,7 +1007,7 @@
                 <div class="info-icon-box"><i class="fas fa-motorcycle"></i></div>
                 <div class="info-content">
                     <h3>vorbestellen / liefern lassen</h3>
-                    <p>Beckum &amp; Roland ab 20&nbsp;€ · Neubeckum &amp; Vellern ab 30&nbsp;€ · Fahrtkostenpauschale 2,00&nbsp;€</p>
+                    <p>Beckum &amp; Roland ab 20&nbsp;€, Fahrtkostenpauschale 2,00&nbsp;€ · Neubeckum &amp; Vellern ab 30&nbsp;€, Fahrtkostenpauschale 3,00&nbsp;€</p>
                 </div>
             </div>
             
@@ -1167,7 +1167,7 @@
 </style>
     <!-- KARTE:START – erzeugt aus Menue/menu.json von karte-einsetzen.js, nicht von Hand aendern -->
     <h2 class="category-title" id="mittagsangebote">Mittags Menü</h2>
-    <p class="category-note">Von Mo bis Fr, 11:30 bis 14:30 Uhr.</p>
+    <p class="category-note">Von Mo bis Fr, 11:30 bis 14:30 Uhr. Nur zur Abholung, keine Lieferung.</p>
     <div class="product-item" onclick="openQuickAdd(this)" style="cursor: pointer;">
         <div class="product-info"><h3>Menü 1: Atas-Tasche</h3></div>
         <div class="price">6,00 €</div>
@@ -1957,10 +1957,39 @@ let LIEFERFENSTER = { offen: true, ab: null, grund: null };
 
 function lieferungGesperrt() { return !LIEFERFENSTER.offen; }
 
+// ── Mittagsangebote: nur Abholung ─────────────────────────────────
+// Namen kommen aus dem Markup selbst (Kategorie "mittagsangebote"), nicht aus
+// einer zweiten, von Hand gepflegten Liste - waechst die Karte, waechst diese
+// Menge automatisch mit. Server.js prueft dieselbe Regel unabhaengig nach
+// (Menue/menu.json, Kategorien mit nur_abholung:true) - die Sperre hier allein
+// genuegt nicht, siehe Begruendung dort.
+const MITTAGSANGEBOTE_NAMEN = (() => {
+    const namen = new Set();
+    let el = document.getElementById('mittagsangebote');
+    el = el ? el.nextElementSibling : null;
+    while (el && !el.classList.contains('category-title')) {
+        if (el.classList.contains('product-item')) {
+            const h3 = el.querySelector('h3');
+            if (h3) namen.add(h3.innerText.trim());
+        }
+        el = el.nextElementSibling;
+    }
+    return namen;
+})();
+
+function warenkorbHatMittagsangebot() {
+    return (typeof warenkorb !== 'undefined' ? warenkorb : []).some(i => MITTAGSANGEBOTE_NAMEN.has(i.name));
+}
+
 // Beide Umschalter melden hierher. Gibt true zurueck, wenn die Auswahl
 // erlaubt ist, und schiebt sonst auf Abholung.
 function lieferwahlErlaubt(option) {
-    if (option !== 'delivery' || !lieferungGesperrt()) return true;
+    if (option !== 'delivery') return true;
+    if (warenkorbHatMittagsangebot()) {
+        alert('Mittagsangebote gibt es nur zur Abholung. Bitte die Mittagsangebote aus dem Warenkorb entfernen, um auf Lieferung umzustellen.');
+        return false;
+    }
+    if (!lieferungGesperrt()) return true;
     // Muss zu den Texten in server.js passen. "noch nicht" und "nicht mehr"
     // sind zwei verschiedene Absagen; am Ruhetag ist auch keine Abholung
     // moeglich, dort darf nicht stehen, der Gast koenne vorbeikommen.
@@ -2177,6 +2206,11 @@ function speiseInWarenkorb() {
         });
     }
 
+    if (activePopupId !== "" && currentSelection === 'delivery' && MITTAGSANGEBOTE_NAMEN.has(name)) {
+        alert('"' + name + '" gibt es nur zur Abholung. Bitte auf Abholung umstellen, um dieses Mittagsangebot zu bestellen.');
+        return;
+    }
+
     if (activePopupId !== "") {
         const itemNote = (document.getElementById('note-' + activePopupId)?.value || '').trim();
         const extrasKey = extraDetails.map(e=>e.name).join(',');
@@ -2354,8 +2388,8 @@ function toggleMobileMenu() {
             <select id="c-stadt" onchange="updateSummary()" style="width:100%; padding:12px; margin-bottom:20px; border:1px solid var(--atas-rahmen); border-radius:8px; background:var(--atas-flaeche); color:var(--atas-schrift); cursor:pointer;">
                 <option value="beckum">Beckum (MBW: 20,00€ | Gebühr: 2,00€)</option>
                 <option value="roland">Roland (MBW: 20,00€ | Gebühr: 2,00€)</option>
-                <option value="neubeckum">Neubeckum (MBW: 30,00€ | Gebühr: 2,00€)</option>
-                <option value="vellern">Vellern (MBW: 30,00€ | Gebühr: 2,00€)</option>
+                <option value="neubeckum">Neubeckum (MBW: 30,00€ | Gebühr: 3,00€)</option>
+                <option value="vellern">Vellern (MBW: 30,00€ | Gebühr: 3,00€)</option>
             </select>
         </div>
         
@@ -2552,8 +2586,8 @@ function showCouponMsg(text, success) {
 const AREA_CONFIG = {
     "beckum":    { min: 20.00, fee: 2.00, label: "Beckum" },
     "roland":    { min: 20.00, fee: 2.00, label: "Roland" },
-    "neubeckum": { min: 30.00, fee: 2.00, label: "Neubeckum" },
-    "vellern":   { min: 30.00, fee: 2.00, label: "Vellern" }
+    "neubeckum": { min: 30.00, fee: 3.00, label: "Neubeckum" },
+    "vellern":   { min: 30.00, fee: 3.00, label: "Vellern" }
 };
 const SERVICE_FEE = 0.99;
 
@@ -4793,7 +4827,7 @@ LEGAL.impressum = {
        + "<h3 style='color:var(--atas-akzent);margin:20px 0 10px'>Lieferzeiten</h3>"
        + "<p style='font-size:.84rem'>Montag bis Freitag ab 12:00&nbsp;Uhr &middot; Samstag, Sonntag und Feiertage ab 13:00&nbsp;Uhr.<br>"
        + "Abholung ist ab &Ouml;ffnung m&ouml;glich.</p>"
-       + "<p style='margin-top:20px;font-size:.84rem'>Liefergebiet: Beckum, Roland, Neubeckum und Vellern &middot; Fahrtkostenpauschale 2,00&nbsp;&euro;</p>"
+       + "<p style='margin-top:20px;font-size:.84rem'>Liefergebiet: Beckum, Roland (Fahrtkostenpauschale 2,00&nbsp;&euro;), Neubeckum und Vellern (Fahrtkostenpauschale 3,00&nbsp;&euro;)</p>"
        + "<h3 style='color:var(--atas-akzent);margin:20px 0 8px'>Verbraucherstreitbeilegung</h3>"
        + "<p>Die Europ&auml;ische Plattform zur Online-Streitbeilegung (OS-Plattform) wurde von der EU-Kommission "
        + "zum 20.&nbsp;Juli&nbsp;2025 eingestellt; eine Verlinkung ist daher nicht mehr m&ouml;glich.</p>"
@@ -4856,7 +4890,7 @@ LEGAL.agb = {
        + "<li>Neubeckum: Mindestbestellwert 30,00&nbsp;&euro;</li>"
        + "<li>Vellern: Mindestbestellwert 30,00&nbsp;&euro;</li>"
        + "</ul>"
-       + "<p>In allen Liefergebieten wird eine Fahrtkostenpauschale von 2,00&nbsp;&euro; je Lieferung berechnet.</p>"
+       + "<p>Fahrtkostenpauschale je Lieferung: Beckum und Roland 2,00&nbsp;&euro;, Neubeckum und Vellern 3,00&nbsp;&euro;.</p>"
        + "<p>Wir liefern Montag bis Freitag ab 12:00&nbsp;Uhr, samstags, sonntags und an Feiertagen ab 13:00&nbsp;Uhr. Abholung ist ab &Ouml;ffnung m&ouml;glich. Dienstag ist Ruhetag.</p>"
        + "<p>Lieferzeiten sind Sch&auml;tzwerte und nicht verbindlich.</p>"
        + "<h4 style='color:var(--atas-akzent);margin:14px 0 6px;font-size:.92rem'>&sect;&nbsp;5 Widerrufsrecht</h4>"

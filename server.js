@@ -495,14 +495,14 @@ app.get('/api/health', (req, res) => {
 app.get('/api/config', (req, res) => res.json({
   whatsapp: process.env.WHATSAPP_NUMBER || '',
   serviceFee: 0.99,
-  // Vier Zonen, eine gemeinsame Fahrtkostenpauschale von 2,00 € - so steht es
-  // auf der gedruckten Karte. Die Vorlage staffelte die Gebuehr je Ort; hier
-  // ist sie ueberall gleich und nur der Mindestbestellwert unterscheidet sich.
+  // Karte vom 30.09.2026: Beckum/Roland 2,00 €, Neubeckum/Vellern 3,00 €.
+  // Bis dahin war die Gebuehr bewusst ueberall gleich (2,00 €) - die neue
+  // Karte staffelt sie wieder wie urspruenglich in der Vorlage.
   deliveryCities: {
     'Beckum':    { min: 20.00, fee: 2.00 },
     'Roland':    { min: 20.00, fee: 2.00 },
-    'Neubeckum': { min: 30.00, fee: 2.00 },
-    'Vellern':   { min: 30.00, fee: 2.00 },
+    'Neubeckum': { min: 30.00, fee: 3.00 },
+    'Vellern':   { min: 30.00, fee: 3.00 },
   }
 }));
 
@@ -565,6 +565,25 @@ const RABATT_CODE        = 'ATAS-KEIN-RABATT';   // Platzhalter, solange RABATT_
 const RABATT_PROZENT     = 0.10;
 const RABATT_MINDESTWERT = 20.00;
 
+// ── Mittagsangebote: nur Abholung, keine Lieferung ───────────────
+// Die Karte kennt Kategorien mit nur_abholung:true (Stand 30.09.2026: nur das
+// Mittags Menü). Namen kommen aus Menue/menu.json, derselben Quelle wie die
+// Karte selbst - keine zweite, von Hand gepflegte Liste, die mit der Zeit
+// auseinanderlaeuft.
+const NUR_ABHOLUNG_NAMEN = (() => {
+  try {
+    const menu = JSON.parse(fs.readFileSync(path.join(__dirname, 'Menue', 'menu.json'), 'utf8'));
+    const namen = new Set();
+    for (const kat of menu.kategorien || []) {
+      if (kat.nur_abholung) for (const item of kat.items || []) namen.add(item.name);
+    }
+    return namen;
+  } catch (e) {
+    console.error('⚠️  Menue/menu.json konnte nicht gelesen werden, nur_abholung-Sperre ist inaktiv:', e.message);
+    return new Set();
+  }
+})();
+
 function berechneRabatt({ coupon, mode, items, subtotal }) {
   if (!RABATT_AKTIV) return 0;
   if (!coupon || String(coupon).toUpperCase() !== RABATT_CODE) return 0;
@@ -608,6 +627,17 @@ app.post('/api/orders', async (req, res) => {
           unbekannt:  'Die Lieferzeiten lassen sich gerade nicht pruefen. Bitte ruf uns kurz an.',
         };
         return res.status(409).json({ message: texte[lf.grund] || texte.unbekannt, lieferAb: lf.ab });
+      }
+    }
+
+    // Mittagsangebote nur zur Abholung - dieselbe Begruendung wie beim
+    // Lieferfenster oben: die Sperre im Frontend allein genuegt nicht.
+    if (!isPOS && req.body.mode === 'lieferung' && Array.isArray(req.body.items)) {
+      const gesperrt = req.body.items.filter(i => NUR_ABHOLUNG_NAMEN.has(i.name));
+      if (gesperrt.length > 0) {
+        return res.status(409).json({
+          message: `Diese Mittagsangebote gibt es nur zur Abholung, nicht zur Lieferung: ${gesperrt.map(i => i.name).join(', ')}. Bitte auf Abholung umstellen oder die Position aus dem Warenkorb entfernen.`
+        });
       }
     }
 
@@ -665,6 +695,18 @@ app.get('/api/orders/status/:token', async (req, res) => {
 app.post('/api/create-stripe-checkout', async (req, res) => {
   try {
     const { items, subtotal, deliveryFee, serviceFee, customer, mode, note } = req.body;
+
+    // Mittagsangebote nur zur Abholung - dieser Endpunkt legt eine eigene
+    // Bestellung an und umgeht sonst die Pruefung aus POST /api/orders.
+    if (mode === 'lieferung' && Array.isArray(items)) {
+      const gesperrt = items.filter(i => NUR_ABHOLUNG_NAMEN.has(i.name));
+      if (gesperrt.length > 0) {
+        return res.status(409).json({
+          message: `Diese Mittagsangebote gibt es nur zur Abholung, nicht zur Lieferung: ${gesperrt.map(i => i.name).join(', ')}. Bitte auf Abholung umstellen oder die Position aus dem Warenkorb entfernen.`
+        });
+      }
+    }
+
     const orderNum = await getNextOrderNum();
 
     // Rabatt serverseitig ermitteln – der Client-Betrag wird nicht übernommen.
@@ -801,6 +843,17 @@ app.post('/api/verify-payment', async (req, res) => {
 app.post('/api/create-paypal-order', async (req, res) => {
   try {
     const { items, subtotal, deliveryFee, serviceFee, customer, mode, note } = req.body;
+
+    // Mittagsangebote nur zur Abholung - dieser Endpunkt legt eine eigene
+    // Bestellung an und umgeht sonst die Pruefung aus POST /api/orders.
+    if (mode === 'lieferung' && Array.isArray(items)) {
+      const gesperrt = items.filter(i => NUR_ABHOLUNG_NAMEN.has(i.name));
+      if (gesperrt.length > 0) {
+        return res.status(409).json({
+          message: `Diese Mittagsangebote gibt es nur zur Abholung, nicht zur Lieferung: ${gesperrt.map(i => i.name).join(', ')}. Bitte auf Abholung umstellen oder die Position aus dem Warenkorb entfernen.`
+        });
+      }
+    }
     const orderNum = await getNextOrderNum();
 
     // Rabatt serverseitig ermitteln – der Client-Betrag wird nicht übernommen.
