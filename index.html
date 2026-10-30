@@ -680,7 +680,8 @@
         font-family: Georgia, 'Times New Roman', serif;
         font-size: 1.45rem;
         font-weight: 900;
-        color: var(--atas-auf-akzent);
+        /* Kopfleiste ist hell (--atas-flaeche) - Creme war darauf unsichtbar. */
+        color: var(--atas-schrift);
         display: flex;
         align-items: center;
         gap: 8px;
@@ -988,9 +989,9 @@
       <div style="font-size:64px; line-height:1; font-weight:900; letter-spacing:6px;
                   color:var(--atas-akzent-2); font-family:'Bebas Neue',Impact,'Arial Narrow',sans-serif;">ATAS</div>
       <div style="font-size:24px; line-height:1.3; margin-top:4px; font-weight:700;
-                  letter-spacing:1px; color:var(--atas-schrift);">Döner &amp; Pizza</div>
+                  letter-spacing:1px; color:var(--atas-auf-akzent);">Döner &amp; Pizza</div>
     </div>
-    <p style="margin: 4px 0 0 0; font-size: 15px; opacity: 0.92; text-shadow: 1px 1px 4px rgba(0,0,0,0.9), 0 0 8px rgba(0,0,0,0.7);">Nordstr. 45a, 59269 Beckum</p>
+    <p style="margin: 4px 0 0 0; font-size: 15px; opacity: 0.92; color: var(--atas-auf-akzent); text-shadow: 1px 1px 4px rgba(0,0,0,0.9), 0 0 8px rgba(0,0,0,0.7);">Nordstr. 45a, 59269 Beckum</p>
 </div>
         
         
@@ -1001,14 +1002,28 @@
          (Sa) und ob Lieferung oder Abholung ausgeschaltet ist. Befuellt von
          zeigeHinweise(), beim Laden und nach jedem /api/status-Abgleich. -->
     <style>
-      #atasHinweise { display:none; background:var(--atas-akzent); color:var(--atas-auf-akzent); }
-      #atasHinweise .hinweis-zeile { padding:10px 16px; text-align:center; font-weight:700; font-size:15px; line-height:1.35; }
-      #atasHinweise .hinweis-zeile + .hinweis-zeile { border-top:1px solid rgba(243,236,224,.25); }
-      #atasHinweise .hinweis-zeile.warnung { background:var(--atas-rot); }
-      #atasHinweise a { color:inherit; text-decoration:underline; }
+      /* Aufbau wie Amouras Aktions-Banner, in den ATAS-Farben */
+      #atasHinweise { display:none; }
+      #atasHinweise .hinweis-zeile { display:block; text-decoration:none; color:#fff; text-align:center;
+        padding:18px 20px; border-bottom:3px solid var(--atas-akzent);
+        background:linear-gradient(135deg, var(--atas-akzent) 0%, var(--atas-akzent-2) 60%, var(--atas-rot) 100%); }
+      #atasHinweise .hinweis-zeile.warnung { background:linear-gradient(135deg, #8b1d1d 0%, #b8322f 100%); }
+      #atasHinweise .hz-kicker { font-size:11px; letter-spacing:2px; text-transform:uppercase; opacity:.85; margin-bottom:6px; }
+      #atasHinweise .hz-titel { font-size:20px; font-weight:900; line-height:1.3; }
+      #atasHinweise .hz-plakette { background:#fff; color:var(--atas-akzent); border-radius:6px; padding:2px 10px; margin-left:4px; white-space:nowrap; }
+      #atasHinweise .hz-text { font-size:13px; margin-top:7px; opacity:.9; }
+      #atasEcke { position:fixed; right:15px; top:60px; z-index:9999; display:none; text-decoration:none;
+        background:linear-gradient(135deg, var(--atas-akzent), var(--atas-rot)); color:#fff; padding:11px 15px;
+        border-radius:10px; font-size:12px; font-weight:bold; text-align:center; max-width:165px; line-height:1.6;
+        box-shadow:0 4px 16px rgba(109,18,32,.45); }
+      #atasEcke .ecke-kicker { font-size:10px; opacity:.85; margin-bottom:3px; }
+      #atasEcke .ecke-titel { font-size:13px; }
+      #atasEcke .ecke-plakette { margin-top:5px; background:#fff; color:var(--atas-akzent); border-radius:5px; padding:3px 6px; font-size:12px; }
       .product-item.grill-zu { opacity:.5; }
     </style>
     <div id="atasHinweise" role="status" aria-live="polite"></div>
+    <!-- Kaertchen oben rechts wie bei Amoura - bleibt beim Scrollen sichtbar. -->
+    <a id="atasEcke" href="#taschen"></a>
 
     <div class="pizzeria-info-wrapper">
         <div class="divider-container">
@@ -4218,28 +4233,79 @@ function zeigeHinweise() {
   var lieferungAus = typeof LIEFERFENSTER !== 'undefined' && LIEFERFENSTER.grund === 'aus';
   var abholungAus = typeof ABHOLUNG_OFFEN !== 'undefined' && !ABHOLUNG_OFFEN;
   if (lieferungAus && !abholungAus) {
-    zeilen.push({ warnung: true, text: 'Lieferung gerade nicht verfügbar – Abholung möglich' });
+    zeilen.push({ warnung: true, kicker: 'Hinweis', titel: 'Lieferung gerade nicht verfügbar',
+                  text: 'Abholung ist möglich – einfach beim Bestellen „Abholung“ wählen.' });
   } else if (abholungAus && !lieferungAus) {
-    zeilen.push({ warnung: true, text: 'Abholung gerade nicht verfügbar – Lieferung möglich' });
+    zeilen.push({ warnung: true, kicker: 'Hinweis', titel: 'Abholung gerade nicht verfügbar',
+                  text: 'Lieferung ist möglich.' });
+  }
+  var samstag = new Date().getDay() === 6;
+  if (samstag) {
+    zeilen.push({ ziel: 'grillhaehnchen', kicker: 'Jeden Samstag ab 13:00 Uhr', titel: 'Grillhähnchen',
+                  plakette: grillVerfuegbar() ? 'JETZT' : 'AB 13 UHR',
+                  text: 'Hähnchenschenkel 3,50 € · mit Reis, Pommes oder Brot 12,00 €' });
   }
   if (steakTag()) {
-    zeilen.push({ text: 'Heute Steak-Döner! Freitags und samstags Steak statt Kalb.', ziel: 'taschen' });
-  }
-  if (new Date().getDay() === 6) {
-    zeilen.push({ ziel: 'grillhaehnchen', text: grillVerfuegbar()
-      ? 'Samstags frische Grillhähnchen – jetzt bestellbar'
-      : 'Samstags ab 13 Uhr frische Grillhähnchen' });
+    zeilen.push({ ziel: 'taschen', kicker: 'Freitag & Samstag', titel: 'Steak-Döner', plakette: 'HEUTE',
+                  text: 'Freitags und samstags Steak statt Kalb · in Tasche, Dürüm, Teller und Lahmacun' });
   }
   box.innerHTML = zeilen.map(function (z) {
-    var inhalt = z.ziel ? '<a href="#' + z.ziel + '">' + z.text + '</a>' : z.text;
-    return '<div class="hinweis-zeile' + (z.warnung ? ' warnung' : '') + '">' + inhalt + '</div>';
+    var tag = z.ziel ? 'a href="#' + z.ziel + '"' : 'div';
+    return '<' + tag + ' class="hinweis-zeile' + (z.warnung ? ' warnung' : '') + '">'
+      + '<div class="hz-kicker">' + z.kicker + '</div>'
+      + '<div class="hz-titel">' + z.titel + (z.plakette ? ' <span class="hz-plakette">' + z.plakette + '</span>' : '') + '</div>'
+      + '<div class="hz-text">' + z.text + '</div>'
+      + '</' + (z.ziel ? 'a' : 'div') + '>';
   }).join('');
   box.style.display = zeilen.length ? 'block' : 'none';
+
+  // Kaertchen oben rechts: das Tagesangebot, samstags das Grillhaehnchen.
+  var ecke = document.getElementById('atasEcke');
+  var angebot = zeilen.filter(function (z) { return z.ziel; })[0];
+  if (ecke) {
+    if (angebot) {
+      ecke.href = '#' + angebot.ziel;
+      ecke.innerHTML = '<div class="ecke-kicker">' + angebot.kicker + '</div>'
+        + '<div class="ecke-titel">' + angebot.titel + '</div>'
+        + '<div class="ecke-plakette">' + (angebot.ziel === 'taschen' ? 'Steak statt Kalb' : angebot.plakette === 'JETZT' ? 'Jetzt bestellbar' : 'ab 13 Uhr') + '</div>';
+    }
+    eckeZeigen = !!angebot;
+    eckeAktualisieren();
+  }
   // Grillhaehnchen ausserhalb von Samstag ab 13 Uhr sichtbar, aber blass.
   GRILL_KARTEN.forEach(function (el) { el.classList.toggle('grill-zu', !grillVerfuegbar()); });
 }
-if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', zeigeHinweise);
-else zeigeHinweise();
+// Das Kaertchen erscheint erst, wenn der grosse Banner aus dem Bild ist -
+// sonst steht das Angebot doppelt da und das Kaertchen liegt am Handy auf
+// dem ATAS-Schriftzug.
+var eckeZeigen = false, bannerSichtbar = true;
+function eckeAktualisieren() {
+  var ecke = document.getElementById('atasEcke');
+  if (!ecke) return;
+  var an = eckeZeigen && !bannerSichtbar;
+  if (an) {
+    // Unter Kopfleiste und klebender Kategorie-Leiste, nicht darauf.
+    var kopf = document.getElementById('atasHeader');
+    var nav = document.getElementById('catNavWrap');
+    ecke.style.top = ((kopf ? kopf.offsetHeight : 60) + (nav ? nav.offsetHeight : 0) + 8) + 'px';
+  }
+  ecke.style.display = an ? 'block' : 'none';
+}
+function hinweiseStarten() {
+  zeigeHinweise();
+  var box = document.getElementById('atasHinweise');
+  if (box && 'IntersectionObserver' in window) {
+    new IntersectionObserver(function (e) {
+      bannerSichtbar = e[0].isIntersecting;
+      eckeAktualisieren();
+    }).observe(box);
+  } else {
+    bannerSichtbar = false;
+    eckeAktualisieren();
+  }
+}
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', hinweiseStarten);
+else hinweiseStarten();
 
 // Mittagsmenue: Mo-Fr, 11:30-14:30 Uhr - lokale Geraetezeit, wie steakVerfuegbar.
 function mittagVerfuegbar() {
