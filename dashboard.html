@@ -341,6 +341,8 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--atas-gru
         <button class="mode-btn" id="modeNeutral"     onclick="setMode('neutral')">⚪ Neutral</button>
         <button class="mode-btn" id="modeGeschlossen" onclick="setMode('geschlossen')">🔴 Geschlossen</button>
         <span class="mode-auto-badge" id="autobadge" onclick="toggleAuto()" title="Automatik nach Öffnungszeiten">🕐 Auto</span>
+        <button class="mode-btn" id="schalterLieferung" onclick="toggleSchalter('lieferung')" title="Lieferung für Kunden an/aus">Lieferung an</button>
+        <button class="mode-btn" id="schalterAbholung"  onclick="toggleSchalter('abholung')"  title="Abholung für Kunden an/aus">Abholung an</button>
       </div>
       <span id="printerStatus" title="Drucker-Status" onclick="testEposDirect()" style="font-size:.75rem;padding:4px 10px;border-radius:20px;background:var(--atas-flaeche);border:1px solid var(--atas-rahmen);color:var(--atas-schrift-leise);cursor:pointer;white-space:nowrap;">🖨️ Prüfe...</span>
       <button class="logout-btn" onclick="doLogout()">Abmelden</button>
@@ -750,7 +752,7 @@ function closeSaladPopup(){document.getElementById('saladPopup').style.display='
 
 // ── Quick-Popup ──
 let quickIstGetraenke=false, quickGetraenkeSorte=null;
-let quickIstMittag=false, quickMittagFleisch=null, quickMittagGetraenk=null;
+let quickIstMittag=false, quickMittagFleisch=null, quickMittagGetraenk=null, quickMittagGericht=null;
 const MITTAG_GETRAENK_SORTEN=['Cola','Coca-Cola Zero','Light','Fanta','Fanta Exotica','Sprite','Mezzo Mix'];
 
 // Mittagsmenue: Mo-Fr, 11:30-14:30 Uhr - gilt auch fuer die Kasse (siehe
@@ -764,6 +766,7 @@ function mittagVerfuegbar(){
 
 function openQuickAdd(el){
   const name=el.querySelector('h3').innerText;
+  if (/Steak$/.test(name) && !steakVerfuegbar()) { alert('Steak gibt es nur freitags und samstags.'); return; }
   if (/^Menü \d/.test(name)) {
     if (!mittagVerfuegbar()) { alert('Mittagsmenü nur Mo–Fr von 11:30 bis 14:30 Uhr.'); return; }
     openMittagsMenu(el, name);
@@ -791,8 +794,15 @@ function openMittagsMenu(el, name){
 
   const istMenue4=/^Menü 4/.test(name);
   const istMenue1=/^Menü 1/.test(name);
-  const fleischOpts=istMenue4?['Hähnchen','Kalb']:['Hähnchen','Rind'];
-  let html='<div style="font-weight:700;margin:6px 0 4px;">Fleisch wählen *</div>'
+  // Freitags kein Kalb/Rind (siehe steakTag) - dann nur Haehnchen.
+  const fleischOpts=!rindVerfuegbar()?['Hähnchen']:istMenue4?['Hähnchen','Kalb']:['Hähnchen','Rind'];
+  // Menue 3: Duerum oder Lahmacun; Menue 5 (Hamburger) ohne Fleischwahl.
+  const istMenue3=/^Menü 3/.test(name), istMenue5=/^Menü 5/.test(name);
+  quickMittagGericht=null;
+  let html='';
+  if (istMenue3) html+='<div style="font-weight:700;margin:6px 0 4px;">Gericht wählen *</div>'
+    + ['Dürüm (Wrap)','Lahmacun'].map(g=>`<label style="display:flex;align-items:center;gap:8px;padding:6px 0;cursor:pointer;"><input type="radio" name="mittagGericht" value="${g}" onchange="quickMittagGericht=this.value"><span>${g}</span></label>`).join('');
+  if (!istMenue5) html+='<div style="font-weight:700;margin:6px 0 4px;">Fleisch wählen *</div>'
     + fleischOpts.map(f=>`<label style="display:flex;align-items:center;gap:8px;padding:6px 0;cursor:pointer;"><input type="radio" name="mittagFleisch" value="${f}" onchange="quickMittagFleisch=this.value"><span>${f}</span></label>`).join('');
   if (!istMenue1) {
     html += '<div style="font-weight:700;margin:10px 0 4px;">Getränk wählen *</div>'
@@ -829,13 +839,12 @@ function closeQuickPopup(){document.getElementById('quickPopup').style.display='
 // ── Fleischwahl-Popup (Haehnchen/Rind/Steak) ──
 const FLEISCH_LABEL={haehnchen:'Hähnchen',rind:'Rind',steak:'Steak'};
 let fleischPreise={}, fleischAuswahl=null;
-// Steak-Döner gibt es laut Karte nur freitags und samstags ab 12 Uhr - gilt
-// auch fuer die Kasse, da es ein Kueche-Verfuegbarkeit ist, kein reiner
-// Website-Hinweis.
-function steakVerfuegbar(){
-  const jetzt=new Date(), tag=jetzt.getDay();
-  return (tag===5||tag===6) && jetzt.getHours()>=12;
-}
+// Freitags und samstags den ganzen Tag Steak-Döner, dafuer kein Kalb ("Rind")
+// - Betreiber, 30.10.2026. Gilt auch fuer die Kasse, da es eine
+// Kuechen-Verfuegbarkeit ist, kein reiner Website-Hinweis.
+function steakTag(){ const tag=new Date().getDay(); return tag===5||tag===6; }
+function steakVerfuegbar(){ return steakTag(); }
+function rindVerfuegbar(){ return !steakTag(); }
 function openFleischwahl(el){
   document.getElementById('fleischName').innerText=el.querySelector('h3').innerText;
   document.getElementById('fleischDesc').innerText=(el.querySelector('p')||{}).innerText||'';
@@ -847,7 +856,10 @@ function openFleischwahl(el){
     .filter(s=>s in fleischPreise)
     .map(s=>{
       if (s==='steak' && !steakVerfuegbar()) {
-        return `<div class="fleisch-btn fleisch-btn-disabled" title="Nur freitags und samstags ab 12:00 Uhr">${FLEISCH_LABEL[s]}<br><span style="font-size:.68rem;font-weight:normal">nur Fr/Sa ab 12 Uhr</span></div>`;
+        return `<div class="fleisch-btn fleisch-btn-disabled" title="Nur freitags und samstags">${FLEISCH_LABEL[s]}<br><span style="font-size:.68rem;font-weight:normal">nur Fr/Sa</span></div>`;
+      }
+      if (s==='rind' && !rindVerfuegbar()) {
+        return `<div class="fleisch-btn fleisch-btn-disabled" title="Freitags und samstags Steak statt Kalb">${FLEISCH_LABEL[s]}<br><span style="font-size:.68rem;font-weight:normal">Fr/Sa Steak statt Kalb</span></div>`;
       }
       return `<div class="fleisch-btn" id="fleisch-btn-${s}" onclick="waehleFleisch('${s}')">${FLEISCH_LABEL[s]} (${fleischPreise[s].toFixed(2).replace('.',',')} €)</div>`;
     })
@@ -1217,8 +1229,9 @@ const POS_MENU = {
   mittagsangebote: [
     {num:'',name:'Menü 1: Atas-Tasche',price:6.00},
     {num:'',name:'Menü 2: Atas-Tasche',price:8.50},
-    {num:'',name:'Menü 3: Dürüm (Wrap)',price:10.00},
+    {num:'',name:'Menü 3: Dürüm (Wrap) oder Lahmacun',price:10.00},
     {num:'',name:'Menü 4: Atas-Teller',price:11.00},
+    {num:'',name:'Menü 5: Hamburger',price:10.00},
   ],
   kids: [
     {num:'',name:'Kids-Box 1',price:7.00},
@@ -1232,36 +1245,45 @@ const POS_MENU = {
     {num:'3',name:'Atas-Tasche Big XL',price:10.00,haehnchen:10.00,rind:11.00,steak:14.00},
     {num:'4',name:'Atas-Tasche Sucuk',price:8.50,haehnchen:8.50,rind:9.00,steak:13.00},
     {num:'5',name:'Atas-Tasche Atas',price:8.50,haehnchen:8.50,rind:9.00,steak:13.00},
-    {num:'6',name:'Atas-Tasche mit gebratenem Gemüse',price:8.50,haehnchen:8.50,rind:9.00,steak:13.00},
+    {num:'6',name:'Atas-Tasche mit gebratenem Gemüse',price:9.00,haehnchen:9.00,rind:9.00,steak:13.00},
     {num:'7',name:'Atas-Bowl Box klein',price:7.00},
     {num:'7',name:'Atas-Bowl Box groß',price:8.00},
-    {num:'8',name:'Köftetasche',price:8.00},
+    {num:'7',name:'Atas-Bowl Box Steak',price:13.00},
+    {num:'8',name:'Punjabitasche',price:8.00},
     {num:'9',name:'Pommestasche',price:6.00},
-    {num:'10',name:'Chickentasche',price:7.00},
+    {num:'10',name:'Chickentasche',price:8.00},
     {num:'11',name:'Salattasche mit Weißkäse',price:6.00},
     {num:'12',name:'Falafeltasche',price:7.00},
+    {num:'13',name:'Kinder Atas-Tasche',price:6.00,haehnchen:6.00,rind:7.00,steak:8.00},
   ],
   dueruem: [
-    {num:'15',name:'Wrap',price:8.00,haehnchen:8.00,rind:9.00,steak:11.00},
-    {num:'16',name:'Wrap doppelt Fleisch',price:9.00,haehnchen:9.00,rind:10.00,steak:12.00},
-    {num:'17',name:'Sucuk Wrap',price:9.00,haehnchen:9.00,rind:10.00,steak:12.00},
-    {num:'18',name:'Atas Wrap',price:9.00,haehnchen:9.00,rind:10.00,steak:12.00},
-    {num:'19',name:'XXL Wrap',price:14.00,haehnchen:14.00,rind:15.00,steak:18.00},
-    {num:'20',name:'Köfte Wrap',price:9.00},
-    {num:'21',name:'Hähnchenschnitzel Wrap',price:9.00},
-    {num:'22',name:'Falafel Wrap',price:7.50},
-    {num:'23',name:'Salat Wrap',price:7.00},
+    {num:'14',name:'Wrap',price:8.00,haehnchen:8.00,rind:9.00,steak:11.00},
+    {num:'15',name:'Wrap doppelt Fleisch',price:9.00,haehnchen:9.00,rind:10.00,steak:12.00},
+    {num:'16',name:'Sucuk Wrap',price:9.00,haehnchen:9.00,rind:10.00,steak:12.00},
+    {num:'17',name:'Atas Wrap',price:9.00,haehnchen:9.00,rind:10.00,steak:12.00},
+    {num:'18',name:'XXL Wrap',price:14.00,haehnchen:14.00,rind:15.00,steak:18.00},
+    {num:'19',name:'Punjabi Wrap',price:9.00},
+    {num:'20',name:'Hähnchenschnitzel Wrap',price:9.00},
+    {num:'21',name:'Falafel Wrap',price:7.50},
+    {num:'22',name:'Salat Wrap',price:7.00},
+    {num:'23',name:'Kinder Wrap',price:6.00,haehnchen:6.00,rind:7.00,steak:8.00},
   ],
   teller: [
-    {num:'24',name:'Atasteller klein',price:9.00,haehnchen:9.00,rind:10.00,steak:12.00},
-    {num:'25',name:'Atasteller',price:11.00,haehnchen:11.00,rind:12.00,steak:14.00},
-    {num:'26',name:'Taxi-Teller',price:15.00,haehnchen:15.00,rind:16.00,steak:18.00},
+    {num:'25',name:'Atasteller klein',price:8.50,haehnchen:8.50,rind:9.00,steak:11.00},
+    {num:'26',name:'Atasteller',price:12.00,haehnchen:12.00,rind:13.00,steak:15.00},
+    {num:'27',name:'Taxi-Teller',price:15.00,haehnchen:15.00,rind:16.00,steak:18.00},
+    {num:'28',name:'Atasteller nur Fleisch',price:11.00,haehnchen:11.00,rind:12.00,steak:14.00},
+  ],
+  grillhaehnchen: [
+    {num:'127',name:'Ein Hähnchenschenkel',price:3.50},
+    {num:'128',name:'Hähnchenschenkel mit Reis, Pommes oder hausgemachtem Brot',price:12.00},
   ],
   lahmacun: [
     {num:'35',name:'Lahmacun-Salat',price:7.00},
     {num:'36',name:'Lahmacun',price:8.00,haehnchen:8.00,rind:9.00,steak:12.00},
     {num:'37',name:'Lahmacun Atas',price:9.00,haehnchen:9.00,rind:10.00,steak:13.00},
     {num:'38',name:'Lahmacun XXL-Atas',price:14.00,haehnchen:14.00,rind:15.00,steak:18.00},
+    {num:'39',name:'Kinder Lahmacun',price:6.00,haehnchen:6.00,rind:7.00,steak:8.00},
   ],
   pide: [
     {num:'45',name:'Pide mit Goudakäse',price:8.00},
@@ -1280,15 +1302,6 @@ const POS_MENU = {
   auflauf: [
     {num:'60',name:'Brokkoli-Auflauf',price:9.00},
     {num:'61',name:'Frischer Drehspieß-Auflauf',price:10.00},
-  ],
-  baguettes: [
-    {num:'65',name:'Baguette mit Salami',price:7.00},
-    {num:'66',name:'Baguette mit Mozzarella',price:7.00},
-    {num:'67',name:'Baguette mit Putenschinken',price:7.00},
-    {num:'68',name:'Baguette mit Thunfisch',price:7.00},
-    {num:'69',name:'Baguette mit Drehspießfleisch',price:7.00},
-    {num:'70',name:'Baguette mit Sucuk',price:7.50},
-    {num:'71',name:'Baguette mit Hähnchenbrust und Paprika',price:8.00},
   ],
   pizza: [
     {num:'75',name:'Margherita',price:7.00},
@@ -1324,33 +1337,34 @@ const POS_MENU = {
     {num:'100',name:'Pizzabrötchen',price:3.50},
     {num:'101',name:'Pizzabrötchen mit Käse',price:8.00},
     {num:'102',name:'Pizzabrötchen mit Thunfisch',price:9.00},
-    {num:'103',name:'Pizzabrötchen mit Salami (Geflügel)',price:9.00},
-    {num:'104',name:'Pizzabrötchen mit Schinken (Geflügel)',price:9.00},
+    {num:'103',name:'Pizzabrötchen mit Geflügel- oder Rindersalami',price:9.00},
+    {num:'104',name:'Pizzabrötchen mit Geflügelschinken',price:9.00},
     {num:'105',name:'Pizzabrötchen mit Weißkäse und Spinat',price:9.00},
     {num:'106',name:'Pizzabrötchen mit Sucuk',price:9.00},
     {num:'107',name:'Pizzabrötchen mit Hähnchenbruststreifen und Paprika',price:9.00},
     {num:'108',name:'Gyrospizzabrötchen',price:9.00},
+    {num:'109',name:'Pizzabrötchen Vegetarisch',price:8.00},
   ],
   snacks: [
-    {num:'109',name:'Pommes klein',price:3.50},
-    {num:'110',name:'Pommes groß',price:4.00},
-    {num:'111',name:'Kroketten',price:4.00},
-    {num:'112',name:'Chicken Nuggets',price:4.50},
-    {num:'113',name:'Kartoffel Twister',price:4.50},
-    {num:'114',name:'Mantaplatte',price:7.00},
-    {num:'115',name:'Bratwurst',price:3.00},
-    {num:'116',name:'Hamburger',price:4.00},
-    {num:'117',name:'Cheeseburger',price:4.50},
-    {num:'118',name:'Mozzarella Sticks',price:6.00},
+    {num:'110',name:'Pommes klein',price:3.50},
+    {num:'111',name:'Pommes groß',price:4.00},
+    {num:'112',name:'Kroketten',price:4.00},
+    {num:'113',name:'Chicken Nuggets',price:4.50},
+    {num:'114',name:'Kartoffel Twister',price:4.50},
+    {num:'115',name:'Mantaplatte',price:7.00},
+    {num:'116',name:'Bratwurst',price:3.00},
+    {num:'117',name:'Hamburger',price:4.00},
+    {num:'118',name:'Cheeseburger',price:4.50},
+    {num:'119',name:'Mozzarella Sticks',price:6.00},
   ],
   salat: [
-    {num:'121',name:'Mista',price:6.00},
-    {num:'122',name:'Gemischter Salat',price:8.00},
-    {num:'123',name:'Bauernsalat',price:8.00},
-    {num:'124',name:'Atas-Salat',price:9.00},
-    {num:'125',name:'Della Casa',price:7.00},
-    {num:'126',name:'Chickensalat',price:9.00},
-    {num:'127',name:'Atasfleischsalat',price:9.00},
+    {num:'120',name:'Mista',price:6.00},
+    {num:'121',name:'Gemischter Salat',price:8.00},
+    {num:'122',name:'Bauernsalat',price:8.00},
+    {num:'123',name:'Atas-Salat',price:9.00},
+    {num:'124',name:'Della Casa',price:7.00},
+    {num:'125',name:'Chickensalat',price:9.00},
+    {num:'126',name:'Atasfleischsalat',price:9.00},
   ],
   extras: [
     {num:'130',name:'Ketchup',price:0.50},
@@ -1369,6 +1383,7 @@ const POS_MENU = {
   ],
 };
 let posCategory = 'taschen';
+window.POS_TITEL = {"mittagsangebote":"Mittags Menü","kids":"Kids-Menüs","taschen":"Taschengerichte","dueruem":"Dürüm (Wrap)","teller":"Tellergerichte","grillhaehnchen":"Grillhähnchen","lahmacun":"Lahmacun","pide":"Pide","schnitzel":"Putenschnitzel","auflauf":"Atas Auflauf","pizza":"Pizza","calzone":"Pizza Gefüllt Calzone","pizzabroetchen":"Pizzabrötchen","snacks":"Snacks","salat":"Salate","extras":"Extras","getraenke":"Getränke"};
 // KARTE:ENDE
 
 // ═══════════════════════════════════════════════════════════════
@@ -2045,7 +2060,7 @@ function openPOS() {
     getraenke:'🥤 Getränke'
   };
   document.getElementById('posCatTabs').innerHTML = cats.map(c=>
-    `<div class="pos-cat${c===posCategory?' active':''}" onclick="setPOSCat('${c}',this)">${labels[c]||c}</div>`
+    `<div class="pos-cat${c===posCategory?' active':''}" onclick="setPOSCat('${c}',this)">${labels[c]||(window.POS_TITEL||{})[c]||c}</div>`
   ).join('');
   renderPOSItems(); renderPOSCart(); renderPOSTotals();
   document.getElementById('posAddrFields').style.display='block';
@@ -2103,9 +2118,14 @@ function renderPOSItems() {
 }
 
 // Richtiges Popup je nach tatsächlicher Kategorie des Artikels öffnen
+// Getraenke zzgl. 0,25 Euro Pfand (Karte 30.10.2026), auf dem Bon als Zusatz.
+let posPfand = 0;
 function openPOSItem(num, name, price) {
   _posItemNum = num;
   const cat = getCatForNum(num, name);
+  // Auch Mittagsmenue 2-5 und Kids-Box 3/4 (Getraenk dabei); Kids-Box 1/2 haben
+  // Capri-Sun, die ist pfandfrei.
+  posPfand = (cat === 'getraenke' || /^Menü [2-5]\b/.test(name) || /^Kids-Box [34]\b/.test(name)) ? 0.25 : 0;
   const rec = (POS_MENU[cat]||[]).find(i => i.num === num && i.name === name);
   const fleischFelder = {};
   if (rec) ['haehnchen','rind','steak'].forEach(f => { if (typeof rec[f] === 'number') fleischFelder[f] = rec[f]; });
@@ -2167,12 +2187,14 @@ function speiseInWarenkorb() {
       name=quickGetraenkeSorte;
       preis=parseFloat($('quickPriceDisplay').innerText.replace(/[€\s]/g,'').replace(',','.'));
     } else if (quickIstMittag) {
-      const istMenue1=/^Menü 1/.test($('quickName').innerText);
-      if (!quickMittagFleisch || (!istMenue1 && !quickMittagGetraenk)) { $('mittagErr').style.display='block'; return; }
+      const mn=$('quickName').innerText;
+      const istMenue1=/^Menü 1/.test(mn), istMenue3=/^Menü 3/.test(mn), istMenue5=/^Menü 5/.test(mn);
+      if ((!istMenue5 && !quickMittagFleisch) || (istMenue3 && !quickMittagGericht) || (!istMenue1 && !quickMittagGetraenk)) { $('mittagErr').style.display='block'; return; }
       activeId='quickPopup';
       name=$('quickName').innerText;
       preis=parseFloat($('quickPriceDisplay').innerText.replace(/[€\s]/g,'').replace(',','.'));
-      extras.push(quickMittagFleisch);
+      if (quickMittagGericht) extras.push(quickMittagGericht);
+      if (quickMittagFleisch) extras.push(quickMittagFleisch);
       if (quickMittagGetraenk) extras.push(quickMittagGetraenk);
     } else {
       activeId='quickPopup';
@@ -2192,6 +2214,7 @@ function speiseInWarenkorb() {
     document.querySelectorAll('#famPizzaPopup .fam-check:checked').forEach(b=>extras.push(b.nextElementSibling.innerText.trim()));
   }
   if (!activeId) return;
+  if (activeId === 'quickPopup' && posPfand) { preis += posPfand; extras.push('zzgl. 0,25 € Pfand'); }
   const note = extras.join(', ');
   addToCart(_posItemNum||name, name, preis, note);
   $(activeId).style.display='none';
@@ -2333,11 +2356,53 @@ async function toggleAuto() {
   } catch(e) { showToast('❌ Fehler'); }
 }
 
+// Schalter fuer Lieferung und Abholung - dieselben Felder, die die
+// Sunmi-Kasse setzt. Eine Lieferpause von der Kasse erscheint hier als
+// "pausiert"; ein Klick schaltet die Lieferung sofort wieder ein.
+let schalter = { lieferung: true, abholung: true, pauseBis: null };
+
+function applySchalterUI(d) {
+  schalter = {
+    lieferung: d.deliveryEnabled !== false,
+    abholung:  d.pickupEnabled !== false,
+    pauseBis:  d.deliveryPausedUntil || null,
+  };
+  const lb = document.getElementById('schalterLieferung');
+  const ab = document.getElementById('schalterAbholung');
+  if (lb) {
+    lb.className = 'mode-btn ' + (schalter.lieferung ? 'active-online' : 'active-geschlossen');
+    lb.textContent = schalter.lieferung ? 'Lieferung an'
+      : schalter.pauseBis ? 'Lieferung pausiert bis ' + new Date(schalter.pauseBis).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })
+      : 'Lieferung aus';
+  }
+  if (ab) {
+    ab.className = 'mode-btn ' + (schalter.abholung ? 'active-online' : 'active-geschlossen');
+    ab.textContent = schalter.abholung ? 'Abholung an' : 'Abholung aus';
+  }
+}
+
+async function toggleSchalter(art) {
+  const feld = art === 'lieferung' ? 'deliveryEnabled' : 'pickupEnabled';
+  const neu = !schalter[art];
+  try {
+    const r = await fetch(API_BASE + '/admin/status', {
+      method: 'PATCH',
+      headers: { ...apiHeaders(), 'Content-Type': 'application/json' },
+      body: JSON.stringify({ [feld]: neu })
+    });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    applySchalterUI(await r.json());
+    const name = art === 'lieferung' ? 'Lieferung' : 'Abholung';
+    showToast(name + (neu ? ' eingeschaltet' : ' ausgeschaltet'));
+  } catch(e) { showToast('Fehler beim Speichern'); }
+}
+
 async function loadRestaurantStatus() {
   try {
     const r = await fetch(API_BASE + '/admin/status', { headers: apiHeaders() });
     const d = await r.json();
     applyModeUI(d.mode || 'online', d.manualOverride || false);
+    applySchalterUI(d);
   } catch(e) {}
 }
 

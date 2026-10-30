@@ -199,9 +199,30 @@ const settingsSchema = new mongoose.Schema({
   mode:           { type: String, default: 'online', enum: ['online','geschlossen','neutral'] },
   manualOverride: { type: Boolean, default: false },
   // Rückwärtskompatibilität
-  isOpen:         { type: Boolean, default: true }
+  isOpen:         { type: Boolean, default: true },
+  // Schalter fuer Lieferung und Abholung, von Hand im Dashboard oder an der
+  // Sunmi-Kasse. Feldnamen wie bei Ararat: die Kassen-App erkennt den
+  // Lieferschalter allein daran, dass /api/admin/status deliveryEnabled
+  // mitliefert, und blendet ihn sonst aus.
+  deliveryEnabled:     { type: Boolean, default: true },  // false = keine Lieferung, bis wieder eingeschaltet
+  // Befristete Pause. Laeuft von selbst ab - die Auswertung passiert beim
+  // Lesen, damit kein Cron noetig ist und eine vergessene Pause sich nach
+  // Ablauf selbst aufloest.
+  deliveryPausedUntil: { type: Date, default: null },
+  pickupEnabled:       { type: Boolean, default: true },  // false = keine Abholung
 });
 const Settings = mongoose.model('Settings', settingsSchema);
+
+// Faktischer Stand beider Schalter aus Dauerschalter und befristeter Pause.
+function schalterStand(s) {
+  const until = s && s.deliveryPausedUntil ? new Date(s.deliveryPausedUntil) : null;
+  const paused = until !== null && until.getTime() > Date.now();
+  return {
+    deliveryEnabled: (s ? s.deliveryEnabled !== false : true) && !paused,
+    deliveryPausedUntil: paused ? until.toISOString() : null,
+    pickupEnabled: s ? s.pickupEnabled !== false : true,
+  };
+}
 
 const userSchema = new mongoose.Schema({
   email:    { type: String, required: true, unique: true, lowercase: true, trim: true },
@@ -514,26 +535,48 @@ app.get('/api/status', async (req, res) => {
     // lieferung und lieferAb kommen aus der Uhr, nicht aus der Datenbank: sie
     // sind eine Eigenschaft der Tageszeit, kein Zustand, den jemand setzt.
     const lf = calcLieferfenster();
-    res.json({ mode, isOpen: mode === 'online', lieferung: lf.offen, lieferAb: lf.ab, lieferGrund: lf.grund });
-  } catch(e) { res.json({ mode: 'online', isOpen: true, lieferung: true, lieferAb: null, lieferGrund: null }); }
+    const sch = schalterStand(s);
+    // Der Schalter geht dem Lieferfenster vor: ist die Lieferung aus, soll der
+    // Gast nicht "ab 12:00" lesen, sondern dass heute nicht geliefert wird.
+    const lieferung = lf.offen && sch.deliveryEnabled;
+    const lieferGrund = sch.deliveryEnabled ? lf.grund : 'aus';
+    res.json({ mode, isOpen: mode === 'online', lieferung, lieferAb: lf.ab, lieferGrund,
+               abholung: sch.pickupEnabled });
+  } catch(e) { res.json({ mode: 'online', isOpen: true, lieferung: true, lieferAb: null, lieferGrund: null, abholung: true }); }
 });
 
 // ── Restaurant Status (Admin) ─────────────────────────────────────
 app.patch('/api/admin/status', auth, async (req, res) => {
   try {
-    const { mode, manualOverride } = req.body;
+    const { mode, manualOverride, deliveryEnabled, deliveryPauseMinutes, pickupEnabled } = req.body;
     const update = {};
     if (mode !== undefined)           update.mode           = mode;
     if (manualOverride !== undefined) update.manualOverride = manualOverride;
+    if (deliveryEnabled !== undefined) {
+      update.deliveryEnabled = deliveryEnabled === true;
+      // Wer die Lieferung ausdruecklich wieder einschaltet, will keine Restpause mehr.
+      if (deliveryEnabled === true) update.deliveryPausedUntil = null;
+    }
+    // Befristete Pause: Minuten > 0 setzt sie, 0 (oder null) beendet sie sofort.
+    if (deliveryPauseMinutes !== undefined) {
+      const min = Number(deliveryPauseMinutes);
+      if (!Number.isFinite(min) || min < 0 || min > 1440) {
+        return res.status(400).json({ message: 'deliveryPauseMinutes muss zwischen 0 und 1440 liegen' });
+      }
+      update.deliveryPausedUntil = min > 0 ? new Date(Date.now() + min * 60000) : null;
+    }
+    if (pickupEnabled !== undefined) update.pickupEnabled = pickupEnabled === true;
     // Auto-Modus: sofort berechnen wenn manualOverride auf false gesetzt wird
     if (manualOverride === false && mode === undefined) {
       update.mode = calcAutoMode();
     }
-    update.isOpen = (update.mode || mode) === 'online';
+    // Nur wenn sich der Modus aendert - ein reiner Liefer-/Abholschalter darf
+    // isOpen nicht auf false setzen, nur weil kein mode mitkam.
+    if (update.mode !== undefined) update.isOpen = update.mode === 'online';
     const s = await Settings.findByIdAndUpdate('restaurant', update, { upsert: true, new: true });
     const icons = { online:'✅ ONLINE', geschlossen:'❌ GESCHLOSSEN', neutral:'⚪ NEUTRAL' };
     console.log(`🏪 Restaurant: ${icons[s.mode]} | Manuell: ${s.manualOverride}`);
-    res.json({ mode: s.mode, manualOverride: s.manualOverride, isOpen: s.isOpen });
+    res.json({ mode: s.mode, manualOverride: s.manualOverride, isOpen: s.isOpen, ...schalterStand(s) });
   } catch(e) { res.status(500).json({ message: 'Fehler' }); }
 });
 
@@ -542,7 +585,7 @@ app.get('/api/admin/status', auth, async (req, res) => {
   try {
     const s = await Settings.findById('restaurant');
     const mode = s ? (s.mode || (s.isOpen ? 'online' : 'geschlossen')) : 'online';
-    res.json({ mode, manualOverride: s ? s.manualOverride : false, isOpen: mode === 'online' });
+    res.json({ mode, manualOverride: s ? s.manualOverride : false, isOpen: mode === 'online', ...schalterStand(s) });
   } catch(e) { res.status(500).json({ mode: 'online', manualOverride: false }); }
 });
 
@@ -584,6 +627,50 @@ const NUR_ABHOLUNG_NAMEN = (() => {
   }
 })();
 
+// ── Grillhaehnchen: nur samstags ab einer Uhrzeit ────────────────
+// Kategorien mit nur_samstag_ab:"13:00" in Menue/menu.json. Wie bei
+// NUR_ABHOLUNG_NAMEN kommt die Namensliste aus der Karte selbst.
+const NUR_SAMSTAG_AB = (() => {
+  const namen = new Map();   // Artikelname -> Minuten ab Mitternacht
+  try {
+    const menu = JSON.parse(fs.readFileSync(path.join(__dirname, 'Menue', 'menu.json'), 'utf8'));
+    for (const kat of menu.kategorien || []) {
+      const m = /^(\d{1,2}):(\d{2})$/.exec(kat.nur_samstag_ab || '');
+      if (m) for (const item of kat.items || []) namen.set(item.name, parseInt(m[1]) * 60 + parseInt(m[2]));
+    }
+  } catch (e) {
+    console.error('⚠️  Menue/menu.json konnte nicht gelesen werden, Samstags-Sperre ist inaktiv:', e.message);
+  }
+  return namen;
+})();
+
+// Prueft Liefer-/Abholschalter und die Samstags-Artikel. Gibt den Text fuer
+// den Gast zurueck oder null. Die Kasse ruft das nicht auf - am Telefon
+// entscheidet die Kueche, nicht der Schalter.
+async function bestellSperre(mode, items) {
+  let s = null;
+  try { s = await Settings.findById('restaurant'); } catch {}
+  const sch = schalterStand(s);
+  if (!sch.deliveryEnabled && !sch.pickupEnabled) {
+    return 'Wir nehmen gerade keine Online-Bestellungen an. Bitte ruf uns kurz an.';
+  }
+  if (mode === 'lieferung' && !sch.deliveryEnabled) {
+    return 'Wir liefern gerade nicht. Abholung ist möglich - bitte auf Abholung umstellen.';
+  }
+  if (mode === 'abholung' && !sch.pickupEnabled) {
+    return 'Abholung ist gerade nicht möglich. Lieferung ist möglich - bitte auf Lieferung umstellen.';
+  }
+  if (Array.isArray(items) && NUR_SAMSTAG_AB.size) {
+    const t = deutscheZeit();
+    const gesperrt = items.filter(i => NUR_SAMSTAG_AB.has(i.name) &&
+      !(t && t.wd === 6 && t.mins >= NUR_SAMSTAG_AB.get(i.name)));
+    if (gesperrt.length) {
+      return `Diese Artikel gibt es nur samstags ab 13:00 Uhr: ${gesperrt.map(i => i.name).join(', ')}. Bitte aus dem Warenkorb entfernen.`;
+    }
+  }
+  return null;
+}
+
 function berechneRabatt({ coupon, mode, items, subtotal }) {
   if (!RABATT_AKTIV) return 0;
   if (!coupon || String(coupon).toUpperCase() !== RABATT_CODE) return 0;
@@ -609,6 +696,13 @@ app.post('/api/orders', async (req, res) => {
     }
 
     const isPOS = req.body.source === 'pos';
+
+    // Schalter zuerst: ist die Lieferung aus, soll der Gast das lesen und
+    // nicht "erst ab 12:00".
+    if (!isPOS) {
+      const sperre = await bestellSperre(req.body.mode, req.body.items);
+      if (sperre) return res.status(409).json({ message: sperre });
+    }
 
     // Lieferung ausserhalb des Lieferfensters ablehnen, noch vor jedem
     // Datenbankzugriff: die Pruefung braucht nur die Uhr, und eine Absage soll
@@ -695,6 +789,9 @@ app.get('/api/orders/status/:token', async (req, res) => {
 app.post('/api/create-stripe-checkout', async (req, res) => {
   try {
     const { items, subtotal, deliveryFee, serviceFee, customer, mode, note } = req.body;
+
+    const sperre = await bestellSperre(mode, items);
+    if (sperre) return res.status(409).json({ message: sperre });
 
     // Mittagsangebote nur zur Abholung - dieser Endpunkt legt eine eigene
     // Bestellung an und umgeht sonst die Pruefung aus POST /api/orders.
@@ -843,6 +940,9 @@ app.post('/api/verify-payment', async (req, res) => {
 app.post('/api/create-paypal-order', async (req, res) => {
   try {
     const { items, subtotal, deliveryFee, serviceFee, customer, mode, note } = req.body;
+
+    const sperre = await bestellSperre(mode, items);
+    if (sperre) return res.status(409).json({ message: sperre });
 
     // Mittagsangebote nur zur Abholung - dieser Endpunkt legt eine eigene
     // Bestellung an und umgeht sonst die Pruefung aus POST /api/orders.
@@ -1469,12 +1569,14 @@ const FEIERTAGE = [
 ];
 
 // Wochentag (0 = So) -> [von, bis] in Minuten seit Mitternacht.
-// Der Dienstag fehlt bewusst: Ruhetag.
 const OEFFNUNG = {
   0: [12 * 60,      22 * 60],       // Sonntag
-  1: [11 * 60 + 30, 21 * 60 + 30],  // Montag
-  3: [11 * 60 + 30, 21 * 60 + 30],  // Mittwoch
-  4: [11 * 60 + 30, 21 * 60 + 30],  // Donnerstag
+  // Karte vom 30.10.2026: Mo-Do 11:30-21:00, kein Ruhetag mehr (vorher
+  // Dienstag zu und Mo/Mi/Do bis 21:30) - vom Betreiber bestaetigt.
+  1: [11 * 60 + 30, 21 * 60],       // Montag
+  2: [11 * 60 + 30, 21 * 60],       // Dienstag
+  3: [11 * 60 + 30, 21 * 60],       // Mittwoch
+  4: [11 * 60 + 30, 21 * 60],       // Donnerstag
   5: [11 * 60 + 30, 22 * 60],       // Freitag
   6: [12 * 60,      22 * 60],       // Samstag
 };

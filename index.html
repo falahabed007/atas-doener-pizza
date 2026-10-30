@@ -996,6 +996,20 @@
         
     </div>
 
+    <!-- ═══ HINWEIS-BANNER ═══
+         Zeigt nur, was gerade zutrifft: Steak-Döner (Fr/Sa), Grillhähnchen
+         (Sa) und ob Lieferung oder Abholung ausgeschaltet ist. Befuellt von
+         zeigeHinweise(), beim Laden und nach jedem /api/status-Abgleich. -->
+    <style>
+      #atasHinweise { display:none; background:var(--atas-akzent); color:var(--atas-auf-akzent); }
+      #atasHinweise .hinweis-zeile { padding:10px 16px; text-align:center; font-weight:700; font-size:15px; line-height:1.35; }
+      #atasHinweise .hinweis-zeile + .hinweis-zeile { border-top:1px solid rgba(243,236,224,.25); }
+      #atasHinweise .hinweis-zeile.warnung { background:var(--atas-rot); }
+      #atasHinweise a { color:inherit; text-decoration:underline; }
+      .product-item.grill-zu { opacity:.5; }
+    </style>
+    <div id="atasHinweise" role="status" aria-live="polite"></div>
+
     <div class="pizzeria-info-wrapper">
         <div class="divider-container">
             <div class="divider-line"></div>
@@ -1052,11 +1066,11 @@
             <a href="#taschen" class="cat-nav-link">Taschen</a>
             <a href="#dueruem" class="cat-nav-link">Dürüm</a>
             <a href="#teller" class="cat-nav-link">Teller</a>
+            <a href="#grillhaehnchen" class="cat-nav-link">Grillhähnchen</a>
             <a href="#lahmacun" class="cat-nav-link">Lahmacun</a>
             <a href="#pide" class="cat-nav-link">Pide</a>
             <a href="#schnitzel" class="cat-nav-link">Schnitzel</a>
             <a href="#auflauf" class="cat-nav-link">Auflauf</a>
-            <a href="#baguettes" class="cat-nav-link">Baguettes</a>
             <a href="#pizza" class="cat-nav-link">Pizza</a>
             <a href="#calzone" class="cat-nav-link">Calzone</a>
             <a href="#pizzabroetchen" class="cat-nav-link">Pizzabrötchen</a>
@@ -1179,12 +1193,16 @@
         <div class="price">8,50 €</div>
     </div>
     <div class="product-item" onclick="openQuickAdd(this)" style="cursor: pointer;">
-        <div class="product-info"><h3>Menü 3: Dürüm (Wrap)</h3><p>mit 0,33 l Getränk</p></div>
+        <div class="product-info"><h3>Menü 3: Dürüm (Wrap) oder Lahmacun</h3><p>mit kleinen Pommes und 0,33 l Getränk</p></div>
         <div class="price">10,00 €</div>
     </div>
     <div class="product-item" onclick="openQuickAdd(this)" style="cursor: pointer;">
         <div class="product-info"><h3>Menü 4: Atas-Teller</h3><p>mit 0,33 l Getränk</p></div>
         <div class="price">11,00 €</div>
+    </div>
+    <div class="product-item" onclick="openQuickAdd(this)" style="cursor: pointer;">
+        <div class="product-info"><h3>Menü 5: Hamburger</h3><p>mit kleinen Pommes und 0,33 l Getränk</p></div>
+        <div class="price">10,00 €</div>
     </div>
     <h2 class="category-title" id="kids">Kids-Menüs</h2>
     <div class="product-item" onclick="openQuickAdd(this)" style="cursor: pointer;">
@@ -1204,7 +1222,7 @@
         <div class="price">8,00 €</div>
     </div>
     <h2 class="category-title" id="taschen">Taschengerichte</h2>
-    <p class="category-note">Freitags und samstags ab 12:00 Uhr auch als Steak-Döner. Saucen: Remoulade, Cocktailsauce, Tzatziki, Joghurt, Chilisauce.</p>
+    <p class="category-note">Freitags und samstags Steak-Döner statt Kalb. Saucen: Remoulade, Cocktailsauce, Tzatziki, Joghurt, Chilisauce, Mayo oder Ketchup.</p>
     <div class="product-item" onclick="openFleischwahl(this)" data-haehnchen="7.00" data-rind="8.00" data-steak="11.00" style="cursor: pointer;">
         <div class="product-info"><h3>1 Atas-Tasche</h3><p>Fleisch nach Wahl mit Salat und Sauce</p></div>
         <div class="price">ab 7,00 €</div>
@@ -1225,9 +1243,9 @@
         <div class="product-info"><h3>5 Atas-Tasche Atas</h3><p>Fleisch nach Wahl mit Pommes, Salat und Sauce</p></div>
         <div class="price">ab 8,50 €</div>
     </div>
-    <div class="product-item" onclick="openFleischwahl(this)" data-haehnchen="8.50" data-rind="9.00" data-steak="13.00" style="cursor: pointer;">
+    <div class="product-item" onclick="openFleischwahl(this)" data-haehnchen="9.00" data-rind="9.00" data-steak="13.00" style="cursor: pointer;">
         <div class="product-info"><h3>6 Atas-Tasche mit gebratenem Gemüse</h3><p>mit gebratenem Gemüse und Sauce</p></div>
-        <div class="price">ab 8,50 €</div>
+        <div class="price">ab 9,00 €</div>
     </div>
     <div class="product-item" onclick="openQuickAdd(this)" style="cursor: pointer;">
         <div class="product-info"><h3>7 Atas-Bowl Box klein</h3><p>Fleisch nach Wahl, Pommes und Sauce</p></div>
@@ -1238,7 +1256,11 @@
         <div class="price">8,00 €</div>
     </div>
     <div class="product-item" onclick="openQuickAdd(this)" style="cursor: pointer;">
-        <div class="product-info"><h3>8 Köftetasche</h3><p>mit Salat und Sauce</p></div>
+        <div class="product-info"><h3>7 Atas-Bowl Box Steak</h3><p>Steak, Pommes und Sauce (nur freitags und samstags)</p></div>
+        <div class="price">13,00 €</div>
+    </div>
+    <div class="product-item" onclick="openQuickAdd(this)" style="cursor: pointer;">
+        <div class="product-info"><h3>8 Punjabitasche</h3><p>mit Grillkebab, Salat und Sauce</p></div>
         <div class="price">8,00 €</div>
     </div>
     <div class="product-item" onclick="openQuickAdd(this)" style="cursor: pointer;">
@@ -1247,7 +1269,7 @@
     </div>
     <div class="product-item" onclick="openQuickAdd(this)" style="cursor: pointer;">
         <div class="product-info"><h3>10 Chickentasche</h3><p>Doppel-Hähnchenschnitzel mit Sauce und Salat</p></div>
-        <div class="price">7,00 €</div>
+        <div class="price">8,00 €</div>
     </div>
     <div class="product-item" onclick="openQuickAdd(this)" style="cursor: pointer;">
         <div class="product-info"><h3>11 Salattasche mit Weißkäse</h3><p>mit Weißkäse und Sauce</p></div>
@@ -1257,56 +1279,79 @@
         <div class="product-info"><h3>12 Falafeltasche</h3><p>mit Salat und Sauce</p></div>
         <div class="price">7,00 €</div>
     </div>
+    <div class="product-item" onclick="openFleischwahl(this)" data-haehnchen="6.00" data-rind="7.00" data-steak="8.00" style="cursor: pointer;">
+        <div class="product-info"><h3>13 Kinder Atas-Tasche</h3><p>Fleisch, Salat, Sauce und Pommes</p></div>
+        <div class="price">ab 6,00 €</div>
+    </div>
     <h2 class="category-title" id="dueruem">Dürüm (Wrap)</h2>
     <p class="category-note">Hausgemachte Dürüm (Teigrolle) aus dem Steinofen</p>
     <div class="product-item" onclick="openFleischwahl(this)" data-haehnchen="8.00" data-rind="9.00" data-steak="11.00" style="cursor: pointer;">
-        <div class="product-info"><h3>15 Wrap</h3><p>Fleisch nach Wahl mit Salat und Sauce</p></div>
+        <div class="product-info"><h3>14 Wrap</h3><p>Fleisch nach Wahl mit Salat und Sauce</p></div>
         <div class="price">ab 8,00 €</div>
     </div>
     <div class="product-item" onclick="openFleischwahl(this)" data-haehnchen="9.00" data-rind="10.00" data-steak="12.00" style="cursor: pointer;">
-        <div class="product-info"><h3>16 Wrap doppelt Fleisch</h3><p>Fleisch nach Wahl mit Salat und Sauce</p></div>
+        <div class="product-info"><h3>15 Wrap doppelt Fleisch</h3><p>Fleisch nach Wahl mit Salat und Sauce</p></div>
         <div class="price">ab 9,00 €</div>
     </div>
     <div class="product-item" onclick="openFleischwahl(this)" data-haehnchen="9.00" data-rind="10.00" data-steak="12.00" style="cursor: pointer;">
-        <div class="product-info"><h3>17 Sucuk Wrap</h3><p>Fleisch nach Wahl mit Sucuk (türk. Knoblauchwurst), Salat und Sauce</p></div>
+        <div class="product-info"><h3>16 Sucuk Wrap</h3><p>Fleisch nach Wahl mit Sucuk (türk. Knoblauchwurst), Salat und Sauce</p></div>
         <div class="price">ab 9,00 €</div>
     </div>
     <div class="product-item" onclick="openFleischwahl(this)" data-haehnchen="9.00" data-rind="10.00" data-steak="12.00" style="cursor: pointer;">
-        <div class="product-info"><h3>18 Atas Wrap</h3><p>Fleisch nach Wahl mit Pommes, Salat und Sauce</p></div>
+        <div class="product-info"><h3>17 Atas Wrap</h3><p>Fleisch nach Wahl mit Pommes, Salat und Sauce</p></div>
         <div class="price">ab 9,00 €</div>
     </div>
     <div class="product-item" onclick="openFleischwahl(this)" data-haehnchen="14.00" data-rind="15.00" data-steak="18.00" style="cursor: pointer;">
-        <div class="product-info"><h3>19 XXL Wrap</h3><p>Fleisch nach Wahl mit Salat und Sauce</p></div>
+        <div class="product-info"><h3>18 XXL Wrap</h3><p>Fleisch nach Wahl mit Salat und Sauce</p></div>
         <div class="price">ab 14,00 €</div>
     </div>
     <div class="product-item" onclick="openQuickAdd(this)" style="cursor: pointer;">
-        <div class="product-info"><h3>20 Köfte Wrap</h3><p>mit Salat und Sauce</p></div>
+        <div class="product-info"><h3>19 Punjabi Wrap</h3><p>mit Grillkebab, Salat und Sauce</p></div>
         <div class="price">9,00 €</div>
     </div>
     <div class="product-item" onclick="openQuickAdd(this)" style="cursor: pointer;">
-        <div class="product-info"><h3>21 Hähnchenschnitzel Wrap</h3><p>mit Salat und Sauce</p></div>
+        <div class="product-info"><h3>20 Hähnchenschnitzel Wrap</h3><p>mit Salat und Sauce</p></div>
         <div class="price">9,00 €</div>
     </div>
     <div class="product-item" onclick="openQuickAdd(this)" style="cursor: pointer;">
-        <div class="product-info"><h3>22 Falafel Wrap</h3><p>Falafel mit Salat und Sauce</p></div>
+        <div class="product-info"><h3>21 Falafel Wrap</h3><p>Falafel mit Salat und Sauce</p></div>
         <div class="price">7,50 €</div>
     </div>
     <div class="product-item" onclick="openQuickAdd(this)" style="cursor: pointer;">
-        <div class="product-info"><h3>23 Salat Wrap</h3><p>Salat, Weißkäse und Sauce</p></div>
+        <div class="product-info"><h3>22 Salat Wrap</h3><p>Salat, Weißkäse und Sauce</p></div>
         <div class="price">7,00 €</div>
     </div>
-    <h2 class="category-title" id="teller">Tellergerichte</h2>
-    <div class="product-item" onclick="openFleischwahl(this)" data-haehnchen="9.00" data-rind="10.00" data-steak="12.00" style="cursor: pointer;">
-        <div class="product-info"><h3>24 Atasteller klein</h3><p>Salat, Twister, Pommes oder Reis und Sauce nach Wahl</p></div>
-        <div class="price">ab 9,00 €</div>
+    <div class="product-item" onclick="openFleischwahl(this)" data-haehnchen="6.00" data-rind="7.00" data-steak="8.00" style="cursor: pointer;">
+        <div class="product-info"><h3>23 Kinder Wrap</h3><p>Fleisch, Salat, Sauce und Pommes</p></div>
+        <div class="price">ab 6,00 €</div>
     </div>
-    <div class="product-item" onclick="openFleischwahl(this)" data-haehnchen="11.00" data-rind="12.00" data-steak="14.00" style="cursor: pointer;">
-        <div class="product-info"><h3>25 Atasteller</h3><p>Salat, Twister, Pommes oder Reis und Sauce nach Wahl</p></div>
-        <div class="price">ab 11,00 €</div>
+    <h2 class="category-title" id="teller">Tellergerichte</h2>
+    <p class="category-note">Alle Teller können mit Reis, Twister oder Pommes zubereitet werden.</p>
+    <div class="product-item" onclick="openFleischwahl(this)" data-haehnchen="8.50" data-rind="9.00" data-steak="11.00" style="cursor: pointer;">
+        <div class="product-info"><h3>25 Atasteller klein</h3><p>Salat, Twister, Pommes oder Reis und Sauce nach Wahl</p></div>
+        <div class="price">ab 8,50 €</div>
+    </div>
+    <div class="product-item" onclick="openFleischwahl(this)" data-haehnchen="12.00" data-rind="13.00" data-steak="15.00" style="cursor: pointer;">
+        <div class="product-info"><h3>26 Atasteller</h3><p>Salat, Twister, Pommes oder Reis und Sauce nach Wahl</p></div>
+        <div class="price">ab 12,00 €</div>
     </div>
     <div class="product-item" onclick="openFleischwahl(this)" data-haehnchen="15.00" data-rind="16.00" data-steak="18.00" style="cursor: pointer;">
-        <div class="product-info"><h3>26 Taxi-Teller</h3><p>Bratwurst, Fleisch nach Wahl, Köfte, Sauce nach Wahl</p></div>
+        <div class="product-info"><h3>27 Taxi-Teller</h3><p>Bratwurst, Fleisch nach Wahl, Köfte, Sauce nach Wahl</p></div>
         <div class="price">ab 15,00 €</div>
+    </div>
+    <div class="product-item" onclick="openFleischwahl(this)" data-haehnchen="11.00" data-rind="12.00" data-steak="14.00" style="cursor: pointer;">
+        <div class="product-info"><h3>28 Atasteller nur Fleisch</h3><p>Fleisch nach Wahl, Pommes und Sauce nach Wahl</p></div>
+        <div class="price">ab 11,00 €</div>
+    </div>
+    <h2 class="category-title" id="grillhaehnchen">Grillhähnchen</h2>
+    <p class="category-note">Jeden Samstag ab 13:00 Uhr.</p>
+    <div class="product-item" onclick="openQuickAdd(this)" style="cursor: pointer;">
+        <div class="product-info"><h3>127 Ein Hähnchenschenkel</h3></div>
+        <div class="price">3,50 €</div>
+    </div>
+    <div class="product-item" onclick="openQuickAdd(this)" style="cursor: pointer;">
+        <div class="product-info"><h3>128 Hähnchenschenkel mit Reis, Pommes oder hausgemachtem Brot</h3></div>
+        <div class="price">12,00 €</div>
     </div>
     <h2 class="category-title" id="lahmacun">Lahmacun</h2>
     <p class="category-note">Hauseigene türkische Teigspezialität mit Hackfleischsauce aus dem Steinofen</p>
@@ -1325,6 +1370,10 @@
     <div class="product-item" onclick="openFleischwahl(this)" data-haehnchen="14.00" data-rind="15.00" data-steak="18.00" style="cursor: pointer;">
         <div class="product-info"><h3>38 Lahmacun XXL-Atas</h3><p>Hackfleischsauce mit Fleisch nach Wahl, Salat und Sauce</p></div>
         <div class="price">ab 14,00 €</div>
+    </div>
+    <div class="product-item" onclick="openFleischwahl(this)" data-haehnchen="6.00" data-rind="7.00" data-steak="8.00" style="cursor: pointer;">
+        <div class="product-info"><h3>39 Kinder Lahmacun</h3><p>Fleisch, Salat, Sauce und Pommes</p></div>
+        <div class="price">ab 6,00 €</div>
     </div>
     <h2 class="category-title" id="pide">Pide</h2>
     <p class="category-note">Hauseigene türkische Teigspezialität (Schiffchen) aus dem Steinofen</p>
@@ -1361,7 +1410,7 @@
         <div class="price">9,00 €</div>
     </div>
     <h2 class="category-title" id="schnitzel">Putenschnitzel</h2>
-    <p class="category-note">Alle Schnitzelgerichte werden mit Beilagen, Salat und wahlweise mit Pommes, Kroketten oder Wildkartoffeln serviert.</p>
+    <p class="category-note">Alle Schnitzel können mit Reis, Twister oder Pommes zubereitet werden.</p>
     <div class="product-item" onclick="openQuickAdd(this)" style="cursor: pointer;">
         <div class="product-info"><h3>53 Champignon-Rahmschnitzel</h3><p>Champignon in Sahnesauce</p></div>
         <div class="price">10,00 €</div>
@@ -1379,36 +1428,6 @@
     <div class="product-item" onclick="openQuickAdd(this)" style="cursor: pointer;">
         <div class="product-info"><h3>61 Frischer Drehspieß-Auflauf</h3><p>Kartoffeln, Fleisch nach Wahl, Weißkäse, Zwiebeln, Paprika, Sauce Hollandaise</p></div>
         <div class="price">10,00 €</div>
-    </div>
-    <h2 class="category-title" id="baguettes">Baguettes</h2>
-    <p class="category-note">Alle Baguettes sind mit Käse überbacken</p>
-    <div class="product-item" onclick="openQuickAdd(this)" style="cursor: pointer;">
-        <div class="product-info"><h3>65 Baguette mit Salami</h3></div>
-        <div class="price">7,00 €</div>
-    </div>
-    <div class="product-item" onclick="openQuickAdd(this)" style="cursor: pointer;">
-        <div class="product-info"><h3>66 Baguette mit Mozzarella</h3></div>
-        <div class="price">7,00 €</div>
-    </div>
-    <div class="product-item" onclick="openQuickAdd(this)" style="cursor: pointer;">
-        <div class="product-info"><h3>67 Baguette mit Putenschinken</h3></div>
-        <div class="price">7,00 €</div>
-    </div>
-    <div class="product-item" onclick="openQuickAdd(this)" style="cursor: pointer;">
-        <div class="product-info"><h3>68 Baguette mit Thunfisch</h3></div>
-        <div class="price">7,00 €</div>
-    </div>
-    <div class="product-item" onclick="openQuickAdd(this)" style="cursor: pointer;">
-        <div class="product-info"><h3>69 Baguette mit Drehspießfleisch</h3></div>
-        <div class="price">7,00 €</div>
-    </div>
-    <div class="product-item" onclick="openQuickAdd(this)" style="cursor: pointer;">
-        <div class="product-info"><h3>70 Baguette mit Sucuk</h3></div>
-        <div class="price">7,50 €</div>
-    </div>
-    <div class="product-item" onclick="openQuickAdd(this)" style="cursor: pointer;">
-        <div class="product-info"><h3>71 Baguette mit Hähnchenbrust und Paprika</h3></div>
-        <div class="price">8,00 €</div>
     </div>
     <h2 class="category-title" id="pizza">Pizza</h2>
     <p class="category-note">Alle Pizzen werden mit Tomatensauce, Käse und Oregano zubereitet. Alle Pizzen gerne extra scharf.</p>
@@ -1533,11 +1552,11 @@
         <div class="price">9,00 €</div>
     </div>
     <div class="product-item" onclick="openQuickAdd(this)" style="cursor: pointer;">
-        <div class="product-info"><h3>103 Pizzabrötchen mit Salami (Geflügel)</h3></div>
+        <div class="product-info"><h3>103 Pizzabrötchen mit Geflügel- oder Rindersalami</h3></div>
         <div class="price">9,00 €</div>
     </div>
     <div class="product-item" onclick="openQuickAdd(this)" style="cursor: pointer;">
-        <div class="product-info"><h3>104 Pizzabrötchen mit Schinken (Geflügel)</h3></div>
+        <div class="product-info"><h3>104 Pizzabrötchen mit Geflügelschinken</h3></div>
         <div class="price">9,00 €</div>
     </div>
     <div class="product-item" onclick="openQuickAdd(this)" style="cursor: pointer;">
@@ -1556,75 +1575,79 @@
         <div class="product-info"><h3>108 Gyrospizzabrötchen</h3></div>
         <div class="price">9,00 €</div>
     </div>
+    <div class="product-item" onclick="openQuickAdd(this)" style="cursor: pointer;">
+        <div class="product-info"><h3>109 Pizzabrötchen Vegetarisch</h3></div>
+        <div class="price">8,00 €</div>
+    </div>
     <h2 class="category-title" id="snacks">Snacks</h2>
     <div class="product-item" onclick="openQuickAdd(this)" style="cursor: pointer;">
-        <div class="product-info"><h3>109 Pommes klein</h3></div>
+        <div class="product-info"><h3>110 Pommes klein</h3></div>
         <div class="price">3,50 €</div>
     </div>
     <div class="product-item" onclick="openQuickAdd(this)" style="cursor: pointer;">
-        <div class="product-info"><h3>110 Pommes groß</h3></div>
+        <div class="product-info"><h3>111 Pommes groß</h3></div>
         <div class="price">4,00 €</div>
     </div>
     <div class="product-item" onclick="openQuickAdd(this)" style="cursor: pointer;">
-        <div class="product-info"><h3>111 Kroketten</h3><p>8 Stk.</p></div>
+        <div class="product-info"><h3>112 Kroketten</h3><p>8 Stk.</p></div>
         <div class="price">4,00 €</div>
     </div>
     <div class="product-item" onclick="openQuickAdd(this)" style="cursor: pointer;">
-        <div class="product-info"><h3>112 Chicken Nuggets</h3><p>6 Stk.</p></div>
+        <div class="product-info"><h3>113 Chicken Nuggets</h3><p>6 Stk.</p></div>
         <div class="price">4,50 €</div>
     </div>
     <div class="product-item" onclick="openQuickAdd(this)" style="cursor: pointer;">
-        <div class="product-info"><h3>113 Kartoffel Twister</h3></div>
+        <div class="product-info"><h3>114 Kartoffel Twister</h3></div>
         <div class="price">4,50 €</div>
     </div>
     <div class="product-item" onclick="openQuickAdd(this)" style="cursor: pointer;">
-        <div class="product-info"><h3>114 Mantaplatte</h3></div>
+        <div class="product-info"><h3>115 Mantaplatte</h3></div>
         <div class="price">7,00 €</div>
     </div>
     <div class="product-item" onclick="openQuickAdd(this)" style="cursor: pointer;">
-        <div class="product-info"><h3>115 Bratwurst</h3></div>
+        <div class="product-info"><h3>116 Bratwurst</h3></div>
         <div class="price">3,00 €</div>
     </div>
     <div class="product-item" onclick="openQuickAdd(this)" style="cursor: pointer;">
-        <div class="product-info"><h3>116 Hamburger</h3></div>
+        <div class="product-info"><h3>117 Hamburger</h3></div>
         <div class="price">4,00 €</div>
     </div>
     <div class="product-item" onclick="openQuickAdd(this)" style="cursor: pointer;">
-        <div class="product-info"><h3>117 Cheeseburger</h3></div>
+        <div class="product-info"><h3>118 Cheeseburger</h3></div>
         <div class="price">4,50 €</div>
     </div>
     <div class="product-item" onclick="openQuickAdd(this)" style="cursor: pointer;">
-        <div class="product-info"><h3>118 Mozzarella Sticks</h3><p>6 Stk.</p></div>
+        <div class="product-info"><h3>119 Mozzarella Sticks</h3><p>6 Stk.</p></div>
         <div class="price">6,00 €</div>
     </div>
     <h2 class="category-title" id="salat">Salate</h2>
     <p class="category-note">Zu allen Salaten werden zusätzlich 4 Stk. Pizzabrötchen serviert. Wahlweise mit Tzatziki, Cocktail, Joghurtsauce, Essig, Öl oder Balsamico als Dressing.</p>
     <div class="product-item" onclick="openQuickAdd(this)" style="cursor: pointer;">
-        <div class="product-info"><h3>121 Mista</h3><p>Tomaten, Gurken, Eisbergsalat</p></div>
+        <div class="product-info"><h3>120 Mista</h3><p>Tomaten, Gurken, Eisbergsalat</p></div>
         <div class="price">6,00 €</div>
     </div>
     <div class="product-item" onclick="openQuickAdd(this)" style="cursor: pointer;">
-        <div class="product-info"><h3>122 Gemischter Salat</h3><p>Tomaten, Gurken, Eisbergsalat, Zwiebeln, Mais, Oliven, Peperoni</p></div>
+        <div class="product-info"><h3>121 Gemischter Salat</h3><p>Tomaten, Gurken, Eisbergsalat, Zwiebeln, Mais, Oliven, Peperoni</p></div>
         <div class="price">8,00 €</div>
     </div>
     <div class="product-item" onclick="openQuickAdd(this)" style="cursor: pointer;">
-        <div class="product-info"><h3>123 Bauernsalat</h3><p>Eisbergsalat, Gurken, Tomaten, Paprika, Weißkäse, Zwiebeln</p></div>
+        <div class="product-info"><h3>122 Bauernsalat</h3><p>Eisbergsalat, Gurken, Tomaten, Paprika, Weißkäse, Zwiebeln</p></div>
         <div class="price">8,00 €</div>
     </div>
     <div class="product-item" onclick="openQuickAdd(this)" style="cursor: pointer;">
-        <div class="product-info"><h3>124 Atas-Salat</h3><p>mit gebratenen Hähnchenbruststreifen, Paprika, Champignons und Zwiebeln</p></div>
+        <div class="product-info"><h3>123 Atas-Salat</h3><p>mit gebratenen Hähnchenbruststreifen, Paprika, Champignons und Zwiebeln</p></div>
         <div class="price">9,00 €</div>
     </div>
     <div class="product-item" onclick="openQuickAdd(this)" style="cursor: pointer;">
-        <div class="product-info"><h3>125 Della Casa</h3><p>Tomaten, Gurken, Eisbergsalat, Käse, Zwiebeln, Thunfisch, gekochtes Ei</p></div>
+        <div class="product-info"><h3>124 Della Casa</h3><p>Tomaten, Gurken, Eisbergsalat, Käse, Zwiebeln, Thunfisch, gekochtes Ei</p></div>
         <div class="price">7,00 €</div>
     </div>
     <div class="product-item" onclick="openQuickAdd(this)" style="cursor: pointer;">
-        <div class="product-info"><h3>126 Chickensalat</h3><p>Tomaten, Gurken, Eisbergsalat, Weißkäse, Paprika, Mais, Hähnchenbruststreifen</p></div>
+        <div class="product-info"><h3>125 Chickensalat</h3><p>Tomaten, Gurken, Eisbergsalat, Weißkäse, Paprika, Mais, Hähnchenbruststreifen</p></div>
         <div class="price">9,00 €</div>
     </div>
     <div class="product-item" onclick="openQuickAdd(this)" style="cursor: pointer;">
-        <div class="product-info"><h3>127 Atasfleischsalat</h3><p>Tomaten, Gurken, Eisbergsalat, Fleisch nach Wahl, Weißkäse</p></div>
+        <div class="product-info"><h3>126 Atasfleischsalat</h3><p>Tomaten, Gurken, Eisbergsalat, Fleisch nach Wahl, Weißkäse</p></div>
         <div class="price">9,00 €</div>
     </div>
     <h2 class="category-title" id="extras">Extras</h2>
@@ -1653,7 +1676,7 @@
         <div class="price">1,00 €</div>
     </div>
     <h2 class="category-title" id="getraenke">Getränke</h2>
-    <p class="category-note">Alle Getränke sind inkl. Pfand.</p>
+    <p class="category-note">Alle Getränke zzgl. 0,25 € Pfand.</p>
     <div class="product-item" onclick="openQuickAdd(this)" style="cursor: pointer;">
         <div class="product-info"><h3>Mineralwasser</h3><p>0,33 l</p></div>
         <div class="price">1,75 €</div>
@@ -1959,6 +1982,10 @@ let LIEFERFENSTER = { offen: true, ab: null, grund: null };
 
 function lieferungGesperrt() { return !LIEFERFENSTER.offen; }
 
+// Abholschalter aus /api/status (Dashboard/Kasse). Fehlt das Feld, bleibt
+// Abholung offen - ein aelteres Backend soll nichts sperren.
+let ABHOLUNG_OFFEN = true;
+
 // ── Mittagsangebote: nur Abholung ─────────────────────────────────
 // Namen kommen aus dem Markup selbst (Kategorie "mittagsangebote"), nicht aus
 // einer zweiten, von Hand gepflegten Liste - waechst die Karte, waechst diese
@@ -1986,6 +2013,10 @@ function warenkorbHatMittagsangebot() {
 // Beide Umschalter melden hierher. Gibt true zurueck, wenn die Auswahl
 // erlaubt ist, und schiebt sonst auf Abholung.
 function lieferwahlErlaubt(option) {
+    if (option === 'pickup' && !ABHOLUNG_OFFEN) {
+        alert('Abholung ist gerade nicht möglich. Bitte Lieferung wählen.');
+        return false;
+    }
     if (option !== 'delivery') return true;
     if (warenkorbHatMittagsangebot()) {
         alert('Mittagsangebote gibt es nur zur Abholung. Bitte die Mittagsangebote aus dem Warenkorb entfernen, um auf Lieferung umzustellen.');
@@ -1999,6 +2030,7 @@ function lieferwahlErlaubt(option) {
         zu_frueh:   'Wir liefern heute erst ab ' + LIEFERFENSTER.ab + ' Uhr. Abholung ist schon jetzt moeglich.',
         feierabend: 'Wir haben fuer heute geschlossen.',
         ruhetag:    'Heute ist Ruhetag. Wir liefern nicht und haben auch nicht geoeffnet.',
+        aus:        'Wir liefern gerade nicht. Abholung ist möglich.',
     };
     alert(texte[LIEFERFENSTER.grund] || 'Lieferung ist gerade nicht moeglich. Bitte ruf uns kurz an.');
     return false;
@@ -2007,31 +2039,41 @@ function lieferwahlErlaubt(option) {
 // Sperrt oder entsperrt beide Umschalter und zeigt an, ab wann geliefert wird.
 function zeigeLieferfenster() {
     const gesperrt = lieferungGesperrt();
-    const hinweis = LIEFERFENSTER.grund === 'zu_frueh' ? 'Lieferung ab ' + LIEFERFENSTER.ab
+    const hinweis = LIEFERFENSTER.grund === 'aus' ? 'Gerade keine Lieferung'
+                  : LIEFERFENSTER.grund === 'zu_frueh' ? 'Lieferung ab ' + LIEFERFENSTER.ab
                   : LIEFERFENSTER.grund === 'feierabend' ? 'Heute geschlossen'
                   : 'Heute Ruhetag';
-    for (const id of ['option-delivery', 'cart-btn-delivery']) {
-        const el = document.getElementById(id);
-        if (!el) continue;
-        el.style.opacity = gesperrt ? '0.45' : '';
-        el.style.cursor  = gesperrt ? 'not-allowed' : 'pointer';
-        el.title = gesperrt ? hinweis : '';
-        const marke = el.querySelector('.lieferhinweis');
-        if (gesperrt && !marke) {
-            const s = document.createElement('div');
-            s.className = 'lieferhinweis';
-            s.style.cssText = 'font-size:10px;font-weight:normal;opacity:0.9;margin-top:2px';
-            s.textContent = hinweis;
-            el.appendChild(s);
-        } else if (!gesperrt && marke) {
-            marke.remove();
+    const markiere = function (ids, zu, text) {
+        for (const id of ids) {
+            const el = document.getElementById(id);
+            if (!el) continue;
+            el.style.opacity = zu ? '0.45' : '';
+            el.style.cursor  = zu ? 'not-allowed' : 'pointer';
+            el.title = zu ? text : '';
+            const marke = el.querySelector('.lieferhinweis');
+            if (zu && !marke) {
+                const s = document.createElement('div');
+                s.className = 'lieferhinweis';
+                s.style.cssText = 'font-size:10px;font-weight:normal;opacity:0.9;margin-top:2px';
+                s.textContent = text;
+                el.appendChild(s);
+            } else if (zu && marke) {
+                marke.textContent = text;
+            } else if (!zu && marke) {
+                marke.remove();
+            }
         }
-    }
-    // Steht der Gast schon auf Lieferung, wenn das Fenster zugeht, wird
-    // umgeschaltet - sonst laeuft er in die Absage des Servers.
-    if (gesperrt && currentSelection === 'delivery') {
+    };
+    markiere(['option-delivery', 'cart-btn-delivery'], gesperrt, hinweis);
+    markiere(['option-pickup', 'cart-btn-pickup'], !ABHOLUNG_OFFEN, 'Gerade keine Abholung');
+    // Steht der Gast auf einer Art, die gerade zugeht, wird umgeschaltet -
+    // sonst laeuft er in die Absage des Servers.
+    if (gesperrt && currentSelection === 'delivery' && ABHOLUNG_OFFEN) {
         selectOption('pickup');
         if (document.getElementById('cart-btn-delivery')) setCartOption('pickup');
+    } else if (!ABHOLUNG_OFFEN && currentSelection === 'pickup' && !gesperrt) {
+        selectOption('delivery');
+        if (document.getElementById('cart-btn-pickup')) setCartOption('delivery');
     }
 }
 
@@ -2182,6 +2224,10 @@ function speiseInWarenkorb() {
             if (!quickPflichtErfuellt()) return;
             extraDetails = quickAuswahlSammeln();
             preis = quickGrundpreis + extraDetails.reduce(function (summe, e) { return summe + e.price; }, 0);
+        }
+        if (quickPfand) {
+            extraDetails.push({ name: 'Pfand', price: quickPfand });
+            preis += quickPfand;
         }
     }
     else if (document.getElementById('fleischPopup').style.display === 'flex') {
@@ -3800,11 +3846,20 @@ function mittagGruppenFuer(name) {
   if (!/^Menü \d/.test(name)) return null;
   var istMenue4 = /^Menü 4/.test(name);
   var istMenue1 = /^Menü 1/.test(name);
-  var gruppen = [
-    { typ: 'radio', titel: 'Fleisch auswählen', pflicht: true,
-      optionen: istMenue4 ? [{ label: 'Hähnchen' }, { label: 'Kalb' }]
-                          : [{ label: 'Hähnchen' }, { label: 'Rind' }] }
-  ];
+  // Freitags kein Kalb/Rind (siehe steakTag) - dann bleibt nur Haehnchen.
+  var fleischOpt = istMenue4 ? [{ label: 'Hähnchen' }, { label: 'Kalb' }]
+                             : [{ label: 'Hähnchen' }, { label: 'Rind' }];
+  if (!rindVerfuegbar()) fleischOpt = [{ label: 'Hähnchen' }];
+  // Menue 3: Duerum oder Lahmacun (Karte 30.10.2026). Menue 5 ist ein
+  // Hamburger - dort gibt es keine Fleischwahl.
+  var gruppen = [];
+  if (/^Menü 3/.test(name)) {
+    gruppen.push({ typ: 'radio', titel: 'Gericht auswählen', pflicht: true,
+      optionen: [{ label: 'Dürüm (Wrap)' }, { label: 'Lahmacun' }] });
+  }
+  if (!/^Menü 5/.test(name)) {
+    gruppen.push({ typ: 'radio', titel: 'Fleisch auswählen', pflicht: true, optionen: fleischOpt });
+  }
   if (!istMenue1) {
     gruppen.push({ typ: 'radio', titel: 'Getränk auswählen', pflicht: true,
       optionen: MITTAG_GETRAENK_SORTEN.map(function (s) { return { label: s }; }) });
@@ -3814,7 +3869,12 @@ function mittagGruppenFuer(name) {
 
 /* ── Wer bekommt was ─────────────────────────────────────────────────── */
 
+// Grillhaehnchen: "mit Reis, Pommes oder hausgemachtem Brot" (Karte)
+const G_GRILL_BEILAGE = { typ: 'radio', titel: 'Beilage auswählen', pflicht: true,
+  optionen: [{ label: 'Reis' }, { label: 'Pommes' }, { label: 'Hausgemachtes Brot' }] };
+
 const AUSWAHL_JE_KATEGORIE = {
+  grillhaehnchen: [G_GRILL_BEILAGE],
   taschen:  [G_SOSSE],
   dueruem:  [G_SOSSE],
   teller:   [G_BEILAGE, G_SOSSE],
@@ -3868,6 +3928,7 @@ function gruppenFuer(el) {
   var desc = pEl ? pEl.textContent : '';
 
   var gruppen = basis.filter(function (g) {
+    if (g === G_GRILL_BEILAGE) return / oder /.test(name);   // nur der Teller mit Beilage
     return g !== G_BEILAGE || BEILAGE_WAHL.test(desc);
   });
   var weg = kat === 'salat' ? weglassenAusZutatenliste(desc) : weglassenGruppeFuer(desc);
@@ -3918,6 +3979,17 @@ var quickGrundpreis = 0;   // Kartenpreis ohne Aufschlaege
 
 function euro(n) { return n.toFixed(2).replace('.', ',') + ' €'; }
 
+// Karte vom 30.10.2026: "Alle Getraenke zzgl. 0,25 Euro Pfand". Der Pfand
+// haengt als eigene Zeile am Getraenk, damit er in Warenkorb, Bestellung
+// und Bon ausgewiesen ist und nicht im Kartenpreis verschwindet.
+const PFAND_GETRAENK = 0.25;
+var quickPfand = 0;
+// Pfand auch auf das Getraenk in Mittagsmenue 2-5 und Kids-Box 3/4 (Abed,
+// 30.10.2026). Kids-Box 1/2 haben eine Capri-Sun - die ist pfandfrei.
+function mitPfand(kat, name) {
+  return kat === 'getraenke' || /^Menü [2-5]\b/.test(name) || /^Kids-Box [34]\b/.test(name);
+}
+
 function openQuickAdd(element) {
     const num = element.dataset.itemNum;
     // Nur den ersten Textknoten lesen, nicht .innerText - sonst haengt die
@@ -3925,6 +3997,7 @@ function openQuickAdd(element) {
     // in Warenkorb, Bestellung und Bon landen wuerde.
     const h3El = element.querySelector('h3');
     const rawName = h3El.childNodes[0] ? h3El.childNodes[0].textContent : h3El.innerText;
+    quickPfand = mitPfand(kategorieVon(element), rawName.trim()) ? PFAND_GETRAENK : 0;
 
     // Getraenke fuehren mehrere Sorten unter einem Kartenpreis
     // ("Cola, Fanta, Sprite ..."); die Sorte muss die Kueche/Kasse eindeutig
@@ -3937,6 +4010,14 @@ function openQuickAdd(element) {
 
     if (/^Menü \d/.test(rawName) && !mittagVerfuegbar()) {
         zeigeHinweisToast('Mittagsmenü nur Mo–Fr von 11:30 bis 14:30 Uhr bestellbar.');
+        return;
+    }
+    if (/Steak$/.test(rawName.trim()) && !steakVerfuegbar()) {
+        zeigeHinweisToast('Steak gibt es nur freitags und samstags.');
+        return;
+    }
+    if (GRILL_NAMEN.has(rawName.trim()) && !grillVerfuegbar()) {
+        zeigeHinweisToast('Grillhähnchen gibt es nur samstags ab 13 Uhr.');
         return;
     }
     quickIstGetraenke = false;
@@ -4099,14 +4180,66 @@ var fleischAuswahl = null;   // 'haehnchen' | 'rind' | 'steak' | null
 
 const FLEISCH_LABEL = { haehnchen: 'Hähnchen', rind: 'Rind', steak: 'Steak' };
 
-// Steak-Döner gibt es laut Karte nur freitags und samstags ab 12 Uhr - lokale
-// Geraetezeit des Gasts, kein Server-Abgleich. Fuer eine Werbeeinschraenkung
-// (nicht sicherheitsrelevant) reicht das.
-function steakVerfuegbar() {
-  var jetzt = new Date();
-  var tag = jetzt.getDay(); // 0=So, 5=Fr, 6=Sa
-  return (tag === 5 || tag === 6) && jetzt.getHours() >= 12;
+// Freitags und samstags gibt es den ganzen Tag Steak-Döner, dafuer kein Kalb
+// (auf der Seite "Rind") - Betreiber, 30.10.2026. Lokale Geraetezeit des
+// Gasts, kein Server-Abgleich. Fuer eine Werbeeinschraenkung (nicht
+// sicherheitsrelevant) reicht das.
+function steakTag() {
+  var tag = new Date().getDay(); // 0=So, 5=Fr, 6=Sa
+  return tag === 5 || tag === 6;
 }
+function steakVerfuegbar() { return steakTag(); }
+function rindVerfuegbar() { return !steakTag(); }
+
+// Grillhaehnchen: samstags ab 13 Uhr. Server.js prueft dasselbe nach
+// (Kategorien mit nur_samstag_ab in Menue/menu.json).
+function grillVerfuegbar() {
+  var jetzt = new Date();
+  return jetzt.getDay() === 6 && jetzt.getHours() >= 13;
+}
+const GRILL_KARTEN = (() => {
+  const karten = [];
+  let el = document.getElementById('grillhaehnchen');
+  el = el ? el.nextElementSibling : null;
+  while (el && !el.classList.contains('category-title')) {
+    if (el.classList.contains('product-item')) karten.push(el);
+    el = el.nextElementSibling;
+  }
+  return karten;
+})();
+const GRILL_NAMEN = new Set(GRILL_KARTEN.map(el => el.querySelector('h3').innerText.trim()));
+
+// Hinweis-Banner unter dem Hero. Nur was gerade zutrifft, in dieser
+// Reihenfolge: ausgeschaltete Bestellart zuerst, dann die Tagesangebote.
+function zeigeHinweise() {
+  var box = document.getElementById('atasHinweise');
+  if (!box) return;
+  var zeilen = [];
+  var lieferungAus = typeof LIEFERFENSTER !== 'undefined' && LIEFERFENSTER.grund === 'aus';
+  var abholungAus = typeof ABHOLUNG_OFFEN !== 'undefined' && !ABHOLUNG_OFFEN;
+  if (lieferungAus && !abholungAus) {
+    zeilen.push({ warnung: true, text: 'Lieferung gerade nicht verfügbar – Abholung möglich' });
+  } else if (abholungAus && !lieferungAus) {
+    zeilen.push({ warnung: true, text: 'Abholung gerade nicht verfügbar – Lieferung möglich' });
+  }
+  if (steakTag()) {
+    zeilen.push({ text: 'Heute Steak-Döner! Freitags und samstags Steak statt Kalb.', ziel: 'taschen' });
+  }
+  if (new Date().getDay() === 6) {
+    zeilen.push({ ziel: 'grillhaehnchen', text: grillVerfuegbar()
+      ? 'Samstags frische Grillhähnchen – jetzt bestellbar'
+      : 'Samstags ab 13 Uhr frische Grillhähnchen' });
+  }
+  box.innerHTML = zeilen.map(function (z) {
+    var inhalt = z.ziel ? '<a href="#' + z.ziel + '">' + z.text + '</a>' : z.text;
+    return '<div class="hinweis-zeile' + (z.warnung ? ' warnung' : '') + '">' + inhalt + '</div>';
+  }).join('');
+  box.style.display = zeilen.length ? 'block' : 'none';
+  // Grillhaehnchen ausserhalb von Samstag ab 13 Uhr sichtbar, aber blass.
+  GRILL_KARTEN.forEach(function (el) { el.classList.toggle('grill-zu', !grillVerfuegbar()); });
+}
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', zeigeHinweise);
+else zeigeHinweise();
 
 // Mittagsmenue: Mo-Fr, 11:30-14:30 Uhr - lokale Geraetezeit, wie steakVerfuegbar.
 function mittagVerfuegbar() {
@@ -4155,8 +4288,12 @@ function openFleischwahl(element) {
     const knopfHtml = Object.keys(FLEISCH_LABEL).filter(function (s) { return s in fleischPreise; })
       .map(function (sorte) {
         if (sorte === 'steak' && !steakVerfuegbar()) {
-          return '<div class="fleisch-btn fleisch-btn-disabled" title="Steak-Döner gibt es nur freitags und samstags ab 12:00 Uhr">'
-            + FLEISCH_LABEL[sorte] + '<br><span style="font-size:.68rem;font-weight:normal">nur Fr/Sa ab 12 Uhr</span></div>';
+          return '<div class="fleisch-btn fleisch-btn-disabled" title="Steak-Döner gibt es nur freitags und samstags">'
+            + FLEISCH_LABEL[sorte] + '<br><span style="font-size:.68rem;font-weight:normal">nur Fr/Sa</span></div>';
+        }
+        if (sorte === 'rind' && !rindVerfuegbar()) {
+          return '<div class="fleisch-btn fleisch-btn-disabled" title="Freitags und samstags gibt es Steak statt Kalb">'
+            + FLEISCH_LABEL[sorte] + '<br><span style="font-size:.68rem;font-weight:normal">Fr/Sa Steak statt Kalb</span></div>';
         }
         return '<div class="fleisch-btn" id="fleisch-btn-' + sorte + '" onclick="waehleFleisch(\'' + sorte + '\')">'
           + FLEISCH_LABEL[sorte] + ' (' + euro(fleischPreise[sorte]) + ')</div>';
@@ -5481,6 +5618,8 @@ body.modal-open {
     ].join(';');
     banner.innerHTML = mode === 'neutral'
       ? 'Wir arbeiten gerade an unserem Online-Bestellsystem – schau bald wieder vorbei!'
+      : mode === 'pausiert'
+      ? 'Online-Bestellungen sind gerade pausiert – bitte ruf uns an: 02521 / 826 48 00'
       : 'Das Restaurant ist aktuell <u>geschlossen</u> – Bestellungen sind nicht möglich.';
     document.body.prepend(banner);
     document.body.style.paddingTop = '52px';
@@ -5496,11 +5635,17 @@ body.modal-open {
   const POPUP_OPENERS = [
     'openPizza','openPizzaPopup','openQuickAdd',
     'openPastaPopup','openSaladPopup','openPBPopup',
-    'openDipPopup','openFamPizzaPopup'
+    'openDipPopup','openFamPizzaPopup','openFleischwahl'
   ];
+
+  // Die echten Oeffner, damit eine Sperre wieder aufgehoben werden kann -
+  // sonst bliebe die Seite gesperrt, bis der Gast neu laedt, obwohl der
+  // Laden laengst wieder annimmt.
+  const POPUP_ORIGINALE = {};
 
   function blockPopups(mode) {
     POPUP_OPENERS.forEach(fn => {
+      if (!(fn in POPUP_ORIGINALE)) POPUP_ORIGINALE[fn] = window[fn];
       window[fn] = function() { showBlockedToast(mode); };
     });
     const cb = document.getElementById('checkout-btn');
@@ -5510,9 +5655,24 @@ body.modal-open {
     }
   }
 
+  function unblockPopups() {
+    if (!Object.keys(POPUP_ORIGINALE).length) return;   // nichts gesperrt
+    Object.keys(POPUP_ORIGINALE).forEach(fn => {
+      window[fn] = POPUP_ORIGINALE[fn];
+      delete POPUP_ORIGINALE[fn];
+    });
+    const cb = document.getElementById('checkout-btn');
+    if (cb) {
+      cb.style.pointerEvents = '';
+      cb.style.opacity = '';
+    }
+  }
+
   function showBlockedToast(mode) {
     const msg = mode === 'neutral'
       ? 'Online-Bestellung aktuell nicht verfügbar – wir arbeiten daran!'
+      : mode === 'pausiert'
+      ? 'Online-Bestellungen sind gerade pausiert – bitte ruf uns an.'
       : 'Bestellung nicht möglich – Restaurant ist geschlossen.';
     let t = document.getElementById('atas-closed-toast');
     if (t) { clearTimeout(t._timer); t.remove(); }
@@ -5603,9 +5763,16 @@ body.modal-open {
         ab:    statusData.lieferAb || null,
         grund: statusData.lieferGrund || null,
       };
+      ABHOLUNG_OFFEN = statusData.abholung !== false;
       zeigeLieferfenster();
+      zeigeHinweise();
+      // Lieferung und Abholung beide aus: wie geschlossen, mit eigenem Text.
+      const beideAus = LIEFERFENSTER.grund === 'aus' && !ABHOLUNG_OFFEN;
 
-      if (mode === 'geschlossen') {
+      if (mode === 'online' && beideAus) {
+        showClosedBanner('pausiert');
+        blockPopups('pausiert');
+      } else if (mode === 'geschlossen') {
         showClosedBanner('geschlossen');
         blockPopups('geschlossen');
       } else if (mode === 'neutral') {
@@ -5613,6 +5780,7 @@ body.modal-open {
         blockPopups('neutral');
       } else {
         hideClosedBanner();
+        unblockPopups();
       }
     } catch(e) {
       // Backend nicht erreichbar → sicher auf geschlossen setzen

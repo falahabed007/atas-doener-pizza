@@ -37,8 +37,8 @@
         },
         {
           "num": "",
-          "name": "Menü 3: Dürüm (Wrap)",
-          "desc": "mit 0,33 l Getränk",
+          "name": "Menü 3: Dürüm (Wrap) oder Lahmacun",
+          "desc": "mit kleinen Pommes und 0,33 l Getränk",
           "preis": 10
         },
         {
@@ -46,6 +46,11 @@
           "name": "Menü 4: Atas-Teller",
           "desc": "mit 0,33 l Getränk",
           "preis": 11
+        },
+        {
+          "name": "Menü 5: Hamburger",
+          "desc": "mit kleinen Pommes und 0,33 l Getränk",
+          "preis": 10
         }
       ]
     },
@@ -85,7 +90,7 @@
       "id": "taschen",
       "titel": "Taschengerichte",
       "typ": "fleisch",
-      "note": "Freitags und samstags ab 12:00 Uhr auch als Steak-Döner. Saucen: Remoulade, Cocktailsauce, Tzatziki, Joghurt, Chilisauce.",
+      "note": "Freitags und samstags Steak-Döner statt Kalb. Saucen: Remoulade, Cocktailsauce, Tzatziki, Joghurt, Chilisauce, Mayo oder Ketchup.",
       "items": [
         {
           "num": "1",
@@ -131,7 +136,7 @@
           "num": "6",
           "name": "Atas-Tasche mit gebratenem Gemüse",
           "desc": "mit gebratenem Gemüse und Sauce",
-          "haehnchen": 8.5,
+          "haehnchen": 9,
           "rind": 9,
           "steak": 13
         },
@@ -148,9 +153,15 @@
           "preis": 8
         },
         {
+          "num": "7",
+          "name": "Atas-Bowl Box Steak",
+          "desc": "Steak, Pommes und Sauce (nur freitags und samstags)",
+          "preis": 13
+        },
+        {
           "num": "8",
-          "name": "Köftetasche",
-          "desc": "mit Salat und Sauce",
+          "name": "Punjabitasche",
+          "desc": "mit Grillkebab, Salat und Sauce",
           "preis": 8
         },
         {
@@ -163,7 +174,7 @@
           "num": "10",
           "name": "Chickentasche",
           "desc": "Doppel-Hähnchenschnitzel mit Sauce und Salat",
-          "preis": 7
+          "preis": 8
         },
         {
           "num": "11",
@@ -176,6 +187,14 @@
           "name": "Falafeltasche",
           "desc": "mit Salat und Sauce",
           "preis": 7
+        },
+        {
+          "num": "13",
+          "name": "Kinder Atas-Tasche",
+          "desc": "Fleisch, Salat, Sauce und Pommes",
+          "haehnchen": 6,
+          "rind": 7,
+          "steak": 8
         }
       ]
     },
@@ -186,7 +205,7 @@
       "note": "Hausgemachte Dürüm (Teigrolle) aus dem Steinofen",
       "items": [
         {
-          "num": "15",
+          "num": "14",
           "name": "Wrap",
           "desc": "Fleisch nach Wahl mit Salat und Sauce",
           "haehnchen": 8,
@@ -194,7 +213,7 @@
           "steak": 11
         },
         {
-          "num": "16",
+          "num": "15",
           "name": "Wrap doppelt Fleisch",
           "desc": "Fleisch nach Wahl mit Salat und Sauce",
           "haehnchen": 9,
@@ -202,7 +221,7 @@
           "steak": 12
         },
         {
-          "num": "17",
+          "num": "16",
           "name": "Sucuk Wrap",
           "desc": "Fleisch nach Wahl mit Sucuk (türk. Knoblauchwurst), Salat und Sauce",
           "haehnchen": 9,
@@ -210,7 +229,7 @@
           "steak": 12
         },
         {
-          "num": "18",
+          "num": "17",
           "name": "Atas Wrap",
           "desc": "Fleisch nach Wahl mit Pommes, Salat und Sauce",
           "haehnchen": 9,
@@ -218,7 +237,7 @@
           "steak": 12
         },
         {
-          "num": "19",
+          "num": "18",
           "name": "XXL Wrap",
           "desc": "Fleisch nach Wahl mit Salat und Sauce",
           "haehnchen": 14,
@@ -226,28 +245,36 @@
           "steak": 18
         },
         {
-          "num": "20",
-          "name": "Köfte Wrap",
-          "desc": "mit Salat und Sauce",
+          "num": "19",
+          "name": "Punjabi Wrap",
+          "desc": "mit Grillkebab, Salat und Sauce",
           "preis": 9
         },
         {
-          "num": "21",
+          "num": "20",
           "name": "Hähnchenschnitzel Wrap",
           "desc": "mit Salat und Sauce",
           "preis": 9
         },
         {
-          "num": "22",
+          "num": "21",
           "name": "Falafel Wrap",
           "desc": "Falafel mit Salat und Sauce",
           "preis": 7.5
         },
         {
-          "num": "23",
+          "num": "22",
           "name": "Salat Wrap",
           "desc": "Salat, Weißkäse und Sauce",
           "preis": 7
+        },
+        {
+          "num": "23",
+          "name": "Kinder Wrap",
+          "desc": "Fleisch, Salat, Sauce und Pommes",
+          "haehnchen": 6,
+          "rind": 7,
+          "steak": 8
         }
       ]
     },
@@ -257,28 +284,56 @@
       "typ": "fleisch",
       "items": [
         {
-          "num": "24",
+          "num": "25",
           "name": "Atasteller klein",
           "desc": "Salat, Twister, Pommes oder Reis und Sauce nach Wahl",
-          "haehnchen": 9,
-          "rind": 10,
-          "steak": 12
-        },
-        {
-          "num": "25",
-          "name": "Atasteller",
-          "desc": "Salat, Twister, Pommes oder Reis und Sauce nach Wahl",
-          "haehnchen": 11,
-          "rind": 12,
-          "steak": 14
+          "haehnchen": 8.5,
+          "rind": 9,
+          "steak": 11
         },
         {
           "num": "26",
+          "name": "Atasteller",
+          "desc": "Salat, Twister, Pommes oder Reis und Sauce nach Wahl",
+          "haehnchen": 12,
+          "rind": 13,
+          "steak": 15
+        },
+        {
+          "num": "27",
           "name": "Taxi-Teller",
           "desc": "Bratwurst, Fleisch nach Wahl, Köfte, Sauce nach Wahl",
           "haehnchen": 15,
           "rind": 16,
           "steak": 18
+        },
+        {
+          "num": "28",
+          "name": "Atasteller nur Fleisch",
+          "desc": "Fleisch nach Wahl, Pommes und Sauce nach Wahl",
+          "haehnchen": 11,
+          "rind": 12,
+          "steak": 14
+        }
+      ],
+      "note": "Alle Teller können mit Reis, Twister oder Pommes zubereitet werden."
+    },
+    {
+      "id": "grillhaehnchen",
+      "titel": "Grillhähnchen",
+      "typ": "simple",
+      "nur_samstag_ab": "13:00",
+      "note": "Jeden Samstag ab 13:00 Uhr.",
+      "items": [
+        {
+          "num": "127",
+          "name": "Ein Hähnchenschenkel",
+          "preis": 3.5
+        },
+        {
+          "num": "128",
+          "name": "Hähnchenschenkel mit Reis, Pommes oder hausgemachtem Brot",
+          "preis": 12
         }
       ]
     },
@@ -317,6 +372,14 @@
           "haehnchen": 14,
           "rind": 15,
           "steak": 18
+        },
+        {
+          "num": "39",
+          "name": "Kinder Lahmacun",
+          "desc": "Fleisch, Salat, Sauce und Pommes",
+          "haehnchen": 6,
+          "rind": 7,
+          "steak": 8
         }
       ]
     },
@@ -380,7 +443,7 @@
       "id": "schnitzel",
       "titel": "Putenschnitzel",
       "typ": "simple",
-      "note": "Alle Schnitzelgerichte werden mit Beilagen, Salat und wahlweise mit Pommes, Kroketten oder Wildkartoffeln serviert.",
+      "note": "Alle Schnitzel können mit Reis, Twister oder Pommes zubereitet werden.",
       "items": [
         {
           "num": "53",
@@ -413,56 +476,6 @@
           "name": "Frischer Drehspieß-Auflauf",
           "desc": "Kartoffeln, Fleisch nach Wahl, Weißkäse, Zwiebeln, Paprika, Sauce Hollandaise",
           "preis": 10
-        }
-      ]
-    },
-    {
-      "id": "baguettes",
-      "titel": "Baguettes",
-      "typ": "simple",
-      "note": "Alle Baguettes sind mit Käse überbacken",
-      "items": [
-        {
-          "num": "65",
-          "name": "Baguette mit Salami",
-          "desc": "",
-          "preis": 7
-        },
-        {
-          "num": "66",
-          "name": "Baguette mit Mozzarella",
-          "desc": "",
-          "preis": 7
-        },
-        {
-          "num": "67",
-          "name": "Baguette mit Putenschinken",
-          "desc": "",
-          "preis": 7
-        },
-        {
-          "num": "68",
-          "name": "Baguette mit Thunfisch",
-          "desc": "",
-          "preis": 7
-        },
-        {
-          "num": "69",
-          "name": "Baguette mit Drehspießfleisch",
-          "desc": "",
-          "preis": 7
-        },
-        {
-          "num": "70",
-          "name": "Baguette mit Sucuk",
-          "desc": "",
-          "preis": 7.5
-        },
-        {
-          "num": "71",
-          "name": "Baguette mit Hähnchenbrust und Paprika",
-          "desc": "",
-          "preis": 8
         }
       ]
     },
@@ -710,13 +723,13 @@
         },
         {
           "num": "103",
-          "name": "Pizzabrötchen mit Salami (Geflügel)",
+          "name": "Pizzabrötchen mit Geflügel- oder Rindersalami",
           "desc": "",
           "preis": 9
         },
         {
           "num": "104",
-          "name": "Pizzabrötchen mit Schinken (Geflügel)",
+          "name": "Pizzabrötchen mit Geflügelschinken",
           "desc": "",
           "preis": 9
         },
@@ -743,6 +756,11 @@
           "name": "Gyrospizzabrötchen",
           "desc": "",
           "preis": 9
+        },
+        {
+          "num": "109",
+          "name": "Pizzabrötchen Vegetarisch",
+          "preis": 8
         }
       ]
     },
@@ -752,61 +770,61 @@
       "typ": "simple",
       "items": [
         {
-          "num": "109",
+          "num": "110",
           "name": "Pommes klein",
           "desc": "",
           "preis": 3.5
         },
         {
-          "num": "110",
+          "num": "111",
           "name": "Pommes groß",
           "desc": "",
           "preis": 4
         },
         {
-          "num": "111",
+          "num": "112",
           "name": "Kroketten",
           "desc": "8 Stk.",
           "preis": 4
         },
         {
-          "num": "112",
+          "num": "113",
           "name": "Chicken Nuggets",
           "desc": "6 Stk.",
           "preis": 4.5
         },
         {
-          "num": "113",
+          "num": "114",
           "name": "Kartoffel Twister",
           "desc": "",
           "preis": 4.5
         },
         {
-          "num": "114",
+          "num": "115",
           "name": "Mantaplatte",
           "desc": "",
           "preis": 7
         },
         {
-          "num": "115",
+          "num": "116",
           "name": "Bratwurst",
           "desc": "",
           "preis": 3
         },
         {
-          "num": "116",
+          "num": "117",
           "name": "Hamburger",
           "desc": "",
           "preis": 4
         },
         {
-          "num": "117",
+          "num": "118",
           "name": "Cheeseburger",
           "desc": "",
           "preis": 4.5
         },
         {
-          "num": "118",
+          "num": "119",
           "name": "Mozzarella Sticks",
           "desc": "6 Stk.",
           "preis": 6
@@ -820,43 +838,43 @@
       "note": "Zu allen Salaten werden zusätzlich 4 Stk. Pizzabrötchen serviert. Wahlweise mit Tzatziki, Cocktail, Joghurtsauce, Essig, Öl oder Balsamico als Dressing.",
       "items": [
         {
-          "num": "121",
+          "num": "120",
           "name": "Mista",
           "desc": "Tomaten, Gurken, Eisbergsalat",
           "preis": 6
         },
         {
-          "num": "122",
+          "num": "121",
           "name": "Gemischter Salat",
           "desc": "Tomaten, Gurken, Eisbergsalat, Zwiebeln, Mais, Oliven, Peperoni",
           "preis": 8
         },
         {
-          "num": "123",
+          "num": "122",
           "name": "Bauernsalat",
           "desc": "Eisbergsalat, Gurken, Tomaten, Paprika, Weißkäse, Zwiebeln",
           "preis": 8
         },
         {
-          "num": "124",
+          "num": "123",
           "name": "Atas-Salat",
           "desc": "mit gebratenen Hähnchenbruststreifen, Paprika, Champignons und Zwiebeln",
           "preis": 9
         },
         {
-          "num": "125",
+          "num": "124",
           "name": "Della Casa",
           "desc": "Tomaten, Gurken, Eisbergsalat, Käse, Zwiebeln, Thunfisch, gekochtes Ei",
           "preis": 7
         },
         {
-          "num": "126",
+          "num": "125",
           "name": "Chickensalat",
           "desc": "Tomaten, Gurken, Eisbergsalat, Weißkäse, Paprika, Mais, Hähnchenbruststreifen",
           "preis": 9
         },
         {
-          "num": "127",
+          "num": "126",
           "name": "Atasfleischsalat",
           "desc": "Tomaten, Gurken, Eisbergsalat, Fleisch nach Wahl, Weißkäse",
           "preis": 9
@@ -911,7 +929,7 @@
       "titel": "Getränke",
       "typ": "simple",
       "nummer_zeigen": false,
-      "note": "Alle Getränke sind inkl. Pfand.",
+      "note": "Alle Getränke zzgl. 0,25 € Pfand.",
       "items": [
         {
           "num": "",
