@@ -1913,7 +1913,9 @@ function pdfStornoliste(doc, alle) {
 // monatlich an und stehen nur im Monatsbericht. Die Stripe-Gebuehr ist dieselbe Pauschale, die der Checkout je
 // Online-Zahlung einbehaelt (1,5 % + 0,25 €; am 01.11. fuer Dream Oktober in Stripe nachgeprueft, centgenau).
 const stripePauschale = o => Math.round(((o.total || 0) * 0.015 + 0.25) * 100) / 100;
-function berichtAbrechnung(orders, mitFixkosten) {
+// ATAS: Ein offener Betrag wird nicht eingezogen, sondern in den Folgemonat uebertragen und dort von der Stripe-
+// Auszahlung abgezogen (Abed, 02.11.2026). mitFixkosten = erster Tag des Berichtsmonats (oder true/false).
+function berichtAbrechnung(orders, mitFixkosten, uebertrag = 0) {
   const summe  = (liste, f) => Math.round(liste.reduce((s, o) => s + f(o), 0) * 100) / 100;
   const online = orders.filter(o => o.payment === 'stripe');
   const laden  = orders.filter(o => o.payment !== 'stripe');
@@ -1927,7 +1929,10 @@ function berichtAbrechnung(orders, mitFixkosten) {
   a.fluevate  = a.grund + a.domain + a.svc;
   a.gebuehren = a.fluevate + a.stripeGeb;
   a.bleibt    = a.brutto - a.gebuehren;
-  const rest  = Math.round((a.umsatzOnline - a.stripeGeb - a.fluevate) * 100) / 100;
+  a.uebertrag = uebertrag;
+  a.uebertragMonat = mitFixkosten instanceof Date
+    ? new Date(mitFixkosten.getFullYear(), mitFixkosten.getMonth() - 1, 1).toLocaleDateString('de-DE', { month: 'long' }) : 'Vormonat';
+  const rest  = Math.round((a.umsatzOnline - a.stripeGeb - a.fluevate - a.uebertrag) * 100) / 100;
   a.ueberweisung = Math.max(0, rest);
   a.offen        = Math.max(0, -rest);
   return a;
@@ -1961,8 +1966,9 @@ function pdfAbrechnung(doc, a) {
   zeile(`Online-Umsatz  (${a.nOnline} Bestellungen)`, pdfFmt(a.umsatzOnline));
   if (a.nOnline) zeile('Stripe-Gebühr  (1,5 % + 0,25 € je Zahlung)', minus(a.stripeGeb));
   zeile('Gebühren FlueVate', minus(a.fluevate));
+  if (a.uebertrag) zeile(`Übertrag aus ${a.uebertragMonat}  (offener Betrag)`, minus(a.uebertrag));
   zeile('Überweisung an Sie', pdfFmt(a.ueberweisung), true);
-  if (a.offen) zeile('Offener Betrag  (wird eingezogen oder ist an FlueVate zu überweisen)', pdfFmt(a.offen), true);
+  if (a.offen) zeile('Offener Betrag  (wird mit der nächsten Auszahlung verrechnet)', pdfFmt(a.offen), true);
   block('BAR / EC-KARTE – LIEGT IN IHRER KASSE');
   zeile(`${a.nLaden} Bestellungen`, pdfFmt(a.umsatzLaden), true);
   doc.y += 8;
@@ -1972,7 +1978,8 @@ function pdfAbrechnung(doc, a) {
   doc.font('Helvetica-Bold').fontSize(13).fillColor('#2e7d32').text(pdfFmt(a.bleibt), PDF_M+2, ay+8, { width: PDF_W-4, align: 'right' });
   doc.y = ay + 28 + 3;
   doc.font('Helvetica').fontSize(7.5).fillColor('#888')
-    .text(a.offen ? `Kasse ${pdfFmt(a.umsatzLaden)} – offener Betrag ${pdfFmt(a.offen)}` : `Überweisung ${pdfFmt(a.ueberweisung)} + Kasse ${pdfFmt(a.umsatzLaden)}`, PDF_M+10, doc.y, { width: PDF_W-20 });
+    .text((a.offen ? `Kasse ${pdfFmt(a.umsatzLaden)} – offener Betrag ${pdfFmt(a.offen)}` : `Überweisung ${pdfFmt(a.ueberweisung)} + Kasse ${pdfFmt(a.umsatzLaden)}`)
+      + (a.uebertrag ? ` + Übertrag aus ${a.uebertragMonat} ${pdfFmt(a.uebertrag)} (dort schon als Gebühr gezählt)` : ''), PDF_M+10, doc.y, { width: PDF_W-20 });
   doc.y += 14;
 }
 
@@ -1984,8 +1991,9 @@ function abrechnungMailZeilen(a) {
   return `<tr><td ${td}>Gesamtumsatz (Brutto)</td><td ${tdr}>${eur(a.brutto)}</td></tr>`
     + `<tr style="background:#f5f5f5"><td ${td}>Gebühren FlueVate (${teile})</td><td ${tdr}>${eur(a.fluevate)}</td></tr>`
     + (a.nOnline ? `<tr><td ${td}>Stripe-Gebühr (${a.nOnline} Online-Zahlungen)</td><td ${tdr}>${eur(a.stripeGeb)}</td></tr>` : '')
+    + (a.uebertrag ? `<tr><td ${td}>Übertrag aus ${a.uebertragMonat} (offener Betrag, wird abgezogen)</td><td ${tdr}>${eur(a.uebertrag)}</td></tr>` : '')
     + `<tr style="background:#f5f5f5"><td ${td}><b>Überweisung an Sie über Stripe</b> (Online-Umsatz abzüglich Gebühren)</td><td ${tdr}><b>${eur(a.ueberweisung)}</b></td></tr>`
-    + (a.offen ? `<tr><td ${td}><b>Offener Betrag</b> (wird eingezogen oder ist an FlueVate zu überweisen)</td><td ${tdr}><b>${eur(a.offen)}</b></td></tr>` : '')
+    + (a.offen ? `<tr><td ${td}><b>Offener Betrag</b> (wird mit der nächsten Auszahlung verrechnet)</td><td ${tdr}><b>${eur(a.offen)}</b></td></tr>` : '')
     + `<tr><td ${td}>Bar / EC-Karte in Ihrer Kasse</td><td ${tdr}>${eur(a.umsatzLaden)}</td></tr>`
     + `<tr style="background:#e8f5e9"><td style="padding:10px;font-weight:bold;color:#2e7d32;font-size:15px">Ihnen bleiben nach allen Gebühren</td><td style="padding:10px;text-align:right;font-weight:bold;color:#2e7d32;font-size:15px">${eur(a.bleibt)}</td></tr>`;
 }
@@ -1995,8 +2003,9 @@ function abrechnungOwnerText(a) {
     `Servicegebühr ${eur(a.svc)} (${a.n} Bestellungen)`].filter(Boolean).join(', ');
   return `<b>Gebühren FlueVate:</b> ${eur(a.fluevate)} (${teile})`
     + (a.nOnline ? `<br><b>Stripe-Gebühr:</b> ${eur(a.stripeGeb)} (${a.nOnline} Online-Zahlungen)` : '')
+    + (a.uebertrag ? `<br><b>Übertrag aus ${a.uebertragMonat}:</b> ${eur(a.uebertrag)} (abgezogen)` : '')
     + `<br><b>Überweisung an den Laden:</b> ${eur(a.ueberweisung)}`
-    + (a.offen ? `<br><b>Offener Betrag (einziehen):</b> ${eur(a.offen)}` : '');
+    + (a.offen ? `<br><b>Offener Betrag (in den nächsten Monat übertragen):</b> ${eur(a.offen)}` : '');
 }
 
 function pdfBarRechnung(doc, barOrders, barStats, zeitraum) {
@@ -2328,6 +2337,19 @@ function getWeekNum(d) {
 
 // Baut den kompletten Monatsbericht. Einzige Quelle fuer das Layout -
 // Cron und manueller Endpunkt rufen beide hier rein.
+// Offener Betrag der Vormonate, der in den Monat ab mStart uebertragen wird. Gerechnet ab Oktober 2026 mit
+// demselben Statusfilter wie der Monatsbericht; jeder Monat traegt seinen eigenen Uebertrag weiter.
+const UEBERTRAG_AB = new Date(2026, 9, 1);
+async function uebertragFuer(mStart) {
+  let uebertrag = 0;
+  for (let m = new Date(UEBERTRAG_AB); m < mStart; m = new Date(m.getFullYear(), m.getMonth() + 1, 1)) {
+    const ende = new Date(m.getFullYear(), m.getMonth() + 1, 0, 23, 59, 59, 999);
+    const orders = await Order.find({ status: { $in: ['confirmed','preparing','ready','delivered'] }, createdAt: { $gte: m, $lte: ende } });
+    uebertrag = berichtAbrechnung(orders, m, uebertrag).offen;
+  }
+  return uebertrag;
+}
+
 function buildMonatsberichtPdf(doc, d) {
   const { monat, vonBis, orders, brutto, svcFees, auszahlung,
           barOrdersM, barSvcM, barNettoM, barBetragM, weekRows, stornos = [] } = d;
@@ -2341,7 +2363,7 @@ function buildMonatsberichtPdf(doc, d) {
   ]);
   doc.moveDown(0.4);
   pdfHr(doc);
-  pdfAbrechnung(doc, berichtAbrechnung(orders, true));
+  pdfAbrechnung(doc, d.abrechnung || berichtAbrechnung(orders, true));
   doc.y += 6;
   if (doc.y > PDF_FT - (weekRows.length * 20 + 40)) { doc.addPage(); doc.y = PDF_M; }
   pdfHr(doc, '#bbb');
@@ -2399,7 +2421,7 @@ cron.schedule('0 22 * * *', async () => {
     const brutto     = orders.reduce((s,o) => s+(o.total||0), 0);
     const svcFees    = orders.reduce((s,o) => s+(o.serviceFee||PDF_SV), 0);
     const auszahlung = brutto - svcFees;
-    const a = berichtAbrechnung(orders, true);
+    const a = berichtAbrechnung(orders, mStart, await uebertragFuer(mStart));
     const barOrdersM = orders.filter(o => o.payment === 'bar');
     const barSvcM    = barOrdersM.reduce((s,o) => s+(o.serviceFee||PDF_SV), 0);
     const barNettoM  = barOrdersM.reduce((s,o) => s+(o.total||0), 0) - barSvcM;
@@ -2417,7 +2439,7 @@ cron.schedule('0 22 * * *', async () => {
 
     // ── PDF: Monatsbericht (Kennzahlen + Bestellliste + Bar-Übersicht) ─────
     const monatsPdf = await generatePdf(doc => buildMonatsberichtPdf(doc, {
-      monat, vonBis, orders, brutto, svcFees, auszahlung,
+      monat, vonBis, orders, brutto, svcFees, auszahlung, abrechnung: a,
       barOrdersM, barSvcM, barNettoM, barBetragM, weekRows, stornos,
     }));
 
@@ -2533,7 +2555,7 @@ app.post('/api/admin/send-monthly', auth, async (req, res) => {
     const brutto     = orders.reduce((s,o) => s+(o.total||0), 0);
     const svcFees    = orders.reduce((s,o) => s+(o.serviceFee||PDF_SV), 0);
     const auszahlung = brutto - svcFees;
-    const a = berichtAbrechnung(orders, true);
+    const a = berichtAbrechnung(orders, mStart, await uebertragFuer(mStart));
     const barOrdersM = orders.filter(o => o.payment === 'bar');
     const barSvcM    = barOrdersM.reduce((s,o) => s+(o.serviceFee||PDF_SV), 0);
     const barNettoM  = barOrdersM.reduce((s,o) => s+(o.total||0), 0) - barSvcM;
@@ -2543,7 +2565,7 @@ app.post('/api/admin/send-monthly', auth, async (req, res) => {
     const weekRows = Object.entries(weeksMap).sort((a,b)=>+a[0]-+b[0]);
 
     const monatsPdf = await generatePdf(doc => buildMonatsberichtPdf(doc, {
-      monat, vonBis, orders, brutto, svcFees, auszahlung,
+      monat, vonBis, orders, brutto, svcFees, auszahlung, abrechnung: a,
       barOrdersM, barSvcM, barNettoM, barBetragM, weekRows, stornos,
     }));
 
