@@ -1484,7 +1484,7 @@ async function sendConfirmationEmail(order, mins) {
         <div style="background:#f7f3ee;padding:14px;text-align:center;font-size:11px;color:#999">ATAS Döner & Pizza · Nordstr. 45a · 59269 Beckum · Tel: 02521 / 826 48 00</div>
       </div>`
     });
-    console.log(`📧 Bestätigung → ${order.customer.email}`);
+    console.log(`📧 Bestätigung → Bestellung #${order.orderNum}`);
   } catch(e) { console.error('Mail Fehler:', e); }
 }
 
