@@ -43,13 +43,15 @@ services:
         sync: false
 
       # ── PayPal: bewusst nicht eingerichtet ──
-      # Das Backend kann PayPal, das Frontend bietet es nicht an
-      # (ONLINE_ZAHLUNG_AKTIV steht auf true, die PayPal-Option ist entfernt).
-      # Zum Nachruesten hier wieder eintragen:
-      #   PAYPAL_ENV (sandbox oder live), PAYPAL_CLIENT_ID,
-      #   PAYPAL_CLIENT_SECRET, PAYPAL_WEBHOOK_ID
-      # und die Auswahl in index.html zurueckholen. Ohne beides bliebe Render
-      # nach vier Geheimnissen fragen, die niemand hat.
+      # PayPal laeuft direkt auf das PayPal-Konto des Ladens (paypal-direkt.js) und
+      # bleibt aus, bis im Hosting PAYPAL_CLIENT_ID und PAYPAL_CLIENT_SECRET der
+      # Live-App UND PAYPAL_ENV=live stehen. Erst dann legt der Server seinen Webhook
+      # (<API>/api/paypal-webhook) selbst an und die Seite zeigt PayPal (/api/config
+      # paypal:true). Eine Sandbox gibt es nicht mehr. PAYPAL_ENV deshalb nie fest
+      # hier eintragen, sonst wird PayPal mit dem naechsten Deploy scharf.
+      # Optional: PAYPAL_WEBHOOK_ID (Webhook von Hand), PUBLIC_API_URL (falls die
+      # API nicht unter https://api.atas-doener-pizza.com erreichbar ist).
+      # Zustand: GET /api/admin/paypal (Admin-Anmeldung).
 
       # ── E-Mail (Resend) ──
       - key: RESEND_API_KEY
